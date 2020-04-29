@@ -44,12 +44,10 @@ public class TextServer {
 			}
 			
 			// Cerrar la conexión
-			
 			sCon.close();
 
 			// Cerrar el servidor
 			sServ.close();
-			System.out.println("Server closed");
 			
 		} catch(Exception e) {
 			e.printStackTrace();

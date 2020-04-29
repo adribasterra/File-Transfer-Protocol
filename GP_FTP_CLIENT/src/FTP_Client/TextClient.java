@@ -35,16 +35,13 @@ public class TextClient {
 				output.println(data);
 				// Leer datos del servidor
 				result = input.readLine();
-				if(data.compareTo("END") !=0) {
-					System.out.println("Data = " + data + " --- Result = " + result);	
-				}
-				
+
+				System.out.println("Data = " + data + " --- Result = " + result);	
 			}
 
 
 			// Close the connection
 			connection.close();
-			System.out.println("Client Closed");
 
 		}  catch(IOException e) {
 			System.out.println("Error: " + e);		

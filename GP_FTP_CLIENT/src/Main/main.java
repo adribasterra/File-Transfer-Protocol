@@ -7,6 +7,6 @@ public class main{
 	public static void main(String[] args)
 	{
 		System.out.println("CLIENT\n\n");
-		DataClient.testClient();
+		TextClient.testClient();
 	}
 }

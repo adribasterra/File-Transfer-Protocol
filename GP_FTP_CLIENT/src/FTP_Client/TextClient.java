@@ -31,18 +31,38 @@ public class TextClient {
 				System.out.print("Write text (END to close the server): ");
 				data = inputKeyboard.readLine();
 
+
+				if (data.startsWith("send")) {
+					String filename = data.substring(5).trim();
+					output.println(data);
+					System.out.println("Attempting to send file: " + filename);
+					sendFile(filename);
+				}
+				else if (data.startsWith("list")) {
+					output.println(data);
+					receiveListFiles(input);
+				}
+				else if (data.startsWith("delete")) {
+					output.println(data);
+					System.out.println(data);
+					//receiveListFiles(input);
+				}
+				else{
+					System.out.println("Error: Command unrecognised");
+				}
+				//result = input.readLine();
 				// Mandar datos al servidor
-				output.println(data);
+				//output.println(data);
 				// Leer datos del servidor
 				//result = input.readLine();
-				if (result.compareTo("ok") !=0) {
+				/* if (result.compareTo("ok") !=0) {
 				
 				sendFile(data);
 
 				}
 				if(data.compareTo("END") !=0) {
 					System.out.println("Data = " + data + " --- Result = " + result);	
-				}
+				}*/
 				
 			}
 
@@ -64,14 +84,14 @@ public class TextClient {
 		}
 		try {
 			int filePort = 13;
-			String result;
+			//String result;
 	
 			ServerSocket sServ = new ServerSocket(filePort);
 			System.out.println("Client waiting for response before sending");
 			
 			Socket sCon = sServ.accept();
 			System.out.println("File transfer Connection accepted");
-	
+/*
 			BufferedReader resInput = new BufferedReader(new InputStreamReader(sCon.getInputStream()));
 			ObjectOutputStream fileOutput = new ObjectOutputStream(sCon.getOutputStream());
 			
@@ -82,7 +102,7 @@ public class TextClient {
 			System.out.println(result);
 
 			System.out.println("Finished transferring file info");
-
+*/
 			FileInputStream original = new FileInputStream(filename);
 			BufferedInputStream originalBuffer = new BufferedInputStream(original);
 			
@@ -101,8 +121,6 @@ public class TextClient {
 			originalBuffer.close();
 			copyBuffer.close();
 
-
-
 			sCon.close();
 			sServ.close();
 			System.out.println("File transfer Server closed");
@@ -110,6 +128,22 @@ public class TextClient {
 		}
 		catch (Exception e) {
 			System.out.println("Error writing byte to text :" + e);
+		}
+		return false;
+	}
+
+	public static Boolean receiveListFiles(BufferedReader input) {
+		try {
+			System.out.println("Here is the list of files on the server:");
+
+			String s = input.readLine();
+			while (s.compareTo("END")!=0) {
+				System.out.println(" > " + s);
+				s = input.readLine();
+			}
+			return true;
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
 		return false;
 	}

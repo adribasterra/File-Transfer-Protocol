@@ -1,7 +1,7 @@
 package Main;
 
-import FTP_Server.DataServer;
 import FTP_Server.TextServer;
+import FTP_Server.DataServer;
 
 public class main
 {
@@ -9,5 +9,6 @@ public class main
 	{
 		System.out.println("SERVER\n\n");
 		TextServer.testServer();
+		//DataServer.testServer();
 	}
 }

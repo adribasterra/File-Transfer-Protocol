@@ -4,8 +4,6 @@ package FTP_Server;
 // CharacterServer.java
 
 import java.net.*;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.Scanner;
 import java.io.*;
 
@@ -42,6 +40,11 @@ public class TextServer {
 					//output.println("Attempting to receive file: " + filename);
 					receiveFile(filename);
 				}
+				else if (data.startsWith("get")) {
+					String filename = data.substring(4).trim();
+					//output.println("Attempting to receive file: " + filename);
+					sendFile(filename);
+				}
 				else if (data.startsWith("list")) {
 					System.out.println("Attempting to list files.");
 					listFiles(output);
@@ -50,6 +53,13 @@ public class TextServer {
 					String filename = data.substring(7).trim();
 					//output.println("Attempting to receive file: " + filename);
 					deleteFile(filename);
+				}
+				else if (data.startsWith("rename")) {
+					String[] command = data.split(" ");
+					String oldFilename = command[1];
+					String newFilename = command[2];
+					//output.println("Attempting to receive file: " + filename);
+					renameFile(oldFilename, newFilename);
 				}
 				else{
 					//output.println("Error: Command unrecognised");
@@ -122,57 +132,6 @@ public class TextServer {
 		return false;
 	}
 
-	public static Boolean receiveFile(String filename){
-	File fileData = null;
-	try {
-		int filePort = 13;
-		Socket connection = new Socket("localhost", filePort);
-
-		// ObjectInputStream fileInput = new ObjectInputStream(connection.getInputStream());
-		// PrintWriter resOutput = new PrintWriter(connection.getOutputStream(), true);
-
-		//fileData = (File) fileInput.readObject();
-		fileData = new File(filename);
-		System.out.println(fileData.toURI());
-		//resOutput.println("ok");
-		if (!fileData.createNewFile()){
-			String msg = "ERROR: A file named "+fileData.getName()+" already exists on the server.\n";
-			System.out.println(msg);
-			//resOutput.println(msg);
-			connection.close();
-			return false;
-		}
-		addFilenameToList(fileData.getName());
-		
-
-		BufferedInputStream originalBuffer = new BufferedInputStream(connection.getInputStream());
-		
-		FileOutputStream  copy = new FileOutputStream (fileData);
-		BufferedOutputStream copyBuffer = new BufferedOutputStream(copy);
-		
-		// Loop to read a file and write in another
-		byte [] array = new byte[1000];
-		int n_bytes = originalBuffer.read(array);
-
-		while (n_bytes > 0)
-		{
-			copyBuffer.write(array,0,n_bytes);
-			n_bytes=originalBuffer.read(array);
-		}
-
-		// Close the files
-		originalBuffer.close();
-		copyBuffer.close();
-
-
-
-		connection.close();
-		return true;
-	} catch (Exception e) {
-		System.out.println("Error receiving file :" + e);
-	}
-	return false;
-	}
 
 	public static Boolean deleteFile(String filename) {
 		try {
@@ -181,9 +140,35 @@ public class TextServer {
 				System.out.println("ERROR: File "+filename+" does not exist here!");
 				return false;
 			}
-			fileData.delete();
-			removeFilenameFromList(filename);
-			return true;
+			Boolean success = fileData.delete();
+			if (success) removeFilenameFromList(filename);
+			return success;
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return false;
+	}
+
+	public static Boolean renameFile(String oldFilename, String newFilename) {
+		try {
+			File oldFile = new File(oldFilename);
+			File newFile = new File(newFilename);
+			if (!oldFile.exists()){
+				System.out.println("ERROR: File "+oldFilename+" does not exist here!");
+				return false;
+			}
+			if (newFile.exists()){
+				System.out.println("ERROR: File "+newFilename+" already exists here!");
+				return false;
+			}
+			Boolean success = oldFile.renameTo(newFile);
+			if (success) {
+				removeFilenameFromList(oldFilename);
+				addFilenameToList(newFilename);
+			}
+			return success;
+
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -193,16 +178,116 @@ public class TextServer {
 	public static Boolean listFiles(PrintWriter output) {
 		try {
 			Scanner in = new Scanner(new FileReader("fileList.txt"));
-			String s;
+			String s = null;
 			while (in.hasNextLine()) {
 				s = in.nextLine();
 				output.println(s);
 			}
 			in.close();
+			if (s==null) output.println("(empty)");
 			output.println("END");
 			return true;
 		} catch (Exception e) {
 			e.printStackTrace();
+		}
+		return false;
+	}
+
+
+
+	public static Boolean receiveFile(String filename){
+		File fileData = null;
+		try {
+			int filePort = 13;
+			Socket connection = new Socket("localhost", filePort);
+
+			// ObjectInputStream fileInput = new ObjectInputStream(connection.getInputStream());
+			// PrintWriter resOutput = new PrintWriter(connection.getOutputStream(), true);
+
+			//fileData = (File) fileInput.readObject();
+			fileData = new File(filename);
+			System.out.println(fileData.toURI());
+			//resOutput.println("ok");
+			if (!fileData.createNewFile()){
+				String msg = "ERROR: A file named "+fileData.getName()+" already exists on the server.\n";
+				System.out.println(msg);
+				//resOutput.println(msg);
+				connection.close();
+				return false;
+			}
+			addFilenameToList(fileData.getName());
+			
+
+			BufferedInputStream originalBuffer = new BufferedInputStream(connection.getInputStream());
+			
+			FileOutputStream  copy = new FileOutputStream (fileData);
+			BufferedOutputStream copyBuffer = new BufferedOutputStream(copy);
+			
+			// Loop to read a file and write in another
+			byte [] array = new byte[1000];
+			int n_bytes = originalBuffer.read(array);
+
+			while (n_bytes > 0)
+			{
+				copyBuffer.write(array,0,n_bytes);
+				n_bytes=originalBuffer.read(array);
+			}
+
+			// Close the files
+			originalBuffer.close();
+			copyBuffer.close();
+
+			connection.close();
+			return true;
+		} catch (Exception e) {
+			System.out.println("Error receiving file :" + e);
+		}
+		return false;
+	}
+
+
+
+	public static boolean sendFile(String filename) {
+		File fileData = new File(filename);
+		if (!fileData.exists()){
+			System.out.println("ERROR: File "+filename+" does not exist here!");
+			return false;
+		}
+		try {
+			int filePort = 16;
+			//String result;
+	
+			ServerSocket sServ = new ServerSocket(filePort);
+			System.out.println("Server waiting for response before sending");
+			
+			Socket sCon = sServ.accept();
+			System.out.println("File transfer Connection accepted");
+
+			FileInputStream original = new FileInputStream(filename);
+			BufferedInputStream originalBuffer = new BufferedInputStream(original);
+			
+			BufferedOutputStream copyBuffer = new BufferedOutputStream(sCon.getOutputStream());
+			
+			// Loop to read a file and write in another
+			byte [] array = new byte[1000];
+			int n_bytes = originalBuffer.read(array);
+			while (n_bytes > 0)
+			{
+				copyBuffer.write(array,0,n_bytes);
+				n_bytes=originalBuffer.read(array);
+			}
+
+			// Close the files
+			originalBuffer.close();
+			copyBuffer.close();
+
+			sCon.close();
+			sServ.close();
+			System.out.println("File transfer Server closed");
+			return true;
+		}
+		catch (Exception e) {
+			System.out.println("Error writing byte to text :" + e);
 		}
 		return false;
 	}

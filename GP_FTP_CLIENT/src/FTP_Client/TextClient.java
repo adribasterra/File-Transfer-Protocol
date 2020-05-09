@@ -15,7 +15,7 @@ public class TextClient {
 
 			// Datos que mandaremos y recuperaremos
 			String data = "";
-			String result = "";
+			//String result = "";
 
 			// Conectar con el servidor
 			Socket connection = new Socket("localhost", port);
@@ -38,6 +38,12 @@ public class TextClient {
 					System.out.println("Attempting to send file: " + filename);
 					sendFile(filename);
 				}
+				else if (data.startsWith("get")) {
+					String filename = data.substring(4).trim();
+					output.println(data);
+					System.out.println("Attempting to get file: " + filename);
+					receiveFile(filename);
+				}
 				else if (data.startsWith("list")) {
 					output.println(data);
 					receiveListFiles(input);
@@ -45,7 +51,10 @@ public class TextClient {
 				else if (data.startsWith("delete")) {
 					output.println(data);
 					System.out.println(data);
-					//receiveListFiles(input);
+				}
+				else if (data.startsWith("rename")) {
+					output.println(data);
+					System.out.println(data);
 				}
 				else{
 					System.out.println("Error: Command unrecognised");
@@ -144,6 +153,52 @@ public class TextClient {
 			return true;
 		} catch (Exception e) {
 			e.printStackTrace();
+		}
+		return false;
+	}
+
+
+
+	public static Boolean receiveFile(String filename){
+		File fileData = null;
+		try {
+			int filePort = 16;
+			Socket connection = new Socket("localhost", filePort);
+
+			fileData = new File(filename);
+			System.out.println(fileData.toURI());
+			//resOutput.println("ok");
+			if (!fileData.createNewFile()){
+				String msg = "ERROR: A file named "+fileData.getName()+" already exists on the server.\n";
+				System.out.println(msg);
+				//resOutput.println(msg);
+				connection.close();
+				return false;
+			}
+
+			BufferedInputStream originalBuffer = new BufferedInputStream(connection.getInputStream());
+			
+			FileOutputStream  copy = new FileOutputStream (fileData);
+			BufferedOutputStream copyBuffer = new BufferedOutputStream(copy);
+			
+			// Loop to read a file and write in another
+			byte [] array = new byte[1000];
+			int n_bytes = originalBuffer.read(array);
+
+			while (n_bytes > 0)
+			{
+				copyBuffer.write(array,0,n_bytes);
+				n_bytes=originalBuffer.read(array);
+			}
+
+			// Close the files
+			originalBuffer.close();
+			copyBuffer.close();
+
+			connection.close();
+			return true;
+		} catch (Exception e) {
+			System.out.println("Error receiving file :" + e);
 		}
 		return false;
 	}

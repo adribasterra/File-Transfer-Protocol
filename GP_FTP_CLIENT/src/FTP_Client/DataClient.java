@@ -84,13 +84,12 @@ public class DataClient {
 				output.writeChars(command);
 				
 				// Read data form the server
-				response = input.readLine();
 
 				// Clean read/write
 				output.flush();
 				
 				// Print response
-				System.out.println("Data = " + command + " --- Response = " + response);		
+				System.out.println("Data = " + command + " --- Response = " );		
 				
 			}
 

@@ -8,31 +8,59 @@ import java.util.Scanner;
 import java.io.*;
 
 public class TextServer {
+	
+		public static final String CMD_SERVICE_READY = "220. Service ready for new user.";
+		
+		public static final String CMD_OKAY = "200. Okay";
+		
+		public static final String CMD_BAD_SEQUENCE = "503. Bad sequence of commands.";
+		
+		public static final String CMD_FILE_STATUS_OKAY = "150. File status okay; about to open data connection.";
+
+		public static final String CMD_SUCCESS = "226. Closing data connection. Requested file action successful.";
+		
+		public static final String CMD_CANT_OPEN_CONNECTION = "425. Can't open data connection.";
+		
+		public static final String CMD_ACTION_ABORTED = "451. Requested action aborted: local error in processing.";
+		
+		public static final String CMD_FILE_ACTION_UNAVAILABLE= "450. Requested file action not taken. File unavailable.";
+		
+		public static final String CMD_FILE_UNAVAILABLE = "550. Requested action not taken. File unavailable.";
+		
+		public static final String CMD_TRANSFER_ABORTER = "426. Connection closed; transfer aborted.";
+		
+		public static final String CMD_INSUFFICIENT_STORAGE = "452. Requested action not taken. Insufficient storage space in system.";
+		
+		public static final String CMD_FILENAME_NOT_ALLOWED = "553. Requested action not taken. File name not allowed.";
+		
+		public static final String CMD_CLOSING = "221. Service closing control connection.";
+
 
 	public static void testServer() {
 
 		try {
 
-			int port = 1400;
+			int port = 21;
 
-			// Datos que recibiremos / mandaremos
+			// Sending/receiving data
 			String data = "";
 
-			// Crear el socket del servidor
+			// Create server socket
 			ServerSocket sServ = new ServerSocket(port);
 			System.out.println("Character Server waiting for requests");
 
-			// Aceptar conexi�n con cliente
+			// Accept connection with client
 			Socket sCon = sServ.accept();
-			System.out.println("Connection accepted");
+			//System.out.println("Connection accepted");
+			System.out.println(CMD_SERVICE_READY);
 
 			while (data.compareTo("END") != 0) {
 
-				// Coger input / output de la conexi�n
+				// Take input/output from connection
 				BufferedReader input = new BufferedReader(new InputStreamReader(sCon.getInputStream()));
 				PrintWriter output = new PrintWriter(sCon.getOutputStream(), true);
 
-				// Leer datos del cliente
+				// Read data from client
 				data = input.readLine();
 				System.out.println(data);
 				if (data.startsWith("send")) {
@@ -63,26 +91,27 @@ public class TextServer {
 				}
 				else{
 					//output.println("Error: Command unrecognised");
+					output.println(CMD_BAD_SEQUENCE);
 				}
-				
 
-				// Pasar a may�sculas
+				// UpperCase
 				// data = data.toUpperCase();
 
-				// Enviar el texto en may�sculas
+				// Send data with UpperCase
 				// output.println(data);
 			}
 
-			// Cerrar la conexi�n
-
+			// Close connection
 			sCon.close();
+			System.out.println(CMD_CLOSING);
 
-			// Cerrar el servidor
+			// Close server socket
 			sServ.close();
-			System.out.println("Server closed");
+			//System.out.println("Server closed");
 
 		} catch (Exception e) {
 			e.printStackTrace();
+			System.out.println(CMD_ACTION_ABORTED);
 		}
 	}
 
@@ -103,6 +132,7 @@ public class TextServer {
 			return true;
 		} catch (Exception e) {
 			e.printStackTrace();
+			System.out.println(CMD_ACTION_ABORTED);
 		}
 		return false;
 	}
@@ -128,6 +158,7 @@ public class TextServer {
 			return true;
 		} catch (Exception e) {
 			e.printStackTrace();
+			System.out.println(CMD_ACTION_ABORTED);
 		}
 		return false;
 	}
@@ -137,7 +168,8 @@ public class TextServer {
 		try {
 			File fileData = new File(filename);
 			if (!fileData.exists()){
-				System.out.println("ERROR: File "+filename+" does not exist here!");
+				//System.out.println("ERROR: File "+filename+" does not exist here!");
+				System.out.println(CMD_FILE_ACTION_UNAVAILABLE);
 				return false;
 			}
 			Boolean success = fileData.delete();
@@ -146,6 +178,7 @@ public class TextServer {
 
 		} catch (Exception e) {
 			e.printStackTrace();
+			System.out.println(CMD_ACTION_ABORTED);
 		}
 		return false;
 	}
@@ -155,11 +188,13 @@ public class TextServer {
 			File oldFile = new File(oldFilename);
 			File newFile = new File(newFilename);
 			if (!oldFile.exists()){
-				System.out.println("ERROR: File "+oldFilename+" does not exist here!");
+				//System.out.println("ERROR: File "+oldFilename+" does not exist here!");
+				System.out.println(CMD_FILE_ACTION_UNAVAILABLE);
 				return false;
 			}
 			if (newFile.exists()){
-				System.out.println("ERROR: File "+newFilename+" already exists here!");
+				//System.out.println("ERROR: File "+newFilename+" already exists here!");
+				System.out.println(CMD_FILENAME_NOT_ALLOWED);
 				return false;
 			}
 			Boolean success = oldFile.renameTo(newFile);
@@ -171,6 +206,7 @@ public class TextServer {
 
 		} catch (Exception e) {
 			e.printStackTrace();
+			System.out.println(CMD_ACTION_ABORTED);
 		}
 		return false;
 	}
@@ -189,6 +225,7 @@ public class TextServer {
 			return true;
 		} catch (Exception e) {
 			e.printStackTrace();
+			System.out.println(CMD_ACTION_ABORTED);
 		}
 		return false;
 	}
@@ -198,7 +235,8 @@ public class TextServer {
 	public static Boolean receiveFile(String filename){
 		File fileData = null;
 		try {
-			int filePort = 13;
+			int filePort = 20;
+			System.out.println(CMD_FILE_STATUS_OKAY);
 			Socket connection = new Socket("localhost", filePort);
 
 			// ObjectInputStream fileInput = new ObjectInputStream(connection.getInputStream());
@@ -209,12 +247,15 @@ public class TextServer {
 			System.out.println(fileData.toURI());
 			//resOutput.println("ok");
 			if (!fileData.createNewFile()){
-				String msg = "ERROR: A file named "+fileData.getName()+" already exists on the server.\n";
-				System.out.println(msg);
+				//String msg = "ERROR: A file named "+fileData.getName()+" already exists on the server.\n";
+				System.out.println(CMD_FILENAME_NOT_ALLOWED);
+				//System.out.println(msg);
 				//resOutput.println(msg);
 				connection.close();
+				System.out.println(CMD_SUCCESS);
 				return false;
 			}
+			System.out.println(CMD_FILE_STATUS_OKAY);
 			addFilenameToList(fileData.getName());
 			
 
@@ -238,9 +279,11 @@ public class TextServer {
 			copyBuffer.close();
 
 			connection.close();
+			System.out.println(CMD_SUCCESS);
 			return true;
 		} catch (Exception e) {
-			System.out.println("Error receiving file :" + e);
+			//System.out.println("Error receiving file :" + e);
+			System.out.println(CMD_CANT_OPEN_CONNECTION);
 		}
 		return false;
 	}
@@ -251,17 +294,19 @@ public class TextServer {
 		File fileData = new File(filename);
 		if (!fileData.exists()){
 			System.out.println("ERROR: File "+filename+" does not exist here!");
+			System.out.println(CMD_FILE_ACTION_UNAVAILABLE);
 			return false;
 		}
 		try {
-			int filePort = 16;
+			int filePort = 20;
 			//String result;
 	
 			ServerSocket sServ = new ServerSocket(filePort);
 			System.out.println("Server waiting for response before sending");
 			
+			System.out.println(CMD_FILE_STATUS_OKAY);
 			Socket sCon = sServ.accept();
-			System.out.println("File transfer Connection accepted");
+			//System.out.println("File transfer Connection accepted");
 
 			FileInputStream original = new FileInputStream(filename);
 			BufferedInputStream originalBuffer = new BufferedInputStream(original);
@@ -282,12 +327,15 @@ public class TextServer {
 			copyBuffer.close();
 
 			sCon.close();
+			System.out.println(CMD_SUCCESS);
 			sServ.close();
-			System.out.println("File transfer Server closed");
+			//System.out.println("File transfer Server closed");
+			System.out.println(CMD_FILE_ACTION_UNAVAILABLE);
 			return true;
 		}
 		catch (Exception e) {
-			System.out.println("Error writing byte to text :" + e);
+			//System.out.println("Error writing byte to text :" + e);
+			System.out.println(CMD_CANT_OPEN_CONNECTION);
 		}
 		return false;
 	}

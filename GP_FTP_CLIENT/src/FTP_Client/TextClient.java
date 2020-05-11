@@ -11,7 +11,7 @@ public class TextClient {
 
 		try {
 
-			int port = 1400;
+			int port = 21;
 
 			// Datos que mandaremos y recuperaremos
 			String data = "";
@@ -92,7 +92,7 @@ public class TextClient {
 			return false;
 		}
 		try {
-			int filePort = 13;
+			int filePort = 20;
 			//String result;
 	
 			ServerSocket sServ = new ServerSocket(filePort);
@@ -162,7 +162,7 @@ public class TextClient {
 	public static Boolean receiveFile(String filename){
 		File fileData = null;
 		try {
-			int filePort = 16;
+			int filePort = 20;
 			Socket connection = new Socket("localhost", filePort);
 
 			fileData = new File(filename);

@@ -35,18 +35,19 @@ public class TextServer {
 		
 		public static final String CMD_CLOSING = "221. Service closing control connection.";
 
+	private static int commandPort = 21;
 
 	public static void testServer() {
 
 		try {
 
-			int port = 21;
+			//int port = 21;
 
 			// Sending/receiving data
 			String data = "";
 
 			// Create server socket
-			ServerSocket sServ = new ServerSocket(port);
+			ServerSocket sServ = new ServerSocket(commandPort);
 			System.out.println("Character Server waiting for requests");
 
 			// Accept connection with client
@@ -115,7 +116,7 @@ public class TextServer {
 		}
 	}
 
-	private static Boolean addFilenameToList(String filename) {
+	public static boolean addFilenameToList(String filename) {
 		try {
 			Scanner in = new Scanner(new FileReader("fileList.txt"));
 			StringBuilder sb = new StringBuilder();
@@ -232,9 +233,13 @@ public class TextServer {
 
 
 
-	public static Boolean receiveFile(String filename){
-		File fileData = null;
-		try {
+	public static boolean receiveFile(String filename){
+		//File fileData = null;
+		if(DataServer.receive(filename)) {
+			addFilenameToList(filename);
+			return true;
+		}
+		/*try {
 			int filePort = 20;
 			System.out.println(CMD_FILE_STATUS_OKAY);
 			Socket connection = new Socket("localhost", filePort);
@@ -255,6 +260,7 @@ public class TextServer {
 				System.out.println(CMD_SUCCESS);
 				return false;
 			}
+			
 			System.out.println(CMD_FILE_STATUS_OKAY);
 			addFilenameToList(fileData.getName());
 			
@@ -277,18 +283,18 @@ public class TextServer {
 			// Close the files
 			originalBuffer.close();
 			copyBuffer.close();
-
+			
 			connection.close();
 			System.out.println(CMD_SUCCESS);
+			
 			return true;
 		} catch (Exception e) {
 			//System.out.println("Error receiving file :" + e);
 			System.out.println(CMD_CANT_OPEN_CONNECTION);
 		}
+		*/
 		return false;
 	}
-
-
 
 	public static boolean sendFile(String filename) {
 		File fileData = new File(filename);
@@ -297,6 +303,10 @@ public class TextServer {
 			System.out.println(CMD_FILE_ACTION_UNAVAILABLE);
 			return false;
 		}
+		if(DataServer.sendFile(filename)) {
+			return true;
+		}
+		/*
 		try {
 			int filePort = 20;
 			//String result;
@@ -337,6 +347,7 @@ public class TextServer {
 			//System.out.println("Error writing byte to text :" + e);
 			System.out.println(CMD_CANT_OPEN_CONNECTION);
 		}
+		*/
 		return false;
 	}
 }

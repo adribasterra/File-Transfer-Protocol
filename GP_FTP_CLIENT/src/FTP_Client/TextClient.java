@@ -6,27 +6,29 @@ import java.net.*;
 import java.io.*;
 
 public class TextClient {
+	
+	private static int commandPort = 21;
 
 	public static void testClient() {
 
 		try {
 
-			int port = 21;
+			//int port = 21;
 
-			// Datos que mandaremos y recuperaremos
+			// Send & recover data
 			String data = "";
 			//String result = "";
 
-			// Conectar con el servidor
-			Socket connection = new Socket("localhost", port);
+			// Connect with the server
+			Socket connection = new Socket("localhost", commandPort);
 
-			// Recuperar input / output de la conexi�n
+			// Recover input & output from connection
 			BufferedReader input = new BufferedReader(new InputStreamReader(connection.getInputStream()));
 			PrintWriter output = new PrintWriter(connection.getOutputStream(), true);
 
 			while(data.compareTo("END") != 0) {
 
-				// Input para leer desde teclado
+				// Input for reading from keyboard
 				BufferedReader inputKeyboard = new BufferedReader(new InputStreamReader(System.in));
 				System.out.print("Write text (END to close the server): ");
 				data = inputKeyboard.readLine();
@@ -36,13 +38,15 @@ public class TextClient {
 					String filename = data.substring(5).trim();
 					output.println(data);
 					System.out.println("Attempting to send file: " + filename);
-					sendFile(filename);
+					//sendFile(filename);
+					DataClient.sendFile(filename);
 				}
 				else if (data.startsWith("get")) {
 					String filename = data.substring(4).trim();
 					output.println(data);
 					System.out.println("Attempting to get file: " + filename);
-					receiveFile(filename);
+					//receiveFile(filename);
+					DataClient.receiveFile(filename);
 				}
 				else if (data.startsWith("list")) {
 					output.println(data);
@@ -60,9 +64,9 @@ public class TextClient {
 					System.out.println("Error: Command unrecognised");
 				}
 				//result = input.readLine();
-				// Mandar datos al servidor
+				// Send data to server
 				//output.println(data);
-				// Leer datos del servidor
+				// Read data from server
 				//result = input.readLine();
 				/* if (result.compareTo("ok") !=0) {
 				
@@ -91,16 +95,17 @@ public class TextClient {
 			System.out.println("ERROR: File "+filename+" does not exist here!");
 			return false;
 		}
+		
 		try {
 			int filePort = 20;
-			//String result;
+			String result;
 	
 			ServerSocket sServ = new ServerSocket(filePort);
 			System.out.println("Client waiting for response before sending");
 			
 			Socket sCon = sServ.accept();
 			System.out.println("File transfer Connection accepted");
-/*
+
 			BufferedReader resInput = new BufferedReader(new InputStreamReader(sCon.getInputStream()));
 			ObjectOutputStream fileOutput = new ObjectOutputStream(sCon.getOutputStream());
 			
@@ -111,7 +116,7 @@ public class TextClient {
 			System.out.println(result);
 
 			System.out.println("Finished transferring file info");
-*/
+
 			FileInputStream original = new FileInputStream(filename);
 			BufferedInputStream originalBuffer = new BufferedInputStream(original);
 			
@@ -141,7 +146,7 @@ public class TextClient {
 		return false;
 	}
 
-	public static Boolean receiveListFiles(BufferedReader input) {
+	public static boolean receiveListFiles(BufferedReader input) {
 		try {
 			System.out.println("Here is the list of files on the server:");
 
@@ -159,7 +164,7 @@ public class TextClient {
 
 
 
-	public static Boolean receiveFile(String filename){
+	public static boolean receiveFile(String filename){
 		File fileData = null;
 		try {
 			int filePort = 20;

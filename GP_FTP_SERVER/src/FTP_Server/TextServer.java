@@ -11,7 +11,9 @@ public class TextServer {
 	
 		public static final String CMD_SERVICE_READY = "220. Service ready for new user.";
 		
-		public static final String CMD_OKAY = "200. Okay";
+		public static final String CMD_OKAY = "200. Okay.";
+		
+		public static final String CMD_COMPLETED = "250. Requested file action okay, completed.";
 		
 		public static final String CMD_BAD_SEQUENCE = "503. Bad sequence of commands.";
 		
@@ -33,6 +35,8 @@ public class TextServer {
 		
 		public static final String CMD_FILENAME_NOT_ALLOWED = "553. Requested action not taken. File name not allowed.";
 		
+		public static final String CMD_FURTHER_INFO = "350. Requested file action pending further information.";
+		
 		public static final String CMD_CLOSING = "221. Service closing control connection.";
 		
 		public final static String CMD_USER_OKAY = "331. User name okay, need password.";
@@ -41,7 +45,7 @@ public class TextServer {
 		
 		public final static String CMD_USER_LOGGED = "230. User logged in, proceed";
 
-	private static int commandPort = 21;
+	private static int controlPort = 21;
 	private static String user = "user";
 	private static String password = "password";
 
@@ -55,7 +59,7 @@ public class TextServer {
 			String data = "";
 
 			// Create server socket
-			ServerSocket sServ = new ServerSocket(commandPort);
+			ServerSocket sServ = new ServerSocket(controlPort);
 			System.out.println("Character Server waiting for requests");
 
 			// Accept connection with client
@@ -95,8 +99,13 @@ public class TextServer {
 					String[] command = data.split(" ");
 					String oldFilename = command[1];
 					String newFilename = command[2];
-					//output.println("Attempting to receive file: " + filename);
-					renameFile(oldFilename, newFilename);
+					if(newFilename == null) {
+						System.out.println(CMD_FURTHER_INFO);
+					}
+					else {
+						//output.println("Attempting to receive file: " + filename);
+						renameFile(oldFilename, newFilename);
+					}
 				}
 				else if(data.startsWith("user")) {
 					String userData = data.substring(5).trim();
@@ -225,6 +234,7 @@ public class TextServer {
 			if (success) {
 				removeFilenameFromList(oldFilename);
 				addFilenameToList(newFilename);
+				System.out.println(CMD_COMPLETED);
 			}
 			return success;
 

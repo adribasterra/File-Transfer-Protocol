@@ -7,7 +7,7 @@ import java.io.*;
 
 public class TextClient {
 	
-	private static int commandPort = 21;
+	private static int controlPort = 21;
 
 	public static void testClient() {
 
@@ -20,7 +20,7 @@ public class TextClient {
 			//String result = "";
 
 			// Connect with the server
-			Socket connection = new Socket("localhost", commandPort);
+			Socket connection = new Socket("localhost", controlPort);
 
 			// Recover input & output from connection
 			BufferedReader input = new BufferedReader(new InputStreamReader(connection.getInputStream()));
@@ -57,6 +57,14 @@ public class TextClient {
 					System.out.println(data);
 				}
 				else if (data.startsWith("rename")) {
+					output.println(data);
+					System.out.println(data);
+				}
+				else if(data.startsWith("user")) {
+					output.println(data);
+					System.out.println(data);
+				}
+				else if(data.startsWith("password")) {
 					output.println(data);
 					System.out.println(data);
 				}

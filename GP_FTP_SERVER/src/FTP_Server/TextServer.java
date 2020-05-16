@@ -11,7 +11,9 @@ public class TextServer {
 	
 		public static final String CMD_SERVICE_READY = "220. Service ready for new user.";
 		
-		public static final String CMD_OKAY = "200. Okay";
+		public static final String CMD_OKAY = "200. Okay.";
+		
+		public static final String CMD_COMPLETED = "250. Requested file action okay, completed.";
 		
 		public static final String CMD_BAD_SEQUENCE = "503. Bad sequence of commands.";
 		
@@ -33,9 +35,19 @@ public class TextServer {
 		
 		public static final String CMD_FILENAME_NOT_ALLOWED = "553. Requested action not taken. File name not allowed.";
 		
+		public static final String CMD_FURTHER_INFO = "350. Requested file action pending further information.";
+		
 		public static final String CMD_CLOSING = "221. Service closing control connection.";
+		
+		public final static String CMD_USER_OKAY = "331. User name okay, need password.";
+		
+		public final static String CMD_USER_ERROR = "530. User not logged, error";
+		
+		public final static String CMD_USER_LOGGED = "230. User logged in, proceed";
 
-	private static int commandPort = 21;
+	private static int controlPort = 21;
+	private static String user = "user";
+	private static String password = "password";
 
 	public static void testServer() {
 
@@ -47,7 +59,7 @@ public class TextServer {
 			String data = "";
 
 			// Create server socket
-			ServerSocket sServ = new ServerSocket(commandPort);
+			ServerSocket sServ = new ServerSocket(controlPort);
 			System.out.println("Character Server waiting for requests");
 
 			// Accept connection with client
@@ -67,12 +79,16 @@ public class TextServer {
 				if (data.startsWith("send")) {
 					String filename = data.substring(5).trim();
 					//output.println("Attempting to receive file: " + filename);
-					receiveFile(filename);
+					if(DataServer.receiveFile(filename)) {
+						addFilenameToList(filename);
+					}
+					//receiveFile(filename);
 				}
 				else if (data.startsWith("get")) {
 					String filename = data.substring(4).trim();
 					//output.println("Attempting to receive file: " + filename);
-					sendFile(filename);
+					DataServer.sendFile(filename);
+					//sendFile(filename);
 				}
 				else if (data.startsWith("list")) {
 					System.out.println("Attempting to list files.");
@@ -87,8 +103,28 @@ public class TextServer {
 					String[] command = data.split(" ");
 					String oldFilename = command[1];
 					String newFilename = command[2];
-					//output.println("Attempting to receive file: " + filename);
-					renameFile(oldFilename, newFilename);
+					if(newFilename == null) {
+						System.out.println(CMD_FURTHER_INFO);
+					}
+					else {
+						//output.println("Attempting to receive file: " + filename);
+						renameFile(oldFilename, newFilename);
+					}
+				}
+				else if(data.startsWith("user")) {
+					String userData = data.substring(5).trim();
+					if(userData == user) {
+						System.out.println(CMD_USER_OKAY);
+					}
+				}
+				else if(data.startsWith("password")) {
+					String passwordData = data.substring(8).trim();
+					if(passwordData == password) {
+						System.out.println(CMD_USER_LOGGED);
+					}
+					else {
+						System.out.println(CMD_USER_ERROR);
+					}
 				}
 				else{
 					//output.println("Error: Command unrecognised");
@@ -203,6 +239,7 @@ public class TextServer {
 			Boolean success = oldFile.renameTo(newFile);
 			if (success) {;
 				addFilenameToList(newFilename);
+				System.out.println(CMD_COMPLETED);
 			}
 			return success;
 
@@ -235,12 +272,8 @@ public class TextServer {
 
 
 	public static boolean receiveFile(String filename){
-		//File fileData = null;
-		if(DataServer.receive(filename)) {
-			addFilenameToList(filename);
-			return true;
-		}
-		/*try {
+		File fileData = null;
+		try {
 			int filePort = 20;
 			System.out.println(CMD_FILE_STATUS_OKAY);
 			Socket connection = new Socket("localhost", filePort);
@@ -293,7 +326,6 @@ public class TextServer {
 			//System.out.println("Error receiving file :" + e);
 			System.out.println(CMD_CANT_OPEN_CONNECTION);
 		}
-		*/
 		return false;
 	}
 
@@ -304,10 +336,6 @@ public class TextServer {
 			System.out.println(CMD_FILE_ACTION_UNAVAILABLE);
 			return false;
 		}
-		if(DataServer.sendFile(filename)) {
-			return true;
-		}
-		/*
 		try {
 			int filePort = 20;
 			//String result;
@@ -348,7 +376,6 @@ public class TextServer {
 			//System.out.println("Error writing byte to text :" + e);
 			System.out.println(CMD_CANT_OPEN_CONNECTION);
 		}
-		*/
 		return false;
 	}
 }

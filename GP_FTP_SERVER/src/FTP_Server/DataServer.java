@@ -19,8 +19,70 @@ public class DataServer {
 		
 	private static int dataPort = 20;
 		
-	public static boolean sendFile(String filename) {
+	public static boolean receiveFile(String filename){
+		File fileData = null;
+		try {
+			//int filePort = 20;
+			System.out.println(CMD_FILE_STATUS_OKAY);
+			Socket connection = new Socket("localhost", dataPort);
 
+			// ObjectInputStream fileInput = new ObjectInputStream(connection.getInputStream());
+			// PrintWriter resOutput = new PrintWriter(connection.getOutputStream(), true);
+
+			//fileData = (File) fileInput.readObject();
+			fileData = new File(filename);
+			System.out.println(fileData.toURI());
+			//resOutput.println("ok");
+			if (!fileData.createNewFile()){
+				//String msg = "ERROR: A file named "+fileData.getName()+" already exists on the server.\n";
+				System.out.println(CMD_FILENAME_NOT_ALLOWED);
+				//System.out.println(msg);
+				//resOutput.println(msg);
+				connection.close();
+				System.out.println(CMD_SUCCESS);
+				return false;
+			}
+			
+			System.out.println(CMD_FILE_STATUS_OKAY);
+			
+
+			BufferedInputStream originalBuffer = new BufferedInputStream(connection.getInputStream());
+			
+			FileOutputStream  copy = new FileOutputStream (fileData);
+			BufferedOutputStream copyBuffer = new BufferedOutputStream(copy);
+			
+			// Loop to read a file and write in another
+			byte [] array = new byte[1000];
+			int n_bytes = originalBuffer.read(array);
+
+			while (n_bytes > 0)
+			{
+				copyBuffer.write(array,0,n_bytes);
+				n_bytes=originalBuffer.read(array);
+			}
+
+			// Close the files
+			originalBuffer.close();
+			copyBuffer.close();
+			
+			connection.close();
+			System.out.println(CMD_SUCCESS);
+			
+			return true;
+		} catch (Exception e) {
+			//System.out.println("Error receiving file :" + e);
+			System.out.println(CMD_CANT_OPEN_CONNECTION);
+		}
+		return false;
+	}
+
+	public static boolean sendFile(String filename) {
+		File fileData = new File(filename);
+		if (!fileData.exists()){
+			System.out.println("ERROR: File "+filename+" does not exist here!");
+			System.out.println(CMD_FILE_ACTION_UNAVAILABLE);
+			return false;
+		}
 		try {
 			//int filePort = 20;
 			//String result;
@@ -59,58 +121,6 @@ public class DataServer {
 		}
 		catch (Exception e) {
 			//System.out.println("Error writing byte to text :" + e);
-			System.out.println(CMD_CANT_OPEN_CONNECTION);
-		}
-		return false;
-	}
-	
-	public static boolean receive(String filename) {
-		File fileData = null;
-		try {
-			//int filePort = 20;
-			System.out.println(CMD_FILE_STATUS_OKAY);
-			Socket connection = new Socket("localhost", dataPort);
-
-			// ObjectInputStream fileInput = new ObjectInputStream(connection.getInputStream());
-			// PrintWriter resOutput = new PrintWriter(connection.getOutputStream(), true);
-
-			//fileData = (File) fileInput.readObject();
-			fileData = new File(filename);
-			System.out.println(fileData.toURI());
-			//resOutput.println("ok");
-			if (!fileData.createNewFile()){
-				//String msg = "ERROR: A file named "+fileData.getName()+" already exists on the server.\n";
-				System.out.println(CMD_FILENAME_NOT_ALLOWED);
-				//System.out.println(msg);
-				//resOutput.println(msg);
-				connection.close();
-				System.out.println(CMD_SUCCESS);
-				return false;
-			}
-			
-			BufferedInputStream originalBuffer = new BufferedInputStream(connection.getInputStream());
-			
-			FileOutputStream  copy = new FileOutputStream (fileData);
-			BufferedOutputStream copyBuffer = new BufferedOutputStream(copy);
-			
-			// Loop to read a file and write in another
-			byte [] array = new byte[1000];
-			int n_bytes = originalBuffer.read(array);
-
-			while (n_bytes > 0)
-			{
-				copyBuffer.write(array,0,n_bytes);
-				n_bytes=originalBuffer.read(array);
-			}
-
-			// Close the files
-			originalBuffer.close();
-			copyBuffer.close();
-			connection.close();
-			System.out.println(CMD_SUCCESS);
-			return true;
-		} catch (Exception e) {
-			//System.out.println("Error receiving file :" + e);
 			System.out.println(CMD_CANT_OPEN_CONNECTION);
 		}
 		return false;

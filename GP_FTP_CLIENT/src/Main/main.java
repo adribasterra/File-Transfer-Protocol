@@ -1,6 +1,5 @@
 package Main;
 
-import FTP_Client.DataClient;
 import FTP_Client.TextClient;
 
 public class main

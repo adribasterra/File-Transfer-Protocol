@@ -79,12 +79,16 @@ public class TextServer {
 				if (data.startsWith("send")) {
 					String filename = data.substring(5).trim();
 					//output.println("Attempting to receive file: " + filename);
-					receiveFile(filename);
+					if(DataServer.receiveFile(filename)) {
+						addFilenameToList(filename);
+					}
+					//receiveFile(filename);
 				}
 				else if (data.startsWith("get")) {
 					String filename = data.substring(4).trim();
 					//output.println("Attempting to receive file: " + filename);
-					sendFile(filename);
+					DataServer.sendFile(filename);
+					//sendFile(filename);
 				}
 				else if (data.startsWith("list")) {
 					System.out.println("Attempting to list files.");
@@ -267,12 +271,8 @@ public class TextServer {
 
 
 	public static boolean receiveFile(String filename){
-		//File fileData = null;
-		if(DataServer.receive(filename)) {
-			addFilenameToList(filename);
-			return true;
-		}
-		/*try {
+		File fileData = null;
+		try {
 			int filePort = 20;
 			System.out.println(CMD_FILE_STATUS_OKAY);
 			Socket connection = new Socket("localhost", filePort);
@@ -325,7 +325,6 @@ public class TextServer {
 			//System.out.println("Error receiving file :" + e);
 			System.out.println(CMD_CANT_OPEN_CONNECTION);
 		}
-		*/
 		return false;
 	}
 
@@ -336,10 +335,6 @@ public class TextServer {
 			System.out.println(CMD_FILE_ACTION_UNAVAILABLE);
 			return false;
 		}
-		if(DataServer.sendFile(filename)) {
-			return true;
-		}
-		/*
 		try {
 			int filePort = 20;
 			//String result;
@@ -380,7 +375,6 @@ public class TextServer {
 			//System.out.println("Error writing byte to text :" + e);
 			System.out.println(CMD_CANT_OPEN_CONNECTION);
 		}
-		*/
 		return false;
 	}
 }

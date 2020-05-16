@@ -34,8 +34,16 @@ public class TextServer {
 		public static final String CMD_FILENAME_NOT_ALLOWED = "553. Requested action not taken. File name not allowed.";
 		
 		public static final String CMD_CLOSING = "221. Service closing control connection.";
+		
+		public final static String CMD_USER_OKAY = "331. User name okay, need password.";
+		
+		public final static String CMD_USER_ERROR = "530. User not logged, error";
+		
+		public final static String CMD_USER_LOGGED = "230. User logged in, proceed";
 
 	private static int commandPort = 21;
+	private static String user = "user";
+	private static String password = "password";
 
 	public static void testServer() {
 
@@ -89,6 +97,21 @@ public class TextServer {
 					String newFilename = command[2];
 					//output.println("Attempting to receive file: " + filename);
 					renameFile(oldFilename, newFilename);
+				}
+				else if(data.startsWith("user")) {
+					String userData = data.substring(5).trim();
+					if(userData == user) {
+						System.out.println(CMD_USER_OKAY);
+					}
+				}
+				else if(data.startsWith("password")) {
+					String passwordData = data.substring(8).trim();
+					if(passwordData == password) {
+						System.out.println(CMD_USER_LOGGED);
+					}
+					else {
+						System.out.println(CMD_USER_ERROR);
+					}
 				}
 				else{
 					//output.println("Error: Command unrecognised");

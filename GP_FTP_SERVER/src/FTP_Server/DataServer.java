@@ -46,24 +46,24 @@ public class DataServer {
 			System.out.println(CMD_FILE_STATUS_OKAY);
 			
 
-			BufferedInputStream originalBuffer = new BufferedInputStream(connection.getInputStream());
+			BufferedInputStream receiveBuffer = new BufferedInputStream(connection.getInputStream());
 			
-			FileOutputStream  copy = new FileOutputStream (fileData);
-			BufferedOutputStream copyBuffer = new BufferedOutputStream(copy);
+			FileOutputStream  file = new FileOutputStream (fileData);
+			BufferedOutputStream fileBuffer = new BufferedOutputStream(file);
 			
 			// Loop to read a file and write in another
 			byte [] array = new byte[1000];
-			int n_bytes = originalBuffer.read(array);
+			int n_bytes = receiveBuffer.read(array);
 
 			while (n_bytes > 0)
 			{
-				copyBuffer.write(array,0,n_bytes);
-				n_bytes=originalBuffer.read(array);
+				fileBuffer.write(array,0,n_bytes);
+				n_bytes=receiveBuffer.read(array);
 			}
 
 			// Close the files
-			originalBuffer.close();
-			copyBuffer.close();
+			receiveBuffer.close();
+			fileBuffer.close();
 			
 			connection.close();
 			System.out.println(CMD_SUCCESS);

@@ -22,6 +22,7 @@ public class DataClient {
 			System.out.println("ERROR: File "+filename+" does not exist here!");
 			return false;
 		}
+		System.out.println(fileData.toURI());
 		
 		try {
 			ServerSocket sServ = new ServerSocket(dataPort);
@@ -30,23 +31,23 @@ public class DataClient {
 			Socket sCon = sServ.accept();
 			System.out.println("File transfer Connection accepted");
 
-			FileInputStream original = new FileInputStream(filename);
-			BufferedInputStream originalBuffer = new BufferedInputStream(original);
+			FileInputStream file = new FileInputStream(filename);
+			BufferedInputStream fileBuffer = new BufferedInputStream(file);
 			
-			BufferedOutputStream copyBuffer = new BufferedOutputStream(sCon.getOutputStream());
+			BufferedOutputStream sendBuffer = new BufferedOutputStream(sCon.getOutputStream());
 			
 			// Loop to read a file and write in another
 			byte [] array = new byte[1000];
-			int n_bytes = originalBuffer.read(array);
+			int n_bytes = fileBuffer.read(array);
 			while (n_bytes > 0)
 			{
-				copyBuffer.write(array,0,n_bytes);
-				n_bytes=originalBuffer.read(array);
+				sendBuffer.write(array,0,n_bytes);
+				n_bytes=fileBuffer.read(array);
 			}
 
 			// Close the files
-			originalBuffer.close();
-			copyBuffer.close();
+			fileBuffer.close();
+			sendBuffer.close();
 
 			sCon.close();
 			sServ.close();

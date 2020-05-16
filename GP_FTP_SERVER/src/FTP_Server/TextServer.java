@@ -46,8 +46,8 @@ public class TextServer {
 		public final static String CMD_USER_LOGGED = "230. User logged in, proceed";
 
 	private static int controlPort = 21;
-	private static String user = "user";
-	private static String password = "password";
+	private static final String user = "user";
+	private static final String password = "password";
 
 	public static void testServer() {
 
@@ -67,11 +67,14 @@ public class TextServer {
 			//System.out.println("Connection accepted");
 			System.out.println(CMD_SERVICE_READY);
 
-			while (data.compareTo("END") != 0) {
+			// Take input/output from connection
+			BufferedReader input = new BufferedReader(new InputStreamReader(sCon.getInputStream()));
+			PrintWriter output = new PrintWriter(sCon.getOutputStream(), true);
 
-				// Take input/output from connection
-				BufferedReader input = new BufferedReader(new InputStreamReader(sCon.getInputStream()));
-				PrintWriter output = new PrintWriter(sCon.getOutputStream(), true);
+			Boolean loggegIn = false;
+			while (!loggegIn) loggegIn = logIn(input, output);
+
+			while (data.compareTo("END") != 0) {
 
 				// Read data from client
 				data = input.readLine();
@@ -113,13 +116,13 @@ public class TextServer {
 				}
 				else if(data.startsWith("user")) {
 					String userData = data.substring(5).trim();
-					if(userData == user) {
+					if(userData.compareTo(user)==0) {
 						System.out.println(CMD_USER_OKAY);
 					}
 				}
 				else if(data.startsWith("password")) {
 					String passwordData = data.substring(8).trim();
-					if(passwordData == password) {
+					if(passwordData.compareTo(password)==0) {
 						System.out.println(CMD_USER_LOGGED);
 					}
 					else {
@@ -151,6 +154,38 @@ public class TextServer {
 			System.out.println(CMD_ACTION_ABORTED);
 		}
 	}
+
+	public static boolean logIn(BufferedReader input, PrintWriter output){
+		String data = null;
+		try {
+			String userData = input.readLine();
+			if(userData.compareTo(user)==0) {
+				System.out.println(CMD_USER_OKAY);
+				output.println("User OK");
+			}else{
+				output.println("User WRONG");
+				return false;
+			}
+
+			String passwordData = input.readLine();
+			if(passwordData.compareTo(password)==0) {
+				System.out.println(CMD_USER_LOGGED);
+				output.println("Password OK");
+			}else{
+				System.out.println(CMD_USER_ERROR);
+				output.println("Password WRONG");
+				return false;
+			}
+
+			return true;
+		} catch (Exception e) {
+			e.printStackTrace();
+			System.out.println(CMD_ACTION_ABORTED);
+		}
+		
+		return false;
+	}
+
 
 	public static boolean addFilenameToList(String filename) {
 		try {
@@ -270,7 +305,7 @@ public class TextServer {
 	}
 
 
-
+/*
 	public static boolean receiveFile(String filename){
 		File fileData = null;
 		try {
@@ -378,5 +413,6 @@ public class TextServer {
 		}
 		return false;
 	}
+*/
 }
 

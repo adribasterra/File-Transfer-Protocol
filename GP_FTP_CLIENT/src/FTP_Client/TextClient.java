@@ -89,6 +89,23 @@ public class TextClient {
 		}
 	}
 	
+	public static boolean receiveListFiles(BufferedReader input) {
+		try {
+			System.out.println("Here is the list of files on the server:");
+
+			String s = input.readLine();
+			while (s.compareTo("END")!=0) {
+				System.out.println(" > " + s);
+				s = input.readLine();
+			}
+			return true;
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return false;
+	}
+
+/*	
 	public static boolean sendFile(String filename) {
 		File fileData = new File(filename);
 		if (!fileData.exists()){
@@ -146,22 +163,6 @@ public class TextClient {
 		return false;
 	}
 
-	public static boolean receiveListFiles(BufferedReader input) {
-		try {
-			System.out.println("Here is the list of files on the server:");
-
-			String s = input.readLine();
-			while (s.compareTo("END")!=0) {
-				System.out.println(" > " + s);
-				s = input.readLine();
-			}
-			return true;
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return false;
-	}
-
 
 
 	public static boolean receiveFile(String filename){
@@ -207,5 +208,6 @@ public class TextClient {
 		}
 		return false;
 	}
+*/
 }
 

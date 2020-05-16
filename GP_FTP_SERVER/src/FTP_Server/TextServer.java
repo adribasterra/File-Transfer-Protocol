@@ -143,14 +143,18 @@ public class TextServer {
 			Scanner in = new Scanner(new FileReader("fileList.txt"));
 			StringBuilder sb = new StringBuilder();
 			String s;
+			Boolean isInList = false;
 			while (in.hasNextLine()){
 				s = in.nextLine();
 				if (!s.contains(filename)){
 					sb.append(s);
 					sb.append(System.lineSeparator());
+				}else{
+					isInList = true;
 				}
 			}
 			in.close();
+			if (!isInList) return false;
 
 			PrintWriter listWriter = new PrintWriter(new FileOutputStream("fileList.txt"));
 			listWriter.print(sb.toString());
@@ -168,14 +172,12 @@ public class TextServer {
 	public static Boolean deleteFile(String filename) {
 		try {
 			File fileData = new File(filename);
-			if (!fileData.exists()){
+			if (!fileData.exists() || !removeFilenameFromList(filename)){
 				//System.out.println("ERROR: File "+filename+" does not exist here!");
 				System.out.println(CMD_FILE_ACTION_UNAVAILABLE);
 				return false;
 			}
-			Boolean success = fileData.delete();
-			if (success) removeFilenameFromList(filename);
-			return success;
+			return fileData.delete();
 
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -188,7 +190,7 @@ public class TextServer {
 		try {
 			File oldFile = new File(oldFilename);
 			File newFile = new File(newFilename);
-			if (!oldFile.exists()){
+			if (!oldFile.exists() || !removeFilenameFromList(oldFilename)){
 				//System.out.println("ERROR: File "+oldFilename+" does not exist here!");
 				System.out.println(CMD_FILE_ACTION_UNAVAILABLE);
 				return false;
@@ -199,8 +201,7 @@ public class TextServer {
 				return false;
 			}
 			Boolean success = oldFile.renameTo(newFile);
-			if (success) {
-				removeFilenameFromList(oldFilename);
+			if (success) {;
 				addFilenameToList(newFilename);
 			}
 			return success;

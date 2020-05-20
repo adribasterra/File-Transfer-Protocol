@@ -26,6 +26,9 @@ public class TextClient {
 			BufferedReader input = new BufferedReader(new InputStreamReader(connection.getInputStream()));
 			PrintWriter output = new PrintWriter(connection.getOutputStream(), true);
 
+			Boolean loggegIn = false;
+			while (!loggegIn) loggegIn = logIn(input, output);
+
 			while(data.compareTo("END") != 0) {
 
 				// Input for reading from keyboard
@@ -81,6 +84,9 @@ public class TextClient {
 					output.println(dataTCP);
 						System.out.println(dataTCP);
 				}
+				else if(data.compareTo("END")==0) {
+					output.println(data);
+				}
 				else{
 					System.out.println("Error: Command unrecognised");
 				}
@@ -123,6 +129,36 @@ public class TextClient {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+		return false;
+	}
+
+	public static boolean logIn(BufferedReader input, PrintWriter output){
+		String data = null;
+		try {
+			BufferedReader inputKeyboard = new BufferedReader(new InputStreamReader(System.in));
+			System.out.println("To use this server you must first log in.");
+			System.out.print("Username: ");
+			
+			data = inputKeyboard.readLine();
+			output.println(data);
+			String result = input.readLine();
+			System.out.println(result);
+			if (result.compareTo("User WRONG")==0) return false;
+
+			System.out.print("Password: ");
+			data = inputKeyboard.readLine();
+			output.println(data);
+			result = input.readLine();
+			System.out.println(result);
+			if (result.compareTo("Password WRONG")==0) return false;
+
+			return true;
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			System.out.println("Error : "+e);
+		}
+		
 		return false;
 	}
 

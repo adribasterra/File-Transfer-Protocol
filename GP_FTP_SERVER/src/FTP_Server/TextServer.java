@@ -8,41 +8,41 @@ import java.util.Scanner;
 import java.io.*;
 
 public class TextServer {
-	
+
 		public static final String CMD_SERVICE_READY = "220. Service ready for new user.";
-		
+
 		public static final String CMD_OKAY = "200. Okay.";
-		
+
 		public static final String CMD_COMPLETED = "250. Requested file action okay, completed.";
-		
+
 		public static final String CMD_BAD_SEQUENCE = "503. Bad sequence of commands.";
-		
+
 		public static final String CMD_FILE_STATUS_OKAY = "150. File status okay; about to open data connection.";
 
 		public static final String CMD_SUCCESS = "226. Closing data connection. Requested file action successful.";
-		
+
 		public static final String CMD_CANT_OPEN_CONNECTION = "425. Can't open data connection.";
-		
+
 		public static final String CMD_ACTION_ABORTED = "451. Requested action aborted: local error in processing.";
-		
+
 		public static final String CMD_FILE_ACTION_UNAVAILABLE= "450. Requested file action not taken. File unavailable.";
-		
+
 		public static final String CMD_FILE_UNAVAILABLE = "550. Requested action not taken. File unavailable.";
-		
+
 		public static final String CMD_TRANSFER_ABORTER = "426. Connection closed; transfer aborted.";
-		
+
 		public static final String CMD_INSUFFICIENT_STORAGE = "452. Requested action not taken. Insufficient storage space in system.";
-		
+
 		public static final String CMD_FILENAME_NOT_ALLOWED = "553. Requested action not taken. File name not allowed.";
-		
+
 		public static final String CMD_FURTHER_INFO = "350. Requested file action pending further information.";
-		
+
 		public static final String CMD_CLOSING = "221. Service closing control connection.";
-		
+
 		public final static String CMD_USER_OKAY = "331. User name okay, need password.";
-		
+
 		public final static String CMD_USER_ERROR = "530. User not logged, error";
-		
+
 		public final static String CMD_USER_LOGGED = "230. User logged in, proceed";
 
 	private static int controlPort = 21;
@@ -74,7 +74,7 @@ public class TextServer {
 			Boolean loggedIn = false;
 			while (!loggedIn) loggedIn = logIn(input, output);
 
-			
+
 			// Read data from client
 			//data = input.readLine();
 
@@ -182,7 +182,7 @@ public class TextServer {
 			e.printStackTrace();
 			System.out.println(CMD_ACTION_ABORTED);
 		}
-		
+
 		return false;
 	}
 
@@ -327,15 +327,15 @@ public class TextServer {
 				System.out.println(CMD_SUCCESS);
 				return false;
 			}
-			
+
 			System.out.println(CMD_FILE_STATUS_OKAY);
 			addFilenameToList(fileData.getName());
-			
+
 			BufferedInputStream originalBuffer = new BufferedInputStream(connection.getInputStream());
-			
+
 			FileOutputStream  copy = new FileOutputStream (fileData);
 			BufferedOutputStream copyBuffer = new BufferedOutputStream(copy);
-			
+
 			// Loop to read a file and write in another
 			byte [] array = new byte[1000];
 			int n_bytes = originalBuffer.read(array);
@@ -347,10 +347,10 @@ public class TextServer {
 			// Close the files
 			originalBuffer.close();
 			copyBuffer.close();
-			
+
 			connection.close();
 			System.out.println(CMD_SUCCESS);
-			
+
 			return true;
 		} catch (Exception e) {
 			//System.out.println("Error receiving file :" + e);
@@ -368,18 +368,18 @@ public class TextServer {
 		try {
 			int filePort = 20;
 			//String result;
-	
+
 			ServerSocket sServ = new ServerSocket(filePort);
 			System.out.println("Server waiting for response before sending");
-			
+
 			System.out.println(CMD_FILE_STATUS_OKAY);
 			Socket sCon = sServ.accept();
 			//System.out.println("File transfer Connection accepted");
 			FileInputStream original = new FileInputStream(filename);
 			BufferedInputStream originalBuffer = new BufferedInputStream(original);
-			
+
 			BufferedOutputStream copyBuffer = new BufferedOutputStream(sCon.getOutputStream());
-			
+
 			// Loop to read a file and write in another
 			byte [] array = new byte[1000];
 			int n_bytes = originalBuffer.read(array);

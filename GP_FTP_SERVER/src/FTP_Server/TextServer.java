@@ -74,10 +74,15 @@ public class TextServer {
 			Boolean loggegIn = false;
 			while (!loggegIn) loggegIn = logIn(input, output);
 
+			
+			// Read data from client
+			//data = input.readLine();
+
 			while (data.compareTo("END") != 0) {
 
 				// Read data from client
 				data = input.readLine();
+
 				System.out.println(data);
 				if (data.startsWith("send")) {
 					String filename = data.substring(5).trim();
@@ -134,11 +139,6 @@ public class TextServer {
 					output.println(CMD_BAD_SEQUENCE);
 				}
 
-				// UpperCase
-				// data = data.toUpperCase();
-
-				// Send data with UpperCase
-				// output.println(data);
 			}
 
 			// Close connection

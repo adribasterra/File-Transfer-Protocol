@@ -71,6 +71,9 @@ public class TextClient {
 					output.println(data);
 					System.out.println(data);
 				}
+				else if(data.compareTo("END")==0) {
+					output.println(data);
+				}
 				else{
 					System.out.println("Error: Command unrecognised");
 				}

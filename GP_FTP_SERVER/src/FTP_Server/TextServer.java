@@ -44,6 +44,12 @@ public class TextServer {
 		public final static String CMD_USER_ERROR = "530. User not logged, error";
 
 		public final static String CMD_USER_LOGGED = "230. User logged in, proceed";
+		
+		public final static String CMD_GET_DIRECTORY = "257. "; //+ current path directory
+		
+		public final static String CMD_PASSIVE_MODE = "227. Entering Passive Mode "; //+ (h1,h2,h3,h4,p1,p2)
+		
+		
 
 	private static int controlPort = 21;
 	private static final String user = "user";
@@ -138,7 +144,6 @@ public class TextServer {
 					//output.println("Error: Command unrecognised");
 					output.println(CMD_BAD_SEQUENCE);
 				}
-
 			}
 
 			// Close connection
@@ -182,7 +187,6 @@ public class TextServer {
 			e.printStackTrace();
 			System.out.println(CMD_ACTION_ABORTED);
 		}
-
 		return false;
 	}
 

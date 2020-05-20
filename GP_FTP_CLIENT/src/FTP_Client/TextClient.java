@@ -36,37 +36,50 @@ public class TextClient {
 
 				if (data.startsWith("send")) {
 					String filename = data.substring(5).trim();
-					output.println(data);
+					String dataTCP = "STOR" + " " + filename;						//STOR <SP> <pathname> <CRLF> 
+					output.println(dataTCP);
 					System.out.println("Attempting to send file: " + filename);
 					//sendFile(filename);
 					DataClient.sendFile(filename);
 				}
 				else if (data.startsWith("get")) {
 					String filename = data.substring(4).trim();
-					output.println(data);
+					String dataTCP = "RETR" + " " + filename;						//RETR <SP> <pathname> <CRLF> 
+					output.println(dataTCP);
 					System.out.println("Attempting to get file: " + filename);
 					//receiveFile(filename);
 					DataClient.receiveFile(filename);
 				}
 				else if (data.startsWith("list")) {
-					output.println(data);
+					String pathDirectory = data.substring(5).trim();
+					String dataTCP = "LIST" + " " + pathDirectory;				//LIST [<SP> <pathname>] <CRLF>
+						System.out.println(dataTCP);
+					output.println(dataTCP);
 					receiveListFiles(input);
 				}
 				else if (data.startsWith("delete")) {
-					output.println(data);
-					System.out.println(data);
+					String pathDirectory = data.substring(7).trim();
+					String dataTCP = "DELE" + " " + pathDirectory;				//DELE <SP> <pathname> <CRLF>
+						System.out.println(dataTCP);
+					output.println(dataTCP);
 				}
 				else if (data.startsWith("rename")) {
-					output.println(data);
-					System.out.println(data);
+					String pathDirectory = data.substring(7).trim();
+					String dataTCP = "RNFR" + " " + pathDirectory;				//RNFR <SP> <pathname> <CRLF>
+					output.println(dataTCP);
+						System.out.println(dataTCP);
 				}
 				else if(data.startsWith("user")) {
-					output.println(data);
-					System.out.println(data);
+					String user = data.substring(5).trim();
+					String dataTCP = "USER" + " " + user;						//USER <SP> <username> <CRLF>
+					output.println(dataTCP);
+						System.out.println(dataTCP);
 				}
 				else if(data.startsWith("password")) {
-					output.println(data);
-					System.out.println(data);
+					String password = data.substring(9).trim();
+					String dataTCP = "PASS" + " " + password;					//PASS <SP> <password> <CRLF>
+					output.println(dataTCP);
+						System.out.println(dataTCP);
 				}
 				else{
 					System.out.println("Error: Command unrecognised");

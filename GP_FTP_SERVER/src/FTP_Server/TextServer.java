@@ -46,8 +46,8 @@ public class TextServer {
 		public final static String CMD_USER_LOGGED = "230. User logged in, proceed";
 
 	private static int controlPort = 21;
-	private static String user = "user";
-	private static String password = "password";
+	private static final String user = "user";
+	private static final String password = "password";
 
 	public static void testServer() {
 
@@ -67,16 +67,24 @@ public class TextServer {
 			//System.out.println("Connection accepted");
 			System.out.println(CMD_SERVICE_READY);
 
-			while (data.compareTo("END") != 0) {
+			// Take input/output from connection
+			BufferedReader input = new BufferedReader(new InputStreamReader(sCon.getInputStream()));
+			PrintWriter output = new PrintWriter(sCon.getOutputStream(), true);
 
-				// Take input/output from connection
-				BufferedReader input = new BufferedReader(new InputStreamReader(sCon.getInputStream()));
-				PrintWriter output = new PrintWriter(sCon.getOutputStream(), true);
+			Boolean loggedIn = false;
+			while (!loggedIn) loggedIn = logIn(input, output);
+
+			
+			// Read data from client
+			//data = input.readLine();
+
+			while (data.compareTo("END") != 0) {
 
 				// Read data from client
 				data = input.readLine();
+
 				System.out.println(data);
-				if (data.startsWith("send")) {
+				if (data.startsWith("STOR")) {
 					String filename = data.substring(5).trim();
 					//output.println("Attempting to receive file: " + filename);
 					if(DataServer.receiveFile(filename)) {
@@ -84,22 +92,22 @@ public class TextServer {
 					}
 					//receiveFile(filename);
 				}
-				else if (data.startsWith("get")) {
-					String filename = data.substring(4).trim();
+				else if (data.startsWith("RETR")) {
+					String filename = data.substring(5).trim();
 					//output.println("Attempting to receive file: " + filename);
 					DataServer.sendFile(filename);
 					//sendFile(filename);
 				}
-				else if (data.startsWith("list")) {
+				else if (data.startsWith("LIST")) {
 					System.out.println("Attempting to list files.");
 					listFiles(output);
 				}
-				else if (data.startsWith("delete")) {
-					String filename = data.substring(7).trim();
+				else if (data.startsWith("DELE")) {
+					String filename = data.substring(5).trim();
 					//output.println("Attempting to receive file: " + filename);
 					deleteFile(filename);
 				}
-				else if (data.startsWith("rename")) {
+				else if (data.startsWith("RNFR")) {
 					String[] command = data.split(" ");
 					String oldFilename = command[1];
 					String newFilename = command[2];
@@ -111,15 +119,15 @@ public class TextServer {
 						renameFile(oldFilename, newFilename);
 					}
 				}
-				else if(data.startsWith("user")) {
+				else if(data.startsWith("USER")) {
 					String userData = data.substring(5).trim();
-					if(userData == user) {
+					if(userData.compareTo(user)==0) {
 						System.out.println(CMD_USER_OKAY);
 					}
 				}
-				else if(data.startsWith("password")) {
-					String passwordData = data.substring(8).trim();
-					if(passwordData == password) {
+				else if(data.startsWith("PASS")) {
+					String passwordData = data.substring(5).trim();
+					if(passwordData.compareTo(password)==0) {
 						System.out.println(CMD_USER_LOGGED);
 					}
 					else {
@@ -131,11 +139,6 @@ public class TextServer {
 					output.println(CMD_BAD_SEQUENCE);
 				}
 
-				// UpperCase
-				// data = data.toUpperCase();
-
-				// Send data with UpperCase
-				// output.println(data);
 			}
 
 			// Close connection
@@ -151,6 +154,38 @@ public class TextServer {
 			System.out.println(CMD_ACTION_ABORTED);
 		}
 	}
+
+	public static boolean logIn(BufferedReader input, PrintWriter output){
+		String data = null;
+		try {
+			String userData = input.readLine();
+			if(userData.compareTo(user)==0) {
+				System.out.println(CMD_USER_OKAY);
+				output.println("User OK");
+			}else{
+				output.println("User WRONG");
+				return false;
+			}
+
+			String passwordData = input.readLine();
+			if(passwordData.compareTo(password)==0) {
+				System.out.println(CMD_USER_LOGGED);
+				output.println("Password OK");
+			}else{
+				System.out.println(CMD_USER_ERROR);
+				output.println("Password WRONG");
+				return false;
+			}
+
+			return true;
+		} catch (Exception e) {
+			e.printStackTrace();
+			System.out.println(CMD_ACTION_ABORTED);
+		}
+		
+		return false;
+	}
+
 
 	public static boolean addFilenameToList(String filename) {
 		try {
@@ -270,17 +305,15 @@ public class TextServer {
 	}
 
 
-
+/*
 	public static boolean receiveFile(String filename){
 		File fileData = null;
 		try {
 			int filePort = 20;
 			System.out.println(CMD_FILE_STATUS_OKAY);
 			Socket connection = new Socket("localhost", filePort);
-
 			// ObjectInputStream fileInput = new ObjectInputStream(connection.getInputStream());
 			// PrintWriter resOutput = new PrintWriter(connection.getOutputStream(), true);
-
 			//fileData = (File) fileInput.readObject();
 			fileData = new File(filename);
 			System.out.println(fileData.toURI());
@@ -298,7 +331,6 @@ public class TextServer {
 			System.out.println(CMD_FILE_STATUS_OKAY);
 			addFilenameToList(fileData.getName());
 			
-
 			BufferedInputStream originalBuffer = new BufferedInputStream(connection.getInputStream());
 			
 			FileOutputStream  copy = new FileOutputStream (fileData);
@@ -307,13 +339,11 @@ public class TextServer {
 			// Loop to read a file and write in another
 			byte [] array = new byte[1000];
 			int n_bytes = originalBuffer.read(array);
-
 			while (n_bytes > 0)
 			{
 				copyBuffer.write(array,0,n_bytes);
 				n_bytes=originalBuffer.read(array);
 			}
-
 			// Close the files
 			originalBuffer.close();
 			copyBuffer.close();
@@ -328,7 +358,6 @@ public class TextServer {
 		}
 		return false;
 	}
-
 	public static boolean sendFile(String filename) {
 		File fileData = new File(filename);
 		if (!fileData.exists()){
@@ -346,7 +375,6 @@ public class TextServer {
 			System.out.println(CMD_FILE_STATUS_OKAY);
 			Socket sCon = sServ.accept();
 			//System.out.println("File transfer Connection accepted");
-
 			FileInputStream original = new FileInputStream(filename);
 			BufferedInputStream originalBuffer = new BufferedInputStream(original);
 			
@@ -360,11 +388,9 @@ public class TextServer {
 				copyBuffer.write(array,0,n_bytes);
 				n_bytes=originalBuffer.read(array);
 			}
-
 			// Close the files
 			originalBuffer.close();
 			copyBuffer.close();
-
 			sCon.close();
 			System.out.println(CMD_SUCCESS);
 			sServ.close();
@@ -378,5 +404,5 @@ public class TextServer {
 		}
 		return false;
 	}
+*/
 }
-

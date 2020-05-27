@@ -4,48 +4,52 @@ package FTP_Server;
 // CharacterServer.java
 
 import java.net.*;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Scanner;
 import java.io.*;
 
 public class TextServer {
-	
+
 		public static final String CMD_SERVICE_READY = "220. Service ready for new user.";
-		
+
 		public static final String CMD_OKAY = "200. Okay.";
-		
+
 		public static final String CMD_COMPLETED = "250. Requested file action okay, completed.";
-		
+
 		public static final String CMD_BAD_SEQUENCE = "503. Bad sequence of commands.";
-		
+
 		public static final String CMD_FILE_STATUS_OKAY = "150. File status okay; about to open data connection.";
 
 		public static final String CMD_SUCCESS = "226. Closing data connection. Requested file action successful.";
-		
+
 		public static final String CMD_CANT_OPEN_CONNECTION = "425. Can't open data connection.";
-		
+
 		public static final String CMD_ACTION_ABORTED = "451. Requested action aborted: local error in processing.";
-		
+
 		public static final String CMD_FILE_ACTION_UNAVAILABLE= "450. Requested file action not taken. File unavailable.";
-		
+
 		public static final String CMD_FILE_UNAVAILABLE = "550. Requested action not taken. File unavailable.";
-		
+
 		public static final String CMD_TRANSFER_ABORTER = "426. Connection closed; transfer aborted.";
-		
+
 		public static final String CMD_INSUFFICIENT_STORAGE = "452. Requested action not taken. Insufficient storage space in system.";
-		
+
 		public static final String CMD_FILENAME_NOT_ALLOWED = "553. Requested action not taken. File name not allowed.";
-		
+
 		public static final String CMD_FURTHER_INFO = "350. Requested file action pending further information.";
-		
+
 		public static final String CMD_CLOSING = "221. Service closing control connection.";
-		
+
 		public final static String CMD_USER_OKAY = "331. User name okay, need password.";
-		
+
 		public final static String CMD_USER_ERROR = "530. User not logged, error";
-		
+
 		public final static String CMD_USER_LOGGED = "230. User logged in, proceed";
+		
+		public final static String CMD_GET_DIRECTORY = "257. "; //+ current path directory
+		
+		public final static String CMD_PASSIVE_MODE = "227. Entering Passive Mode "; //+ (h1,h2,h3,h4,p1,p2)
+		
+		
 
 	private static int controlPort = 21;
 	private static final String user = "user";
@@ -73,8 +77,9 @@ public class TextServer {
 			BufferedReader input = new BufferedReader(new InputStreamReader(sCon.getInputStream()));
 			PrintWriter output = new PrintWriter(sCon.getOutputStream(), true);
 
-			Boolean loggegIn = false;
-			while (!loggegIn) loggegIn = logIn(input, output);
+			Boolean loggedIn = false;
+			while (!loggedIn) loggedIn = logIn(input, output);
+
 
 			String curDir = "files\\";
 			// Read data from client
@@ -86,7 +91,8 @@ public class TextServer {
 				data = input.readLine();
 
 				System.out.println(data);
-				if (data.startsWith("send")) {
+
+				if (data.startsWith("STOR")) {
 					String[] command = data.split(" ");
 					String filename = curDir + command[1];
 					//output.println("Attempting to receive file: " + filename);
@@ -95,7 +101,7 @@ public class TextServer {
 					}
 					//receiveFile(filename);
 				}
-				else if (data.startsWith("get")) {
+				else if (data.startsWith("RETR")) {
 					String[] command = data.split(" ");
 					String filename = curDir + command[1];
 					//output.println("Attempting to receive file: " + filename);
@@ -120,21 +126,21 @@ public class TextServer {
 						System.out.println("ERROR: Directory : "+directory+" does not exist!");
 					};
 				}
-				else if (data.startsWith("list")) {
+				else if (data.startsWith("LIST")) {
 					System.out.println("Attempting to list files.");
 					listFiles(output);
 				}
-				else if (data.startsWith("delete")) {
+				else if (data.startsWith("DELE")) {
 					String[] command = data.split(" ");
 					String filename = curDir + command[1];
 					//output.println("Attempting to receive file: " + filename);
 					deleteFile(filename);
 				}
-				else if (data.startsWith("rename")) {
+				else if (data.startsWith("RNFR")) {
 					String[] command = data.split(" ");
-					String oldFilename = curDir+command[1];
-					String newFilename = curDir+command[2];
-					if(newFilename == null) {
+					String oldFilename = curDir + command[1];
+					String newFilename = curDir + command[2];
+					if(newFilename == curDir) {
 						System.out.println(CMD_FURTHER_INFO);
 					}
 					else {
@@ -142,14 +148,14 @@ public class TextServer {
 						renameFile(oldFilename, newFilename);
 					}
 				}
-				else if(data.startsWith("user")) {
+				else if(data.startsWith("USER")) {
 					String userData = data.substring(5).trim();
 					if(userData.compareTo(user)==0) {
 						System.out.println(CMD_USER_OKAY);
 					}
 				}
-				else if(data.startsWith("password")) {
-					String passwordData = data.substring(8).trim();
+				else if(data.startsWith("PASS")) {
+					String passwordData = data.substring(5).trim();
 					if(passwordData.compareTo(password)==0) {
 						System.out.println(CMD_USER_LOGGED);
 					}
@@ -161,7 +167,6 @@ public class TextServer {
 					//output.println("Error: Command unrecognised");
 					output.println(CMD_BAD_SEQUENCE);
 				}
-
 			}
 
 			// Close connection
@@ -179,7 +184,6 @@ public class TextServer {
 	}
 
 	public static boolean logIn(BufferedReader input, PrintWriter output){
-		String data = null;
 		try {
 			String userData = input.readLine();
 			if(userData.compareTo(user)==0) {
@@ -205,7 +209,6 @@ public class TextServer {
 			e.printStackTrace();
 			System.out.println(CMD_ACTION_ABORTED);
 		}
-		
 		return false;
 	}
 
@@ -359,10 +362,8 @@ public class TextServer {
 			int filePort = 20;
 			System.out.println(CMD_FILE_STATUS_OKAY);
 			Socket connection = new Socket("localhost", filePort);
-
 			// ObjectInputStream fileInput = new ObjectInputStream(connection.getInputStream());
 			// PrintWriter resOutput = new PrintWriter(connection.getOutputStream(), true);
-
 			//fileData = (File) fileInput.readObject();
 			fileData = new File(filename);
 			System.out.println(fileData.toURI());
@@ -376,33 +377,30 @@ public class TextServer {
 				System.out.println(CMD_SUCCESS);
 				return false;
 			}
-			
+
 			System.out.println(CMD_FILE_STATUS_OKAY);
 			addFilenameToList(fileData.getName());
-			
 
 			BufferedInputStream originalBuffer = new BufferedInputStream(connection.getInputStream());
-			
+
 			FileOutputStream  copy = new FileOutputStream (fileData);
 			BufferedOutputStream copyBuffer = new BufferedOutputStream(copy);
-			
+
 			// Loop to read a file and write in another
 			byte [] array = new byte[1000];
 			int n_bytes = originalBuffer.read(array);
-
 			while (n_bytes > 0)
 			{
 				copyBuffer.write(array,0,n_bytes);
 				n_bytes=originalBuffer.read(array);
 			}
-
 			// Close the files
 			originalBuffer.close();
 			copyBuffer.close();
-			
+
 			connection.close();
 			System.out.println(CMD_SUCCESS);
-			
+
 			return true;
 		} catch (Exception e) {
 			//System.out.println("Error receiving file :" + e);
@@ -410,7 +408,6 @@ public class TextServer {
 		}
 		return false;
 	}
-
 	public static boolean sendFile(String filename) {
 		File fileData = new File(filename);
 		if (!fileData.exists()){
@@ -421,19 +418,18 @@ public class TextServer {
 		try {
 			int filePort = 20;
 			//String result;
-	
+
 			ServerSocket sServ = new ServerSocket(filePort);
 			System.out.println("Server waiting for response before sending");
-			
+
 			System.out.println(CMD_FILE_STATUS_OKAY);
 			Socket sCon = sServ.accept();
 			//System.out.println("File transfer Connection accepted");
-
 			FileInputStream original = new FileInputStream(filename);
 			BufferedInputStream originalBuffer = new BufferedInputStream(original);
-			
+
 			BufferedOutputStream copyBuffer = new BufferedOutputStream(sCon.getOutputStream());
-			
+
 			// Loop to read a file and write in another
 			byte [] array = new byte[1000];
 			int n_bytes = originalBuffer.read(array);
@@ -442,11 +438,9 @@ public class TextServer {
 				copyBuffer.write(array,0,n_bytes);
 				n_bytes=originalBuffer.read(array);
 			}
-
 			// Close the files
 			originalBuffer.close();
 			copyBuffer.close();
-
 			sCon.close();
 			System.out.println(CMD_SUCCESS);
 			sServ.close();
@@ -462,4 +456,3 @@ public class TextServer {
 	}
 */
 }
-

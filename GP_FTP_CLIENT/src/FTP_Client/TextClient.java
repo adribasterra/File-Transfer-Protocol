@@ -43,7 +43,8 @@ public class TextClient {
 				if (data.startsWith("send")) {
 					String[] command = data.split(" ");
 					String filename = baseDir + command[1];
-					output.println(data);
+					String dataTCP = "STOR" + " " + filename;						//STOR <SP> <pathname> <CRLF> 
+					output.println(dataTCP);
 					System.out.println("Attempting to send file: " + filename);
 					//sendFile(filename);
 					DataClient.sendFile(filename);
@@ -51,7 +52,8 @@ public class TextClient {
 				else if (data.startsWith("get")) {
 					String[] command = data.split(" ");
 					String filename = curDir + command[1];
-					output.println(data);
+					String dataTCP = "RETR" + " " + filename;						//RETR <SP> <pathname> <CRLF> 
+					output.println(dataTCP);
 					System.out.println("Attempting to get file: " + filename);
 					//receiveFile(filename);
 					DataClient.receiveFile(filename);
@@ -75,24 +77,40 @@ public class TextClient {
 					}
 				}
 				else if (data.startsWith("list")) {
-					output.println(data);
+					String[] command = data.split(" ");
+					String pathDirectory = curDir + command[1];
+					String dataTCP = "LIST" + " " + pathDirectory;				//LIST [<SP> <pathname>] <CRLF>
+						System.out.println(dataTCP);
+					output.println(dataTCP);
 					receiveListFiles(input);
 				}
 				else if (data.startsWith("delete")) {
-					output.println(data);
-					System.out.println(data);
+					String[] command = data.split(" ");
+					String pathDirectory = curDir + command[1];
+					String dataTCP = "DELE" + " " + pathDirectory;				//DELE <SP> <pathname> <CRLF>
+						System.out.println(dataTCP);
+					output.println(dataTCP);
 				}
 				else if (data.startsWith("rename")) {
-					output.println(data);
-					System.out.println(data);
+					String[] command = data.split(" ");
+					String pathDirectory = curDir + command[1];
+					String dataTCP = "RNFR" + " " + pathDirectory;				//RNFR <SP> <pathname> <CRLF>
+					output.println(dataTCP);
+						System.out.println(dataTCP);
 				}
 				else if(data.startsWith("user")) {
-					output.println(data);
-					System.out.println(data);
+					String[] command = data.split(" ");
+					String user = curDir + command[1];
+					String dataTCP = "USER" + " " + user;						//USER <SP> <username> <CRLF>
+					output.println(dataTCP);
+						System.out.println(dataTCP);
 				}
 				else if(data.startsWith("password")) {
-					output.println(data);
-					System.out.println(data);
+					String[] command = data.split(" ");
+					String password = curDir + command[1];
+					String dataTCP = "PASS" + " " + password;					//PASS <SP> <password> <CRLF>
+					output.println(dataTCP);
+						System.out.println(dataTCP);
 				}
 				else if(data.compareTo("END")==0) {
 					output.println(data);

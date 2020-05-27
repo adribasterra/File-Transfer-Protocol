@@ -108,24 +108,44 @@ public class TextServer {
 					DataServer.sendFile(filename);
 					//sendFile(filename);
 				}
-				else if (data.startsWith("mkdir")) {
+				else if (data.startsWith("MKD")) { 
 					String[] command = data.split(" ");
 					String fileDir = canonicalDir(curDir, command[1]);
-					new File(fileDir).mkdir();
+					if(new File(fileDir).mkdir()) {
+						System.out.println(CMD_GET_DIRECTORY + fileDir + " directory created.");
+					}
+					else { System.out.println(CMD_FILE_UNAVAILABLE); }
 				}
-				else if (data.startsWith("cd")) {
+				else if (data.startsWith("CWD")) {
 					String[] command = data.split(" ");
 					String directory = canonicalDir(curDir, command[1]);
 					output.println(directory);
 					
 					if ( !directory.isEmpty() && new File(directory).isDirectory() ) {
 						curDir = directory;
+						System.out.println(CMD_COMPLETED);
 					}else if ( directory.isEmpty() ) {
 						System.out.println("ERROR: Access forbidden outside the \"files\\\" folder!");
 					}else{
+						System.out.println(CMD_FILE_UNAVAILABLE);
 						System.out.println("ERROR: Directory : "+directory+" does not exist!");
 					};
 				}
+				else if(data.startsWith("PWD")) {
+					output.println(curDir);
+					System.out.println(CMD_GET_DIRECTORY + curDir);
+				}
+				
+				else if(data.startsWith("RMD")) {
+					//Remove directory
+					String[] command = data.split(" ");
+					String directory = canonicalDir(curDir, command[1]);
+					
+					/* if(madeIt) { System.out.println(CMD_COMPLETED); }
+					 * else { System.out.println(CMD_FILE_UNAVAILABLE); }
+					 */
+				}
+				
 				else if (data.startsWith("LIST")) {
 					System.out.println("Attempting to list files.");
 					listFiles(output);
@@ -211,8 +231,6 @@ public class TextServer {
 		}
 		return false;
 	}
-
-
 	
 	public static String canonicalDir(String curDir, String directory) {
 		String[] paths;
@@ -235,8 +253,6 @@ public class TextServer {
 		return directory;
 	}
 	
-
-
 	public static boolean addFilenameToList(String filename) {
 		try {
 			Scanner in = new Scanner(new FileReader("fileList.txt"));
@@ -288,7 +304,6 @@ public class TextServer {
 		}
 		return false;
 	}
-
 
 	public static Boolean deleteFile(String filename) {
 		try {

@@ -43,7 +43,7 @@ public class TextClient {
 				if (data.startsWith("send")) {
 					String[] command = data.split(" ");
 					String filename = baseDir + command[1];
-					String dataTCP = "STOR" + " " + filename;						//STOR <SP> <pathname> <CRLF> 
+					String dataTCP = "STOR" + " " + filename;					//STOR <SP> <pathname> <CRLF> 
 					output.println(dataTCP);
 					System.out.println("Attempting to send file: " + filename);
 					//sendFile(filename);
@@ -52,7 +52,7 @@ public class TextClient {
 				else if (data.startsWith("get")) {
 					String[] command = data.split(" ");
 					String filename = curDir + command[1];
-					String dataTCP = "RETR" + " " + filename;						//RETR <SP> <pathname> <CRLF> 
+					String dataTCP = "RETR" + " " + filename;					//RETR <SP> <pathname> <CRLF> 
 					output.println(dataTCP);
 					System.out.println("Attempting to get file: " + filename);
 					//receiveFile(filename);
@@ -61,13 +61,16 @@ public class TextClient {
 				else if (data.startsWith("mkdir")) {
 					String[] command = data.split(" ");
 					String directory = curDir + command[1];
-					output.println(data);
+					String dataTCP = "MKD" + " " + directory;					//MKD <SP> <pathname> <CRLF> 
+					output.println(dataTCP);
 					System.out.println("Attempting to create directory: " + directory);
 					//receiveFile(filename);
 					//new File(directory).mkdir();
 				}
 				else if (data.startsWith("cd")) {
-					output.println(data);
+					String[] command = data.split(" ");
+					String dataTCP = "CWD" + " " + command[1]; 					//CWD <SP> <pathname> <CRLF>
+					output.println(dataTCP);
 					String directory = input.readLine();
 					
 					if ( !directory.isEmpty() ) {
@@ -75,6 +78,17 @@ public class TextClient {
 					}else{
 						System.out.println("ERROR: Access forbidden outside the \"files\\\" folder!");
 					}
+				}
+				
+				else if(data.startsWith("get path")) {
+					String[] command = data.split(" ");
+					String dataTCP = "PWD"; 									//PWD <CRLF>
+					output.println(dataTCP);
+				}
+				else if(data.startsWith("remove")) {
+					String[] command = data.split(" ");
+					String dataTCP = "RMD" + command[1]; 						//RMD <SP> <pathname> <CRLF>
+					output.println(dataTCP);
 				}
 				else if (data.startsWith("list")) {
 					String[] command = data.split(" ");

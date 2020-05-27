@@ -29,27 +29,50 @@ public class TextClient {
 			Boolean loggegIn = false;
 			while (!loggegIn) loggegIn = logIn(input, output);
 
+			String curDir = "files\\";
+			String baseDir = "files\\";
+
 			while(data.compareTo("END") != 0) {
 
 				// Input for reading from keyboard
 				BufferedReader inputKeyboard = new BufferedReader(new InputStreamReader(System.in));
-				System.out.print("Write text (END to close the server): ");
+				System.out.print("FTP (END to close the server): "+curDir+"> ");
 				data = inputKeyboard.readLine();
 
 
 				if (data.startsWith("send")) {
-					String filename = data.substring(5).trim();
+					String[] command = data.split(" ");
+					String filename = baseDir + command[1];
 					output.println(data);
 					System.out.println("Attempting to send file: " + filename);
 					//sendFile(filename);
 					DataClient.sendFile(filename);
 				}
 				else if (data.startsWith("get")) {
-					String filename = data.substring(4).trim();
+					String[] command = data.split(" ");
+					String filename = curDir + command[1];
 					output.println(data);
 					System.out.println("Attempting to get file: " + filename);
 					//receiveFile(filename);
 					DataClient.receiveFile(filename);
+				}
+				else if (data.startsWith("mkdir")) {
+					String[] command = data.split(" ");
+					String directory = curDir + command[1];
+					output.println(data);
+					System.out.println("Attempting to create directory: " + directory);
+					//receiveFile(filename);
+					//new File(directory).mkdir();
+				}
+				else if (data.startsWith("cd")) {
+					output.println(data);
+					String directory = input.readLine();
+					
+					if ( !directory.isEmpty() ) {
+						curDir = directory;
+					}else{
+						System.out.println("ERROR: Access forbidden outside the \"files\\\" folder!");
+					}
 				}
 				else if (data.startsWith("list")) {
 					output.println(data);
@@ -102,7 +125,7 @@ public class TextClient {
 			System.out.println("Error: " + e);		
 		}
 	}
-	
+
 	public static boolean receiveListFiles(BufferedReader input) {
 		try {
 			System.out.println("Here is the list of files on the server:");

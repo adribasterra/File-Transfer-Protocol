@@ -4,6 +4,8 @@ package FTP_Server;
 // CharacterServer.java
 
 import java.net.*;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 import java.io.*;
 
@@ -74,7 +76,7 @@ public class TextServer {
 			Boolean loggegIn = false;
 			while (!loggegIn) loggegIn = logIn(input, output);
 
-			
+			String curDir = "files\\";
 			// Read data from client
 			//data = input.readLine();
 
@@ -85,7 +87,8 @@ public class TextServer {
 
 				System.out.println(data);
 				if (data.startsWith("send")) {
-					String filename = data.substring(5).trim();
+					String[] command = data.split(" ");
+					String filename = curDir + command[1];
 					//output.println("Attempting to receive file: " + filename);
 					if(DataServer.receiveFile(filename)) {
 						addFilenameToList(filename);
@@ -93,24 +96,44 @@ public class TextServer {
 					//receiveFile(filename);
 				}
 				else if (data.startsWith("get")) {
-					String filename = data.substring(4).trim();
+					String[] command = data.split(" ");
+					String filename = curDir + command[1];
 					//output.println("Attempting to receive file: " + filename);
 					DataServer.sendFile(filename);
 					//sendFile(filename);
+				}
+				else if (data.startsWith("mkdir")) {
+					String[] command = data.split(" ");
+					String fileDir = canonicalDir(curDir, command[1]);
+					new File(fileDir).mkdir();
+				}
+				else if (data.startsWith("cd")) {
+					String[] command = data.split(" ");
+					String directory = canonicalDir(curDir, command[1]);
+					output.println(directory);
+					
+					if ( !directory.isEmpty() && new File(directory).isDirectory() ) {
+						curDir = directory;
+					}else if ( directory.isEmpty() ) {
+						System.out.println("ERROR: Access forbidden outside the \"files\\\" folder!");
+					}else{
+						System.out.println("ERROR: Directory : "+directory+" does not exist!");
+					};
 				}
 				else if (data.startsWith("list")) {
 					System.out.println("Attempting to list files.");
 					listFiles(output);
 				}
 				else if (data.startsWith("delete")) {
-					String filename = data.substring(7).trim();
+					String[] command = data.split(" ");
+					String filename = curDir + command[1];
 					//output.println("Attempting to receive file: " + filename);
 					deleteFile(filename);
 				}
 				else if (data.startsWith("rename")) {
 					String[] command = data.split(" ");
-					String oldFilename = command[1];
-					String newFilename = command[2];
+					String oldFilename = curDir+command[1];
+					String newFilename = curDir+command[2];
 					if(newFilename == null) {
 						System.out.println(CMD_FURTHER_INFO);
 					}
@@ -187,6 +210,30 @@ public class TextServer {
 	}
 
 
+	
+	public static String canonicalDir(String curDir, String directory) {
+		String[] paths;
+		if (directory.contains("/")) {
+			paths = directory.split("/");
+		} else {
+			paths = new String[]{directory};
+		}
+		directory = curDir;
+		for (String path : paths){
+			if (path.compareTo("..")==0){
+				int i = directory.lastIndexOf("\\", directory.length()-2);
+				if (i==-1) return "";
+				directory = directory.substring(0, i+1);
+			}
+			else if (path.compareTo(".")!=0){
+				directory = directory + path + "\\";
+			}
+		}
+		return directory;
+	}
+	
+
+
 	public static boolean addFilenameToList(String filename) {
 		try {
 			Scanner in = new Scanner(new FileReader("fileList.txt"));
@@ -198,7 +245,7 @@ public class TextServer {
 			in.close();
 
 			PrintWriter listWriter = new PrintWriter(new FileOutputStream("fileList.txt"));
-			listWriter.println(sb.toString()+filename);
+			listWriter.println(sb.toString()+filename.substring(6));
 			listWriter.close();
 
 			return true;
@@ -217,7 +264,7 @@ public class TextServer {
 			Boolean isInList = false;
 			while (in.hasNextLine()){
 				s = in.nextLine();
-				if (!s.contains(filename)){
+				if (!s.contains(filename.substring(6))){
 					sb.append(s);
 					sb.append(System.lineSeparator());
 				}else{

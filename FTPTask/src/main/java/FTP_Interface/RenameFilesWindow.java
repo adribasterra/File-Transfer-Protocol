@@ -75,6 +75,10 @@ public class RenameFilesWindow extends javax.swing.JFrame {
 
     private void formWindowOpened(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowOpened
         // TODO add your handling code here:
+        
+        //ClientPanel.setVisible(false);
+        //ServerPanel.dispose();
+        
         for (double i=0.0;i<=1.0;i = i+ 0.1){
         
            String val = i+ "";

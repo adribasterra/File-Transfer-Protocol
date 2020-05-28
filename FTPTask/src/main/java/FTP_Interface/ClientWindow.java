@@ -14,13 +14,19 @@ import java.awt.Color;
 public class ClientWindow extends javax.swing.JFrame {
 
     /**
-     * Creates new form ClientWindow
+     * Creates new form NewJFrame
      */
     public ClientWindow() {
         initComponents();
         this.setLocationRelativeTo(null);
         setBackground(new Color(0.0f,0.0f,0.0f,0.0f));
     }
+    
+    
+    ServerWindow ServerPanel = new ServerWindow();
+    //RenameFilesWindow RenamePanel = new RenameFilesWindow();
+    DirectorySWindow DirectPanel = new DirectorySWindow();
+    
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -31,13 +37,9 @@ public class ClientWindow extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jTextField1 = new javax.swing.JTextField();
-        AddButton = new javax.swing.JButton();
-        DeleteButon = new javax.swing.JButton();
         UploadBuuton = new javax.swing.JButton();
-        renameButton = new javax.swing.JButton();
-        DownloadButton = new javax.swing.JButton();
-        main = new javax.swing.JLabel();
+        addButton = new javax.swing.JButton();
+        ClientLabel = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setAlwaysOnTop(true);
@@ -45,31 +47,14 @@ public class ClientWindow extends javax.swing.JFrame {
         setOpacity(0.0F);
         setResizable(false);
         addWindowListener(new java.awt.event.WindowAdapter() {
-            public void windowClosed(java.awt.event.WindowEvent evt) {
-                formWindowClosed(evt);
-            }
             public void windowOpened(java.awt.event.WindowEvent evt) {
                 formWindowOpened(evt);
             }
         });
         getContentPane().setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
-        jTextField1.setText("jTextField1");
-        getContentPane().add(jTextField1, new org.netbeans.lib.awtextra.AbsoluteConstraints(550, 90, 170, 40));
-
-        AddButton.setContentAreaFilled(false);
-        AddButton.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-        AddButton.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                AddButtonMouseClicked(evt);
-            }
-        });
-        getContentPane().add(AddButton, new org.netbeans.lib.awtextra.AbsoluteConstraints(600, 420, 90, 30));
-
-        DeleteButon.setContentAreaFilled(false);
-        DeleteButon.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-        getContentPane().add(DeleteButon, new org.netbeans.lib.awtextra.AbsoluteConstraints(580, 340, 120, 40));
-
+        UploadBuuton.setBorder(null);
+        UploadBuuton.setBorderPainted(false);
         UploadBuuton.setContentAreaFilled(false);
         UploadBuuton.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         UploadBuuton.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -77,36 +62,37 @@ public class ClientWindow extends javax.swing.JFrame {
                 UploadBuutonMouseClicked(evt);
             }
         });
-        getContentPane().add(UploadBuuton, new org.netbeans.lib.awtextra.AbsoluteConstraints(580, 280, 120, 40));
+        getContentPane().add(UploadBuuton, new org.netbeans.lib.awtextra.AbsoluteConstraints(570, 280, 130, 40));
 
-        renameButton.setContentAreaFilled(false);
-        renameButton.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-        getContentPane().add(renameButton, new org.netbeans.lib.awtextra.AbsoluteConstraints(570, 220, 120, 50));
+        addButton.setBorder(null);
+        addButton.setBorderPainted(false);
+        addButton.setContentAreaFilled(false);
+        addButton.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        addButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                addButtonMouseClicked(evt);
+            }
+        });
+        getContentPane().add(addButton, new org.netbeans.lib.awtextra.AbsoluteConstraints(590, 410, 100, 40));
 
-        DownloadButton.setContentAreaFilled(false);
-        DownloadButton.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-        getContentPane().add(DownloadButton, new org.netbeans.lib.awtextra.AbsoluteConstraints(560, 160, 150, 50));
-
-        main.setIcon(new javax.swing.ImageIcon(getClass().getResource("/FTP_Images/Cliente panel.png"))); // NOI18N
-        getContentPane().add(main, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, -1, 550));
+        ClientLabel.setIcon(new javax.swing.ImageIcon(getClass().getResource("/FTP_Images/Cliente panel.png"))); // NOI18N
+        getContentPane().add(ClientLabel, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 900, 550));
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void AddButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_AddButtonMouseClicked
+    private void addButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_addButtonMouseClicked
         // TODO add your handling code here:
+        //this.dispose();
+        //ServerPanel.dispose();
         RenameFilesWindow RenamePanel = new RenameFilesWindow();
         RenamePanel.setVisible(true);
-        //ServerWindow ServerPanel = new ServerWindow();
-        //this.dispose();
+        
+    }//GEN-LAST:event_addButtonMouseClicked
 
-    }//GEN-LAST:event_AddButtonMouseClicked
-
-    DirectorySWindow DirecSPanel = new DirectorySWindow();
-    
     private void formWindowOpened(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowOpened
         // TODO add your handling code here:
-       for (double i=0.0;i<=1.0;i = i+ 0.1){
+               for (double i=0.0;i<=1.0;i = i+ 0.1){
         
            String val = i+ "";
            float f = Float.valueOf(val);
@@ -118,16 +104,12 @@ public class ClientWindow extends javax.swing.JFrame {
             catch (Exception e){}
             
         }
-
     }//GEN-LAST:event_formWindowOpened
-
-    private void formWindowClosed(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_formWindowClosed
 
     private void UploadBuutonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_UploadBuutonMouseClicked
         // TODO add your handling code here:
-        DirecSPanel.setVisible(true);
+        DirectPanel.setVisible(true);
+        
     }//GEN-LAST:event_UploadBuutonMouseClicked
 
     /**
@@ -141,7 +123,7 @@ public class ClientWindow extends javax.swing.JFrame {
          */
         try {
             for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Windows".equals(info.getName())) {
+                if ("Nimbus".equals(info.getName())) {
                     javax.swing.UIManager.setLookAndFeel(info.getClassName());
                     break;
                 }
@@ -156,6 +138,7 @@ public class ClientWindow extends javax.swing.JFrame {
             java.util.logging.Logger.getLogger(ClientWindow.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
         //</editor-fold>
+        //</editor-fold>
 
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
@@ -166,12 +149,8 @@ public class ClientWindow extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton AddButton;
-    private javax.swing.JButton DeleteButon;
-    private javax.swing.JButton DownloadButton;
+    private javax.swing.JLabel ClientLabel;
     private javax.swing.JButton UploadBuuton;
-    private javax.swing.JTextField jTextField1;
-    private javax.swing.JLabel main;
-    private javax.swing.JButton renameButton;
+    private javax.swing.JButton addButton;
     // End of variables declaration//GEN-END:variables
 }

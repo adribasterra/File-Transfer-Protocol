@@ -6,6 +6,10 @@
 package FTP_Interface;
 
 import static FTP_Server.TextServer.listFiles;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
+import java.net.Socket;
 import javax.swing.JOptionPane;
 
 /**
@@ -26,11 +30,17 @@ public class main extends javax.swing.JFrame {
         main.setVisible(true);
         SerDesButton.setVisible(false);
         ClientDesenfoque.setVisible(false);
+        SettingsPanel.setVisible(false);
+        CSButton.setVisible(false);
+        LogButton.setVisible(false);
+        SeButton.setVisible(false);
     }
     
      ServerWindow ServerPanel = new ServerWindow();
     ClientWindow ClientPanel =  new ClientWindow();
     RenameFilesWindow RenamePanel = new RenameFilesWindow();
+    LoginWindow LoginPanel = new LoginWindow();
+    private static int controlPort = 21;
 
     
     /**
@@ -42,15 +52,21 @@ public class main extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        SButton = new javax.swing.JButton();
         SerDesButton = new javax.swing.JButton();
         ClienteBoton = new javax.swing.JButton();
         CieDesButton = new javax.swing.JButton();
         ServidorBoton = new javax.swing.JButton();
+        SeButton = new javax.swing.JButton();
+        LogButton = new javax.swing.JButton();
+        CSButton = new javax.swing.JButton();
+        SettingsPanel = new javax.swing.JLabel();
         mdesenfoque = new javax.swing.JLabel();
         BothDesenfoque = new javax.swing.JLabel();
         ClientDesenfoque = new javax.swing.JLabel();
         cerrar = new javax.swing.JLabel();
         main = new javax.swing.JLabel();
+        jLabel1 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setUndecorated(true);
@@ -61,6 +77,17 @@ public class main extends javax.swing.JFrame {
             }
         });
         getContentPane().setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+
+        SButton.setBorder(null);
+        SButton.setBorderPainted(false);
+        SButton.setContentAreaFilled(false);
+        SButton.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        SButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                SButtonMouseClicked(evt);
+            }
+        });
+        getContentPane().add(SButton, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 500, 70, 40));
 
         SerDesButton.setBorder(null);
         SerDesButton.setBorderPainted(false);
@@ -114,6 +141,54 @@ public class main extends javax.swing.JFrame {
         });
         getContentPane().add(ServidorBoton, new org.netbeans.lib.awtextra.AbsoluteConstraints(320, 90, 190, 340));
 
+        SeButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/FTP_Images/NSettingButton.png"))); // NOI18N
+        SeButton.setBorder(null);
+        SeButton.setBorderPainted(false);
+        SeButton.setContentAreaFilled(false);
+        SeButton.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        SeButton.setRolloverIcon(new javax.swing.ImageIcon(getClass().getResource("/FTP_Images/SettingsButton.png"))); // NOI18N
+        SeButton.setRolloverSelectedIcon(new javax.swing.ImageIcon(getClass().getResource("/FTP_Images/SettingsButton.png"))); // NOI18N
+        SeButton.setSelectedIcon(new javax.swing.ImageIcon(getClass().getResource("/FTP_Images/SettingsButton.png"))); // NOI18N
+        SeButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                SeButtonMouseClicked(evt);
+            }
+        });
+        getContentPane().add(SeButton, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 410, 224, 54));
+
+        LogButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/FTP_Images/NLoginButton.png"))); // NOI18N
+        LogButton.setBorder(null);
+        LogButton.setBorderPainted(false);
+        LogButton.setContentAreaFilled(false);
+        LogButton.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        LogButton.setRolloverIcon(new javax.swing.ImageIcon(getClass().getResource("/FTP_Images/LoginButton.png"))); // NOI18N
+        LogButton.setRolloverSelectedIcon(new javax.swing.ImageIcon(getClass().getResource("/FTP_Images/LoginButton.png"))); // NOI18N
+        LogButton.setSelectedIcon(new javax.swing.ImageIcon(getClass().getResource("/FTP_Images/LoginButton.png"))); // NOI18N
+        LogButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                LogButtonMouseClicked(evt);
+            }
+        });
+        getContentPane().add(LogButton, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 350, 224, 54));
+
+        CSButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/FTP_Images/NConnectButton.png"))); // NOI18N
+        CSButton.setBorder(null);
+        CSButton.setBorderPainted(false);
+        CSButton.setContentAreaFilled(false);
+        CSButton.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        CSButton.setRolloverIcon(new javax.swing.ImageIcon(getClass().getResource("/FTP_Images/ConnectButton.png"))); // NOI18N
+        CSButton.setRolloverSelectedIcon(new javax.swing.ImageIcon(getClass().getResource("/FTP_Images/ConnectButton.png"))); // NOI18N
+        CSButton.setSelectedIcon(new javax.swing.ImageIcon(getClass().getResource("/FTP_Images/ConnectButton.png"))); // NOI18N
+        CSButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                CSButtonMouseClicked(evt);
+            }
+        });
+        getContentPane().add(CSButton, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 290, 224, 54));
+
+        SettingsPanel.setIcon(new javax.swing.ImageIcon(getClass().getResource("/FTP_Images/SettingPanelF.png"))); // NOI18N
+        getContentPane().add(SettingsPanel, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 290, -1, -1));
+
         mdesenfoque.setIcon(new javax.swing.ImageIcon(getClass().getResource("/FTP_Images/Menu desenfocado.png"))); // NOI18N
         mdesenfoque.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
@@ -155,6 +230,9 @@ public class main extends javax.swing.JFrame {
         });
         getContentPane().add(main, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, -1, -1));
 
+        jLabel1.setText("jLabel1");
+        getContentPane().add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(180, 400, -1, -1));
+
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
@@ -163,6 +241,10 @@ public class main extends javax.swing.JFrame {
         ClientPanel.dispose();
         ServerPanel.dispose();
         RenamePanel.dispose();
+        SettingsPanel.setVisible(false);
+        CSButton.setVisible(false);
+        LogButton.setVisible(false);
+        SeButton.setVisible(false);
 
     }//GEN-LAST:event_mainMouseClicked
 
@@ -180,6 +262,10 @@ public class main extends javax.swing.JFrame {
          ServidorBoton.setVisible(false);
          ClienteBoton.setVisible(false);
          ClientDesenfoque.setVisible(true);
+         SettingsPanel.setVisible(false);
+         CSButton.setVisible(false);
+         LogButton.setVisible(false);
+         SeButton.setVisible(false);
         
     }//GEN-LAST:event_ServidorBotonMouseClicked
 
@@ -191,6 +277,10 @@ public class main extends javax.swing.JFrame {
          ServidorBoton.setVisible(false);
          ClienteBoton.setVisible(false);
          SerDesButton.setVisible(true);
+         SettingsPanel.setVisible(false);
+         CSButton.setVisible(false);
+         LogButton.setVisible(false);
+         SeButton.setVisible(false);
     }//GEN-LAST:event_ClienteBotonMouseClicked
 
     private void cerrarMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_cerrarMouseClicked
@@ -217,6 +307,8 @@ public class main extends javax.swing.JFrame {
         ClientPanel.dispose();
         SerDesButton.setVisible(false);
         ClientDesenfoque.setVisible(false);
+        LoginPanel.setVisible(false);
+        SButton.setVisible(true);
     }//GEN-LAST:event_mdesenfoqueMouseClicked
 
     private void ClientDesenfoqueMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_ClientDesenfoqueMouseClicked
@@ -235,13 +327,48 @@ public class main extends javax.swing.JFrame {
         // TODO add your handling code here:
         ServerPanel.setVisible(true);
         SerDesButton.setVisible(false);
+        LoginPanel.dispose();
     }//GEN-LAST:event_SerDesButtonMouseClicked
 
     private void CieDesButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_CieDesButtonMouseClicked
         // TODO add your handling code here:
         ClientPanel.setVisible(true);
+         LoginPanel.dispose();
        // ClientDesenfoque.setVisible(false);
     }//GEN-LAST:event_CieDesButtonMouseClicked
+
+    private void SButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_SButtonMouseClicked
+        // TODO add your handling code here:
+        SettingsPanel.setVisible(true);
+        LogButton.setVisible(true);
+        CSButton.setVisible(true);
+        SeButton.setVisible(true);
+    }//GEN-LAST:event_SButtonMouseClicked
+
+    private void CSButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_CSButtonMouseClicked
+        // TODO add your handling code here:
+        
+    }//GEN-LAST:event_CSButtonMouseClicked
+
+    private void LogButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_LogButtonMouseClicked
+        // TODO add your handling code here:
+        LoginPanel.setVisible(true);
+        mdesenfoque.setVisible(true);
+        SettingsPanel.setVisible(false);
+        LogButton.setVisible(false);
+        CSButton.setVisible(false);
+        SButton.setVisible(false);
+        ServidorBoton.setVisible(false);
+        ClienteBoton.setVisible(false);
+        SerDesButton.setVisible(false);
+        ClientDesenfoque.setVisible(false);
+        SeButton.setVisible(false);
+        
+    }//GEN-LAST:event_LogButtonMouseClicked
+
+    private void SeButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_SeButtonMouseClicked
+        // TODO add your handling code here:
+    }//GEN-LAST:event_SeButtonMouseClicked
 
     /**
      * @param args the command line arguments
@@ -284,12 +411,18 @@ public class main extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel BothDesenfoque;
+    private javax.swing.JButton CSButton;
     private javax.swing.JButton CieDesButton;
     private javax.swing.JLabel ClientDesenfoque;
     private javax.swing.JButton ClienteBoton;
+    private javax.swing.JButton LogButton;
+    private javax.swing.JButton SButton;
+    private javax.swing.JButton SeButton;
     private javax.swing.JButton SerDesButton;
     private javax.swing.JButton ServidorBoton;
+    private javax.swing.JLabel SettingsPanel;
     private javax.swing.JLabel cerrar;
+    private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel main;
     private javax.swing.JLabel mdesenfoque;
     // End of variables declaration//GEN-END:variables

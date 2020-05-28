@@ -5,7 +5,7 @@
  */
 package FTP_Interface;
 
-import static FTP_Server.TextServer.listFiles;
+//import static FTP_Server.TextServer.listFiles;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;

@@ -5,6 +5,7 @@
  */
 package FTP_Interface;
 
+//import static FTP_Server.TextServer.listFiles;
 import static FTP_Server.TextServer.listFiles;
 import java.awt.Color;
 
@@ -21,9 +22,9 @@ public class ServerWindow extends javax.swing.JFrame {
         initComponents();
         this.setLocationRelativeTo(null);
         setBackground(new Color(0.0f,0.0f,0.0f,0.0f));
-        //ServerInfo.setText(listFiles());
+        ServerInfo.setText(listFiles());
        // condcion = true;
-        //System.out.println(listFiles());
+        System.out.println(listFiles());
     }
     
     public static boolean condcion = true;
@@ -37,8 +38,7 @@ public class ServerWindow extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jScrollPane1 = new javax.swing.JScrollPane();
-        jList1 = new javax.swing.JList<>();
+        ServerInfo = new javax.swing.JLabel();
         jTextField1 = new javax.swing.JTextField();
         backButton = new javax.swing.JButton();
         main = new javax.swing.JLabel();
@@ -54,15 +54,7 @@ public class ServerWindow extends javax.swing.JFrame {
             }
         });
         getContentPane().setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
-
-        jList1.setModel(new javax.swing.AbstractListModel<String>() {
-            String[] strings = { "Item 1", "Item 2", "Item 3", "Item 4", "Item 5" };
-            public int getSize() { return strings.length; }
-            public String getElementAt(int i) { return strings[i]; }
-        });
-        jScrollPane1.setViewportView(jList1);
-
-        getContentPane().add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(170, 150, 220, 240));
+        getContentPane().add(ServerInfo, new org.netbeans.lib.awtextra.AbsoluteConstraints(170, 150, 220, 230));
 
         jTextField1.setText("jTextField1");
         getContentPane().add(jTextField1, new org.netbeans.lib.awtextra.AbsoluteConstraints(200, 80, 170, 40));
@@ -131,9 +123,8 @@ public class ServerWindow extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JLabel ServerInfo;
     private javax.swing.JButton backButton;
-    private javax.swing.JList<String> jList1;
-    private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTextField jTextField1;
     private javax.swing.JLabel main;
     // End of variables declaration//GEN-END:variables

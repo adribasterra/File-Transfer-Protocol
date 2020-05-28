@@ -4,7 +4,6 @@ FTP_Client\DataClient.class
 FTP_Interface\LoginWindow$1.class
 FTP_Interface\main$10.class
 FTP_Interface\main$4.class
-FTP_Interface\ServerWindow$3.class
 FTP_Interface\main$7.class
 FTP_Interface\ClientWindow$3.class
 FTP_Interface\main$13.class
@@ -32,6 +31,7 @@ FTP_Interface\RenameFilesWindow$1.class
 FTP_Interface\DirectorySWindow$1.class
 FTP_Interface\RenameFilesWindow$3.class
 FTP_Interface\main$11.class
+FTP_Interface\LoginWindow$2.class
 FTP_Interface\ServerWindow$2.class
 FTP_Interface\main$14.class
 FTP_Interface\main$6.class

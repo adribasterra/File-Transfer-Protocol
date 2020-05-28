@@ -370,6 +370,36 @@ public class TextServer {
 	}
 
 
+        
+          //INTERFACE
+        
+        public static String listFiles() {
+		try {
+                    
+                     String path = "fileList.txt";
+
+                     System.out.println(new File(path).getAbsolutePath());
+                    
+			Scanner in = new Scanner(new FileReader("fileList.txt"));
+
+                        String s = null;
+                    
+                        StringBuilder sb = new StringBuilder();
+			while (in.hasNextLine()) {
+				s = in.nextLine();
+                                sb.append(s);
+	
+			}
+			in.close();
+                        
+			return sb.toString();
+		} catch (Exception e) {
+			e.printStackTrace();
+			System.out.println(CMD_ACTION_ABORTED);
+		}
+		return null;
+                
+	}
 /*
 	public static boolean receiveFile(String filename){
 		File fileData = null;

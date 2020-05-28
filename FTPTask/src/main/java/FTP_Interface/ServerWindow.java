@@ -46,6 +46,7 @@ public class ServerWindow extends javax.swing.JFrame {
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setAlwaysOnTop(true);
         setUndecorated(true);
+        setOpacity(0.0F);
         setResizable(false);
         addWindowListener(new java.awt.event.WindowAdapter() {
             public void windowOpened(java.awt.event.WindowEvent evt) {
@@ -79,6 +80,18 @@ public class ServerWindow extends javax.swing.JFrame {
 
     private void formWindowOpened(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowOpened
         // TODO add your handling code here:
+        for (double i=0.0;i<=1.0;i = i+ 0.1){
+        
+           String val = i+ "";
+           float f = Float.valueOf(val);
+           this.setOpacity(f);
+            try{
+            
+               Thread.sleep(50);
+            }
+            catch (Exception e){}
+            
+        }
         
     }//GEN-LAST:event_formWindowOpened
 

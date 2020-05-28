@@ -16,6 +16,7 @@ FTP_Interface\ServerWindow$1.class
 FTP_Interface\ClientWindow$4.class
 FTP_Interface\main$8.class
 FTP_Interface\main.class
+FTP_Client\main.class
 FTP_Client\TextClient.class
 FTP_Interface\main$9.class
 FTP_Interface\ClientWindow$2.class

@@ -57,6 +57,7 @@ public class ServerWindow extends javax.swing.JFrame {
         getContentPane().add(ServerInfo, new org.netbeans.lib.awtextra.AbsoluteConstraints(170, 150, 220, 230));
 
         jTextField1.setText("jTextField1");
+        jTextField1.setBorder(null);
         getContentPane().add(jTextField1, new org.netbeans.lib.awtextra.AbsoluteConstraints(200, 80, 170, 40));
 
         backButton.setBorder(null);

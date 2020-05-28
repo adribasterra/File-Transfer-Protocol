@@ -37,6 +37,9 @@ public class ClientWindow extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        jButton1 = new javax.swing.JButton();
+        downloadButton = new javax.swing.JButton();
+        jLabel1 = new javax.swing.JLabel();
         UploadBuuton = new javax.swing.JButton();
         addButton = new javax.swing.JButton();
         ClientLabel = new javax.swing.JLabel();
@@ -52,6 +55,31 @@ public class ClientWindow extends javax.swing.JFrame {
             }
         });
         getContentPane().setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+
+        jButton1.setBorder(null);
+        jButton1.setBorderPainted(false);
+        jButton1.setContentAreaFilled(false);
+        jButton1.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        jButton1.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jButton1MouseClicked(evt);
+            }
+        });
+        getContentPane().add(jButton1, new org.netbeans.lib.awtextra.AbsoluteConstraints(570, 340, 130, 40));
+
+        downloadButton.setBorder(null);
+        downloadButton.setBorderPainted(false);
+        downloadButton.setContentAreaFilled(false);
+        downloadButton.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        downloadButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                downloadButtonMouseClicked(evt);
+            }
+        });
+        getContentPane().add(downloadButton, new org.netbeans.lib.awtextra.AbsoluteConstraints(570, 160, 130, 50));
+
+        jLabel1.setText("jLabel1");
+        getContentPane().add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(550, 90, 180, 40));
 
         UploadBuuton.setBorder(null);
         UploadBuuton.setBorderPainted(false);
@@ -112,6 +140,14 @@ public class ClientWindow extends javax.swing.JFrame {
         
     }//GEN-LAST:event_UploadBuutonMouseClicked
 
+    private void downloadButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_downloadButtonMouseClicked
+        // TODO add your handling code here:
+    }//GEN-LAST:event_downloadButtonMouseClicked
+
+    private void jButton1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton1MouseClicked
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jButton1MouseClicked
+
     /**
      * @param args the command line arguments
      */
@@ -152,5 +188,8 @@ public class ClientWindow extends javax.swing.JFrame {
     private javax.swing.JLabel ClientLabel;
     private javax.swing.JButton UploadBuuton;
     private javax.swing.JButton addButton;
+    private javax.swing.JButton downloadButton;
+    private javax.swing.JButton jButton1;
+    private javax.swing.JLabel jLabel1;
     // End of variables declaration//GEN-END:variables
 }

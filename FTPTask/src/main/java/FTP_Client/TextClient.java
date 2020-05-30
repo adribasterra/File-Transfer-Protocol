@@ -110,21 +110,21 @@ public class TextClient {
 					String pathDirectory = curDir + command[1];
 					String dataTCP = "RNFR" + " " + pathDirectory;				//RNFR <SP> <pathname> <CRLF>
 					output.println(dataTCP);
-						System.out.println(dataTCP);
+					//System.out.println(dataTCP);
 				}
 				else if(data.startsWith("user")) {
 					String[] command = data.split(" ");
 					String user = curDir + command[1];
 					String dataTCP = "USER" + " " + user;						//USER <SP> <username> <CRLF>
 					output.println(dataTCP);
-						System.out.println(dataTCP);
+					//System.out.println(dataTCP);
 				}
 				else if(data.startsWith("password")) {
 					String[] command = data.split(" ");
 					String password = curDir + command[1];
 					String dataTCP = "PASS" + " " + password;					//PASS <SP> <password> <CRLF>
 					output.println(dataTCP);
-						System.out.println(dataTCP);
+					//System.out.println(dataTCP);
 				}
 				else if(data.compareTo("END")==0) {
 					output.println(data);

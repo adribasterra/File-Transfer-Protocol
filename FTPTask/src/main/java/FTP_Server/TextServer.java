@@ -72,6 +72,7 @@ public class TextServer {
 			Socket sCon = sServ.accept();
 			//System.out.println("Connection accepted");
 			System.out.println(CMD_SERVICE_READY);
+			output.println(CMD_SERVICE_READY);
 
 			// Take input/output from connection
 			BufferedReader input = new BufferedReader(new InputStreamReader(sCon.getInputStream()));
@@ -113,8 +114,9 @@ public class TextServer {
 					String fileDir = canonicalDir(curDir, command[1]);
 					if(new File(fileDir).mkdir()) {
 						System.out.println(CMD_GET_DIRECTORY + fileDir + " directory created.");
+						output.println(CMD_GET_DIRECTORY + fileDir + " directory created.");
 					}
-					else { System.out.println(CMD_FILE_UNAVAILABLE); }
+					else { System.out.println(CMD_FILE_UNAVAILABLE); output.println(CMD_FILE_UNAVAILABLE); }
 				}
 				else if (data.startsWith("CWD")) {
 					String[] command = data.split(" ");
@@ -124,16 +126,19 @@ public class TextServer {
 					if ( !directory.isEmpty() && new File(directory).isDirectory() ) {
 						curDir = directory;
 						System.out.println(CMD_COMPLETED);
+						output.println(CMD_COMPLETED);
 					}else if ( directory.isEmpty() ) {
 						System.out.println("ERROR: Access forbidden outside the \"files\\\" folder!");
 					}else{
 						System.out.println(CMD_FILE_UNAVAILABLE);
+						output.println(CMD_FILE_UNAVAILABLE);
 						System.out.println("ERROR: Directory : "+directory+" does not exist!");
 					};
 				}
 				else if(data.startsWith("PWD")) {
 					output.println(curDir);
 					System.out.println(CMD_GET_DIRECTORY + curDir);
+					output.println(CMD_GET_DIRECTORY + curDir);
 				}
 				
 				else if(data.startsWith("RMD")) {
@@ -162,6 +167,7 @@ public class TextServer {
 					String newFilename = curDir + command[2];
 					if(newFilename == curDir) {
 						System.out.println(CMD_FURTHER_INFO);
+						output.println(CMD_FURTHER_INFO);
 					}
 					else {
 						//output.println("Attempting to receive file: " + filename);
@@ -172,19 +178,23 @@ public class TextServer {
 					String userData = data.substring(5).trim();
 					if(userData.compareTo(user)==0) {
 						System.out.println(CMD_USER_OKAY);
+						output.println(CMD_USER_OKAY);
 					}
 				}
 				else if(data.startsWith("PASS")) {
 					String passwordData = data.substring(5).trim();
 					if(passwordData.compareTo(password)==0) {
 						System.out.println(CMD_USER_LOGGED);
+						output.println(CMD_USER_LOGGED);
 					}
 					else {
 						System.out.println(CMD_USER_ERROR);
+						output.println(CMD_USER_ERROR);
 					}
 				}
 				else{
 					//output.println("Error: Command unrecognised");
+					System.out.println(CMD_BAD_SEQUENCE);
 					output.println(CMD_BAD_SEQUENCE);
 				}
 			}
@@ -192,6 +202,7 @@ public class TextServer {
 			// Close connection
 			sCon.close();
 			System.out.println(CMD_CLOSING);
+			output.println(CMD_CLOSING);
 
 			// Close server socket
 			sServ.close();
@@ -200,6 +211,7 @@ public class TextServer {
 		} catch (Exception e) {
 			e.printStackTrace();
 			System.out.println(CMD_ACTION_ABORTED);
+			output.println(CMD_ACTION_ABORTED);
 		}
 	}
 
@@ -208,6 +220,7 @@ public class TextServer {
 			String userData = input.readLine();
 			if(userData.compareTo(user)==0) {
 				System.out.println(CMD_USER_OKAY);
+				output.println(CMD_USER_OKAY);
 				output.println("User OK");
 			}else{
 				output.println("User WRONG");
@@ -217,9 +230,11 @@ public class TextServer {
 			String passwordData = input.readLine();
 			if(passwordData.compareTo(password)==0) {
 				System.out.println(CMD_USER_LOGGED);
+				output.println(CMD_USER_LOGGED);
 				output.println("Password OK");
 			}else{
 				System.out.println(CMD_USER_ERROR);
+				output.println(CMD_USER_ERROR);
 				output.println("Password WRONG");
 				return false;
 			}
@@ -228,6 +243,7 @@ public class TextServer {
 		} catch (Exception e) {
 			e.printStackTrace();
 			System.out.println(CMD_ACTION_ABORTED);
+			output.println(CMD_ACTION_ABORTED);
 		}
 		return false;
 	}
@@ -301,6 +317,7 @@ public class TextServer {
 		} catch (Exception e) {
 			e.printStackTrace();
 			System.out.println(CMD_ACTION_ABORTED);
+			output.println(CMD_ACTION_ABORTED);
 		}
 		return false;
 	}
@@ -311,6 +328,7 @@ public class TextServer {
 			if (!fileData.exists() || !removeFilenameFromList(filename)){
 				//System.out.println("ERROR: File "+filename+" does not exist here!");
 				System.out.println(CMD_FILE_ACTION_UNAVAILABLE);
+				output.println(CMD_FILE_ACTION_UNAVAILABLE);
 				return false;
 			}
 			return fileData.delete();
@@ -318,6 +336,7 @@ public class TextServer {
 		} catch (Exception e) {
 			e.printStackTrace();
 			System.out.println(CMD_ACTION_ABORTED);
+			output.println(CMD_ACTION_ABORTED);
 		}
 		return false;
 	}
@@ -329,23 +348,27 @@ public class TextServer {
 			if (!oldFile.exists() || !removeFilenameFromList(oldFilename)){
 				//System.out.println("ERROR: File "+oldFilename+" does not exist here!");
 				System.out.println(CMD_FILE_ACTION_UNAVAILABLE);
+				output.println(CMD_FILE_ACTION_UNAVAILABLE);
 				return false;
 			}
 			if (newFile.exists()){
 				//System.out.println("ERROR: File "+newFilename+" already exists here!");
 				System.out.println(CMD_FILENAME_NOT_ALLOWED);
+				output.println(CMD_FILENAME_NOT_ALLOWED);
 				return false;
 			}
 			Boolean success = oldFile.renameTo(newFile);
 			if (success) {;
 				addFilenameToList(newFilename);
 				System.out.println(CMD_COMPLETED);
+				output.println(CMD_COMPLETED);
 			}
 			return success;
 
 		} catch (Exception e) {
 			e.printStackTrace();
 			System.out.println(CMD_ACTION_ABORTED);
+			output.println(CMD_ACTION_ABORTED);
 		}
 		return false;
 	}
@@ -365,6 +388,7 @@ public class TextServer {
 		} catch (Exception e) {
 			e.printStackTrace();
 			System.out.println(CMD_ACTION_ABORTED);
+			output.println(CMD_ACTION_ABORTED);
 		}
 		return false;
 	}
@@ -376,26 +400,22 @@ public class TextServer {
         public static String listFiles() {
 		try {
                     
-                     String path = "fileList.txt";
+                String path = "fileList.txt";
+                System.out.println(new File(path).getAbsolutePath());
+				Scanner in = new Scanner(new FileReader("fileList.txt"));
+				String s = null;
+				StringBuilder sb = new StringBuilder();
+				while (in.hasNextLine()) {
+					s = in.nextLine();
+					sb.append(s);
+				}
+				in.close();
+				return sb.toString();
 
-                     System.out.println(new File(path).getAbsolutePath());
-                    
-			Scanner in = new Scanner(new FileReader("fileList.txt"));
-
-                        String s = null;
-                    
-                        StringBuilder sb = new StringBuilder();
-			while (in.hasNextLine()) {
-				s = in.nextLine();
-                                sb.append(s);
-	
-			}
-			in.close();
-                        
-			return sb.toString();
-		} catch (Exception e) {
+			} catch (Exception e) {
 			e.printStackTrace();
 			System.out.println(CMD_ACTION_ABORTED);
+			output.println(CMD_ACTION_ABORTED);
 		}
 		return null;
                 

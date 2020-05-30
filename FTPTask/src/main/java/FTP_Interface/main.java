@@ -45,14 +45,17 @@ public class main extends javax.swing.JFrame {
         
     }
     
-     ServerWindow ServerPanel = new ServerWindow();
+    ServerWindow ServerPanel = new ServerWindow();
     ClientWindow ClientPanel =  new ClientWindow();
     RenameFilesWindow RenamePanel = new RenameFilesWindow();
     LoginWindow LoginPanel = new LoginWindow();
     TextClient Login = new TextClient();
     static Socket ExitConection = null;
-    static boolean ServerConnect = new Boolean (false);
+    static boolean ServerConnect = false;
     private static int controlPort = 21;
+    private static Socket connection;
+    private static BufferedReader input;
+    private static PrintWriter output;
     // Send & recover data
      String data = "";
 
@@ -315,21 +318,26 @@ public class main extends javax.swing.JFrame {
     }//GEN-LAST:event_ClienteBotonMouseClicked
 
     private void cerrarMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_cerrarMouseClicked
-         int dialog = JOptionPane.YES_NO_OPTION;
-         int result = JOptionPane.showConfirmDialog(null, "Do you want to close?","Exit",dialog);
+        int dialog = JOptionPane.YES_NO_OPTION;
+        int result = JOptionPane.showConfirmDialog(null, "Do you want to close?","Exit",dialog);
         
-       // try {
+        //try {
             // TODO add your handling code here:
             // Connect with the server
        //     Socket desconection = new Socket("localhost", controlPort);
         //    desconection.close();
             
              if(result == 0){
-                System.exit(0);
+                output.print("END");
+            try {
+                connection.close();
+            } catch (IOException ex) {
+                Logger.getLogger(main.class.getName()).log(Level.SEVERE, null, ex);
+            }
              }
-      //  } catch (IOException ex) {
+        //} catch (IOException ex) {
         //    Logger.getLogger(main.class.getName()).log(Level.SEVERE, null, ex);
-       // }
+        //}
     }//GEN-LAST:event_cerrarMouseClicked
 
     private void mdesenfoqueMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_mdesenfoqueMouseClicked
@@ -425,6 +433,7 @@ public class main extends javax.swing.JFrame {
 
     //Allow us to connect into the server
     public static void ConnectServer(){
+        
         ServerConnect=true;
         clientConectSButton1.setVisible(true);
         CSButton.setVisible(false);
@@ -435,12 +444,12 @@ public class main extends javax.swing.JFrame {
         
         
                 // Connect with the server
-                Socket connection = new Socket("localhost", controlPort);
+                connection = new Socket("localhost", controlPort);
                 //connection = ExitConection;
             
              // Recover input & output from connection
-                BufferedReader input = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-                PrintWriter output = new PrintWriter(connection.getOutputStream(), true);
+                input = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+                output = new PrintWriter(connection.getOutputStream(), true);
         
              Boolean loggegIn = true;
              while (!loggegIn) loggegIn = logIn(input, output);
@@ -448,7 +457,6 @@ public class main extends javax.swing.JFrame {
              } catch (IOException ex) {
              Logger.getLogger(main.class.getName()).log(Level.SEVERE, null, ex);
         }
-    
     }
     
     //Condition for the server conection

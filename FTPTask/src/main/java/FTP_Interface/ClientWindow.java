@@ -142,6 +142,7 @@ public class ClientWindow extends javax.swing.JFrame {
 
     private void downloadButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_downloadButtonMouseClicked
         // TODO add your handling code here:
+        
     }//GEN-LAST:event_downloadButtonMouseClicked
 
     private void jButton1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton1MouseClicked

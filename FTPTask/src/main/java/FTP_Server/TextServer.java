@@ -51,7 +51,7 @@ public class TextServer {
 		
 		
 
-	private static int controlPort = 21;
+	private static final int controlPort = 21;
 	private static final String user = "user";
 	private static final String password = "password";
         
@@ -213,7 +213,6 @@ public class TextServer {
 		} catch (Exception e) {
 			e.printStackTrace();
 			System.out.println(CMD_ACTION_ABORTED);
-			output.println(CMD_ACTION_ABORTED);
 		}
 	}
 

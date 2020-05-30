@@ -54,6 +54,8 @@ public class TextServer {
 	private static int controlPort = 21;
 	private static final String user = "user";
 	private static final String password = "password";
+        
+        private static PrintWriter output;
 
 	public static void testServer() {
 
@@ -72,12 +74,12 @@ public class TextServer {
 			Socket sCon = sServ.accept();
 			//System.out.println("Connection accepted");
 			System.out.println(CMD_SERVICE_READY);
-			output.println(CMD_SERVICE_READY);
 
 			// Take input/output from connection
 			BufferedReader input = new BufferedReader(new InputStreamReader(sCon.getInputStream()));
-			PrintWriter output = new PrintWriter(sCon.getOutputStream(), true);
+			output = new PrintWriter(sCon.getOutputStream(), true);
 
+                        output.println(CMD_SERVICE_READY);
 			Boolean loggedIn = false;
 			while (!loggedIn) loggedIn = logIn(input, output);
 

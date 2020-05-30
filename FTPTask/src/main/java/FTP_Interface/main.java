@@ -325,7 +325,7 @@ public class main extends javax.swing.JFrame {
         //    desconection.close();
             
              if(result == 0){
-                 System.exit(0);
+                System.exit(0);
              }
       //  } catch (IOException ex) {
         //    Logger.getLogger(main.class.getName()).log(Level.SEVERE, null, ex);

@@ -54,8 +54,10 @@ public class TextServer {
 	private static final int controlPort = 21;
 	private static final String user = "user";
 	private static final String password = "password";
-        
-        private static PrintWriter output;
+
+	private static int dataPort = -1;
+	private static PrintWriter output;
+	private static bool hasPort = false;
 
 	public static void testServer() {
 
@@ -79,7 +81,7 @@ public class TextServer {
 			BufferedReader input = new BufferedReader(new InputStreamReader(sCon.getInputStream()));
 			output = new PrintWriter(sCon.getOutputStream(), true);
 
-                        output.println(CMD_SERVICE_READY);
+            output.println(CMD_SERVICE_READY);
 			Boolean loggedIn = false;
 			while (!loggedIn) loggedIn = logIn(input, output);
 
@@ -99,8 +101,12 @@ public class TextServer {
 					String[] command = data.split(" ");
 					String filename = curDir + command[1];
 					//output.println("Attempting to receive file: " + filename);
-					if(DataServer.receiveFile(filename)) {
+					if(hasPort && DataServer.receiveFile(filename, dataPort)) {
 						addFilenameToList(filename);
+					}
+					else{
+						System.out.println("Missing PORT command");
+						output.println(CMD_CANT_OPEN_CONNECTION);
 					}
 					//receiveFile(filename);
 				}
@@ -108,12 +114,21 @@ public class TextServer {
 					String[] command = data.split(" ");
 					String filename = curDir + command[1];
 					//output.println("Attempting to receive file: " + filename);
-					DataServer.sendFile(filename);
+					if(hasPort){
+						DataServer.sendFile(filename, dataPort);
+					}
+					else{
+						System.out.println("Missing PORT");
+						output.println(CMD_CANT_OPEN_CONNECTION);
+					}
 					//sendFile(filename);
 				}
 				else if (data.startsWith("PORT")) {
 					//Check structure of type: h1, h2, h3, h4, p1, p2
-					if(true) output.print(CMD_OKAY);
+					if(true) {
+						output.print(CMD_OKAY);
+						hasPort = true;
+					}
 					else {
 						output.print(CMD_BAD_SEQUENCE);
 						System.out.println("Bad structure of PORT");
@@ -214,6 +229,7 @@ public class TextServer {
 			sCon.close();
 			System.out.println(CMD_CLOSING);
 			output.println(CMD_CLOSING);
+			hasPort = false;
 
 			// Close server socket
 			sServ.close();

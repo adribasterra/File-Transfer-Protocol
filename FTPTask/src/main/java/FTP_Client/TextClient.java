@@ -89,7 +89,7 @@ public class TextClient {
 				}
 				
 				else if(data.startsWith("get path")) {
-					String[] command = data.split(" ");
+					//String[] command = data.split(" ");
 					String dataTCP = "PWD"; 									//PWD <CRLF>
 					output.println(dataTCP);
 				}

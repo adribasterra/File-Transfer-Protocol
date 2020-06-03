@@ -111,6 +111,15 @@ public class TextServer {
 					DataServer.sendFile(filename);
 					//sendFile(filename);
 				}
+				else if (data.startsWith("PORT")) {
+					//Check structure of type: h1, h2, h3, h4, p1, p2
+					if(true) output.print(CMD_OKAY);
+					else {
+						output.print(CMD_BAD_SEQUENCE);
+						System.out.println("Bad structure of PORT");
+					}
+				}
+
 				else if (data.startsWith("MKD")) { 
 					String[] command = data.split(" ");
 					String fileDir = canonicalDir(curDir, command[1]);

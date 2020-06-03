@@ -79,6 +79,14 @@ public class TextClient {
 						System.out.println("ERROR: Access forbidden outside the \"files\\\" folder!");
 					}
 				}
+
+				else if(data.startsWith("port")){
+					String[] command = data.split(" ");
+					String hostPort = "";
+					for(int i = 1; i<command.length; i++) hostPort = command[i];
+					String dataTCP = "PORT" + " " + hostPort;					//PORT <SP> <host-port> <CRLF>
+					output.println(dataTCP);
+				}
 				
 				else if(data.startsWith("get path")) {
 					String[] command = data.split(" ");

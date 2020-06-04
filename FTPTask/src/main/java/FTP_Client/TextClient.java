@@ -10,6 +10,9 @@ public class TextClient {
 	private static int controlPort = 21;
 	private static String hostDirection = "localhost";
 	private static String dataTCP = "";
+	public static int dataPort;
+
+	public static PrintWriter output;
 
 	public static void testClient() {
 
@@ -22,11 +25,11 @@ public class TextClient {
 			//String result = "";
 
 			// Connect with the server
-			Socket connection = new Socket(hostDirection, controlPort);
+			Socket connection = new Socket("localhost", controlPort);
 
 			// Recover input & output from connection
 			BufferedReader input = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-			PrintWriter output = new PrintWriter(connection.getOutputStream(), true);
+			output = new PrintWriter(connection.getOutputStream(), true);
 
 			Boolean loggegIn = false;
 			while (!loggegIn) loggegIn = logIn(input, output);
@@ -44,30 +47,51 @@ public class TextClient {
 				if (data.startsWith("send")) {
 					String[] command = data.split(" ");
 					String filename = baseDirectory + command[1];
-					dataTCP = "STOR" + " " + filename; // STOR <SP> <pathname> <CRLF>
+					dataTCP = "STOR" + " " + filename; 						// STOR <SP> <pathname> <CRLF>
 					output.println(dataTCP);
 					System.out.println("Attempting to send file: " + filename);
 					// sendFile(filename);
 					DataClient.sendFile(filename);
-				} else if (data.startsWith("get")) {
+				}
+				else if (data.startsWith("port")) {
+					String command = data.substring(5, data.length());
+					String[] parts = command.split(",");
+					for(int i = 0; i<parts.length; i++) System.out.print(parts[i] + " ");
+					if(parts.length == 6) {
+						hostDirection = parts[0] + "." + parts[1] + "." + parts[2] + "." + parts[3];
+						System.out.println("hostDirection " + hostDirection);
+						int port1Int = Integer.parseInt(parts[4]);
+						int port2Int = Integer.parseInt(parts[5]);
+						String port1Hex = Integer.toHexString(port1Int);
+						String port2Hex = Integer.toHexString(port2Int);
+						dataPort = convertToDecimal(port1Hex + port2Hex);
+						System.out.println("dataPort " + dataPort);
+					}
+					dataTCP = "PORT" + " " + hostDirection + " " + dataPort; // PORT <SP> <host-port> <CRLF>
+					System.out.println("dataTCP: " + dataTCP);
+					output.println(dataTCP);
+				}
+				else if (data.startsWith("get")) {
 					String[] command = data.split(" ");
 					String filename = currentDirectory + command[1];
-					dataTCP = "RETR" + " " + filename; // RETR <SP> <pathname> <CRLF>
+					dataTCP = "RETR" + " " + filename; 						// RETR <SP> <pathname> <CRLF>
 					output.println(dataTCP);
 					System.out.println("Attempting to get file: " + filename);
 					// receiveFile(filename);
-					DataClient.receiveFile(filename);
-				} else if (data.startsWith("mkdir")) {
+					DataClient.receiveFile(filename, hostDirection, dataPort);
+				} 
+				else if (data.startsWith("mkdir")) {
 					String[] command = data.split(" ");
 					String directory = currentDirectory + command[1];
-					dataTCP = "MKD" + " " + directory; // MKD <SP> <pathname> <CRLF>
+					dataTCP = "MKD" + " " + directory; 						// MKD <SP> <pathname> <CRLF>
 					output.println(dataTCP);
 					System.out.println("Attempting to create directory: " + directory);
 					// receiveFile(filename);
 					// new File(directory).mkdir();
-				} else if (data.startsWith("cd")) {
+				} 
+				else if (data.startsWith("cd")) {
 					String[] command = data.split(" ");
-					dataTCP = "CWD" + " " + command[1]; // CWD <SP> <pathname> <CRLF>
+					dataTCP = "CWD" + " " + command[1]; 					// CWD <SP> <pathname> <CRLF>
 					output.println(dataTCP);
 					String directory = input.readLine();
 
@@ -77,58 +101,58 @@ public class TextClient {
 						System.out.println("ERROR: Access forbidden outside the \"files\\\" folder!");
 					}
 				}
-
-				else if (data.startsWith("port")) {
-					String command = data.substring(5);
-					String hostPort = "";
-					dataTCP = "PORT" + " " + hostPort; // PORT <SP> <host-port> <CRLF>
-					output.println(dataTCP);
-				}
-
 				else if (data.startsWith("get path")) {
 					// String[] command = data.split(" ");
-					dataTCP = "PWD"; // PWD <CRLF>
+					dataTCP = "PWD"; 										// PWD <CRLF>
 					output.println(dataTCP);
-				} else if (data.startsWith("remove")) {
+				} 
+				else if (data.startsWith("remove")) {
 					String[] command = data.split(" ");
-					dataTCP = "RMD" + command[1]; // RMD <SP> <pathname> <CRLF>
+					dataTCP = "RMD" + command[1];							// RMD <SP> <pathname> <CRLF>
 					output.println(dataTCP);
-				} else if (data.startsWith("list")) {
+				} 
+				else if (data.startsWith("list")) {
 					String[] command = data.split(" ");
 					String pathDirectory = currentDirectory + command[1];
-					dataTCP = "LIST" + " " + pathDirectory; // LIST [<SP> <pathname>] <CRLF>
+					dataTCP = "LIST" + " " + pathDirectory; 				// LIST [<SP> <pathname>] <CRLF>
 					System.out.println(dataTCP);
 					output.println(dataTCP);
 					receiveListFiles(input);
-				} else if (data.startsWith("delete")) {
+				} 
+				else if (data.startsWith("delete")) {
 					String[] command = data.split(" ");
 					String pathDirectory = currentDirectory + command[1];
-					dataTCP = "DELE" + " " + pathDirectory; // DELE <SP> <pathname> <CRLF>
+					dataTCP = "DELE" + " " + pathDirectory; 				// DELE <SP> <pathname> <CRLF>
 					System.out.println(dataTCP);
 					output.println(dataTCP);
-				} else if (data.startsWith("rename")) {
+				} 
+				else if (data.startsWith("rename")) {
 					String[] command = data.split(" ");
 					String pathDirectory = currentDirectory + command[1];
-					dataTCP = "RNFR" + " " + pathDirectory; // RNFR <SP> <pathname> <CRLF>
+					dataTCP = "RNFR" + " " + pathDirectory; 				// RNFR <SP> <pathname> <CRLF>
 					output.println(dataTCP);
 					System.out.println(dataTCP);
-				} else if (data.startsWith("user")) {
+				} 
+				else if (data.startsWith("user")) {
 					String[] command = data.split(" ");
 					String user = currentDirectory + command[1];
-					dataTCP = "USER" + " " + user; // USER <SP> <username> <CRLF>
+					dataTCP = "USER" + " " + user; 							// USER <SP> <username> <CRLF>
 					output.println(dataTCP);
 					// System.out.println(dataTCP);
-				} else if (data.startsWith("password")) {
+				} 
+				else if (data.startsWith("password")) {
 					String[] command = data.split(" ");
 					String password = currentDirectory + command[1];
-					dataTCP = "PASS" + " " + password; // PASS <SP> <password> <CRLF>
+					dataTCP = "PASS" + " " + password; 						// PASS <SP> <password> <CRLF>
 					output.println(dataTCP);
 					// System.out.println(dataTCP);
-				} else if(data.startsWith("quit")){
+				} 
+				else if(data.startsWith("quit")){
 					dataTCP = "QUIT";
 					output.println(dataTCP);
 
-				} else if (data.compareTo("END") == 0) {
+				} 
+				else if (data.compareTo("END") == 0) {
 					output.println(data);
 				}
 				else {
@@ -205,6 +229,18 @@ public class TextClient {
 		}
 
 		return false;
+	}
+
+	private static int convertToDecimal(String hexNumber) {
+		String digits = "0123456789ABCDEF";
+	    String s = hexNumber.toUpperCase();
+	    int value = 0;
+	    for (int i = 0; i < s.length(); i++) {
+	        char c = s.charAt(i);
+	        int d = digits.indexOf(c);
+	        value = 16*value + d;
+	    }
+	    return value;
 	}
 
 /*	

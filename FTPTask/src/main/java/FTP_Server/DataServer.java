@@ -17,13 +17,17 @@ public class DataServer {
 		
 		public static final String CMD_FILENAME_NOT_ALLOWED = "553. Requested action not taken. File name not allowed.";
 
-		
-	public static boolean receiveFile(String filename, int dataPort){
+	public static PrintWriter output;
+	
+	public static boolean receiveFile(String filename, String hostDirection, int dataPort){
 		File fileData = null;
 		try {
 			//int filePort = 20;
-			System.out.println(CMD_FILE_STATUS_OKAY);
-			Socket connection = new Socket("localhost", dataPort);
+			output.println(CMD_FILE_STATUS_OKAY);
+			System.out.println("hostDirection in DataServer: " + hostDirection);
+			System.out.println("dataPort in DataServer: " + dataPort);
+			
+			Socket connection = new Socket(hostDirection, dataPort);
 
 			// ObjectInputStream fileInput = new ObjectInputStream(connection.getInputStream());
 			// PrintWriter resOutput = new PrintWriter(connection.getOutputStream(), true);
@@ -85,11 +89,12 @@ public class DataServer {
 		try {
 			//int filePort = 20;
 			//String result;
-			
+			System.out.println("dataPort in DataServer " + dataPort);
 			ServerSocket sServ = new ServerSocket(dataPort);
 			System.out.println("Server waiting for response before sending");
 			
 			output.println(CMD_FILE_STATUS_OKAY);
+
 			Socket sCon = sServ.accept();
 			//System.out.println("File transfer Connection accepted");
 
@@ -118,7 +123,7 @@ public class DataServer {
 			return true;
 		}
 		catch (Exception e) {
-			//System.out.println("Error writing byte to text :" + e);
+			System.out.println("Error writing byte to text :" + e);
 			output.println(CMD_CANT_OPEN_CONNECTION);
 		}
 		return false;

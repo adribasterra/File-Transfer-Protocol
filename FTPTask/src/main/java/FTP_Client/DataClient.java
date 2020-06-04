@@ -1,22 +1,17 @@
 package FTP_Client;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
+import java.net.*;
+import java.io.*;
 
 // Example: Client that receives and sends bytes
 // ByteClient
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.net.ServerSocket;
-import java.net.Socket;
-
 public class DataClient {
 	
-	private static int dataPort = 20;
+	public static int dataPort = 20;
+	public static PrintWriter output;
 	
-	public static boolean sendFile(final String filename) {
+	public static final boolean sendFile(final String filename) {
 		final File fileData = new File(filename);
 		if (!fileData.exists()){
 			System.out.println("ERROR: File "+filename+" does not exist here!");
@@ -60,29 +55,35 @@ public class DataClient {
 		return false;
 	}
 	
-	public static boolean receiveFile(final String filename){
+	public static final boolean receiveFile(String filename, String hostDirection, int dataPort){
+		System.out.println("He entrado");
 		File fileData = null;
 		try {
-			final Socket connection = new Socket("localhost", dataPort);
+			System.out.println("hostDirection in DataClient: " + hostDirection);
+			System.out.println("dataPort in DataClient: " + dataPort);
+
+			final Socket connection = new Socket(hostDirection, dataPort);
+
+			System.out.println("dataPort in DataClient: " + dataPort);
 
 			fileData = new File(filename);
 			System.out.println(fileData.toURI());
 			//resOutput.println("ok");
 			if (!fileData.createNewFile()){
-				final String msg = "ERROR: A file named "+fileData.getName()+" already exists on the server.\n";
+				String msg = "ERROR: A file named "+fileData.getName()+" already exists on the server.\n";
 				System.out.println(msg);
 				//resOutput.println(msg);
 				connection.close();
 				return false;
 			}
 
-			final BufferedInputStream originalBuffer = new BufferedInputStream(connection.getInputStream());
+			BufferedInputStream originalBuffer = new BufferedInputStream(connection.getInputStream());
 			
-			final FileOutputStream  copy = new FileOutputStream (fileData);
-			final BufferedOutputStream copyBuffer = new BufferedOutputStream(copy);
+			FileOutputStream  copy = new FileOutputStream (fileData);
+			BufferedOutputStream copyBuffer = new BufferedOutputStream(copy);
 			
 			// Loop to read a file and write in another
-			final byte [] array = new byte[1000];
+			byte [] array = new byte[1000];
 			int n_bytes = originalBuffer.read(array);
 
 			while (n_bytes > 0)
@@ -97,7 +98,7 @@ public class DataClient {
 
 			connection.close();
 			return true;
-		} catch (final Exception e) {
+		} catch (Exception e) {
 			System.out.println("Error receiving file :" + e);
 		}
 		return false;

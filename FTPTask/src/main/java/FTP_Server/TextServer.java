@@ -49,15 +49,15 @@ public class TextServer {
 		
 		public final static String CMD_PASSIVE_MODE = "227. Entering Passive Mode "; //+ (h1,h2,h3,h4,p1,p2)
 		
-		
 
 	private static int controlPort = 21;
 	private static final String user = "user";
 	private static final String password = "password";
 
-	private static int dataPort = -1;
-	private static PrintWriter output;
+	public static int dataPort = -1;
+	public static PrintWriter output;
 	private static boolean hasPort = false;
+	private static String hostDirection = "localhost";
 
 	public static void testServer() {
 
@@ -101,9 +101,9 @@ public class TextServer {
 
 				if (data.startsWith("STOR")) {
 					String[] command = data.split(" ");
-					String filename = currentDirectory + command[1];
+					String filename = command[1];
 					//output.println("Attempting to receive file: " + filename);
-					if(hasPort && DataServer.receiveFile(filename, dataPort)) {
+					if(hasPort && DataServer.receiveFile(filename, hostDirection, dataPort)) {
 						addFilenameToList(filename);
 					}
 					else{
@@ -112,9 +112,27 @@ public class TextServer {
 					}
 					//receiveFile(filename);
 				}
+				else if (data.startsWith("PORT")) {
+					System.out.println("Hola v1");
+					//Structure of type: h1,h2,h3,h4,p1,p2
+					String[] command = data.split(" ");
+					if(command.length == 3){
+						System.out.println("Hola v2");
+						hostDirection = command[1];
+						System.out.println("hostDirection: " + hostDirection);
+						dataPort = Integer.parseInt(command[2]);
+						System.out.println("dataPort: " + dataPort);
+						output.print(CMD_OKAY);
+						hasPort = true;
+					}
+					else{
+						output.print(CMD_BAD_SEQUENCE);
+						System.out.println("Bad structure of PORT");
+					}
+				}
 				else if (data.startsWith("RETR")) {
 					String[] command = data.split(" ");
-					String filename = currentDirectory + command[1];
+					String filename = command[1];
 					//output.println("Attempting to receive file: " + filename);
 					if(hasPort){
 						DataServer.sendFile(filename, dataPort);
@@ -125,25 +143,6 @@ public class TextServer {
 					}
 					//sendFile(filename);
 				}
-				else if (data.startsWith("PORT")) {
-					//Check structure of type: h1, h2, h3, h4, p1, p2
-					String[] parts = data.split(",");
-					if(parts.length==6) {
-						String host = parts[0]+"."+parts[1]+"."+parts[2]+"."+parts[3];
-						int port1Int = Integer.parseInt(parts[4]);
-						int port2Int = Integer.parseInt(parts[5]);
-						String port1Hex = Integer.toHexString(port1Int);
-						String port2Hex = Integer.toHexString(port2Int);
-						int dataPort = convertToDecimal(port1Hex+port2Hex);
-						output.print(CMD_OKAY);
-						hasPort = true;
-					}
-					else {
-						output.print(CMD_BAD_SEQUENCE);
-						System.out.println("Bad structure of PORT");
-					}
-				}
-
 				else if (data.startsWith("MKD")) { 
 					String[] command = data.split(" ");
 					String fileDir = canonicalDir(currentDirectory, command[1]);
@@ -168,7 +167,7 @@ public class TextServer {
 						System.out.println(CMD_FILE_UNAVAILABLE);
 						output.println(CMD_FILE_UNAVAILABLE);
 						System.out.println("ERROR: Directory : "+directory+" does not exist!");
-					};
+					}
 				}
 				else if(data.startsWith("PWD")) {
 					output.println(currentDirectory);
@@ -228,7 +227,7 @@ public class TextServer {
 						output.println(CMD_USER_ERROR);
 					}
 				}
-				else if(data.compareTo("QUIT")){
+				else if(data.startsWith("QUIT")){
 					sCon.close();
 					System.out.println(CMD_CLOSING);
 					output.println(CMD_CLOSING);
@@ -467,29 +466,20 @@ public class TextServer {
 
 	public static void ShowGuideline() {
 		output.println("Possible actions:\n");
-		output.println("\t1. List files in directory. \t\tCOMMAND: list + path");
-		output.println("\t2. Download file. \t\t\tCOMMAND: get + file");
-		output.println("\t3. Upload file. \t\t\tCOMMAND: send + file");
-		output.println("\t4. Close connection. \t\t\tCOMMAND: quit");
-		output.println("\t5. Delete file. \t\t\tCOMMAND: delete + path\n");
-		output.println("\t6. Get path of working directory. \tCOMMAND: get path");
-		output.println("\t7. Change current directory. \t\tCOMMAND: cd + path");
-		output.println("\t8. Create directory. \t\t\tCOMMAND: mkdir + path");
-		output.println("\t9. Remove directory. \t\t\tCOMMAND: remove + path");
-		output.println("\t10. Rename file or directory. \t\tCOMMAND: rename + path\n");
+		output.println("\t1. List files in directory. \t\tCOMMAND: 'list + path'");
+		output.println("\t2. Download file. \t\t\tCOMMAND: 'get + file'");
+		output.println("\t3. Upload file. \t\t\tCOMMAND: 'send + file'");
+		output.println("\t4. Close connection. \t\t\tCOMMAND: 'quit'");
+		output.println("\t5. Delete file. \t\t\tCOMMAND: 'delete + path'\n");
+		output.println("\t6. Get path of working directory. \tCOMMAND: 'get path'");
+		output.println("\t7. Change current directory. \t\tCOMMAND: 'cd + path'");
+		output.println("\t8. Create directory. \t\t\tCOMMAND: 'mkdir + path'");
+		output.println("\t9. Remove directory. \t\t\tCOMMAND: 'remove + path'");
+		output.println("\t10. Rename file or directory. \t\tCOMMAND: 'rename + path'\n");
+		output.println("\t11. Indicate port for file transfer.  \t\tCOMMAND: 'port h1,h2,h3,h4,p1,p2'\n");
+		output.println("'Quit' or 'END' for finishing connection.\n");
 	}
 
-	private static int convertToDecimal(String hexNumber) {
-		String digits = "0123456789ABCDEF";
-	    String s = hexNumber.toUpperCase();
-	    int value = 0;
-	    for (int i = 0; i < s.length(); i++) {
-	        char c = s.charAt(i);
-	        int d = digits.indexOf(c);
-	        value = 16*value + d;
-	    }
-	    return value;
-	}
 /*
 	public static boolean receiveFile(String filename){
 		File fileData = null;

@@ -21,53 +21,29 @@ public class DataServer {
 	private static int dataPortServer = 20;
 	
 	public static boolean receiveFile(String filename, int dataPortClient){
-		File fileData = null;
+		//File fileData = null;
 		try {
 			//int filePort = 20;
 			//output.println(CMD_FILE_STATUS_OKAY);
 			
-			Socket connection = new Socket("localhost", dataPortClient);
+			ServerSocket sServ = new ServerSocket(dataPortClient);
+			System.out.println("Server waiting for response before receiving");
 
-			// ObjectInputStream fileInput = new ObjectInputStream(connection.getInputStream());
-			// PrintWriter resOutput = new PrintWriter(connection.getOutputStream(), true);
+			Socket sCon = sServ.accept();
 
-			fileData = (File) fileInput.readObject();
-			fileData = new File(filename);
-			System.out.println(fileData.toURI());
-			//resOutput.println("ok");
-			if (!fileData.createNewFile()){
-				//String msg = "ERROR: A file named "+fileData.getName()+" already exists on the server.\n";
-				//output.println(CMD_FILENAME_NOT_ALLOWED);
-				//System.out.println(msg);
-				//resOutput.println(msg);
-				connection.close();
-				//output.println(CMD_SUCCESS);
-				return false;
+			InputStream inputStream = sCon.getInputStream();
+			FileOutputStream fileOutputStream = new FileOutputStream(filename);
+
+			byte[] bytes = new byte[1000];
+			int count;
+			while((count = inputStream.read(bytes)) > 0){
+				fileOutputStream.write(bytes, 0, count);
 			}
 			
-			//output.println(CMD_FILE_STATUS_OKAY);
-			
-
-			BufferedInputStream receiveBuffer = new BufferedInputStream(connection.getInputStream());
-			
-			FileOutputStream  file = new FileOutputStream (fileData);
-			BufferedOutputStream fileBuffer = new BufferedOutputStream(file);
-			
-			// Loop to read a file and write in another
-			byte [] array = new byte[1000];
-			int n_bytes = receiveBuffer.read(array);
-
-			while (n_bytes > 0)
-			{
-				fileBuffer.write(array,0,n_bytes);
-				n_bytes=receiveBuffer.read(array);
-			}
-
-			// Close the files
-			receiveBuffer.close();
-			fileBuffer.close();
-			
-			connection.close();
+			fileOutputStream.close();
+			inputStream.close();
+			sCon.close();
+			sServ.close();
 			//output.println(CMD_SUCCESS);
 			
 			return true;
@@ -79,15 +55,13 @@ public class DataServer {
 	}
 
 	public static boolean sendFile(String filename, int dataPortClient) {
-		File fileData = new File(filename);
 		if (!fileData.exists()){
 			System.out.println("ERROR: File "+filename+" does not exist here!");
 			output.println(CMD_FILE_ACTION_UNAVAILABLE);
 			return false;
 		}
 		try {
-			//int filePort = 20;
-			//String result;
+			
 			System.out.println("dataPort in DataServer " + dataPortServer);
 			ServerSocket sServ = new ServerSocket(dataPortClient);
 			System.out.println("Server waiting for response before sending");
@@ -100,6 +74,7 @@ public class DataServer {
 			
 			BufferedOutputStream copyBuffer = new BufferedOutputStream(sCon.getOutputStream());
 			
+			File fileData = new File(filename);
 			// Loop to read a file and write in another
 			byte [] array = new byte[1000];
 			int n_bytes = originalBuffer.read(array);

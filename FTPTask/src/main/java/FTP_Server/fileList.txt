@@ -3,3 +3,10 @@ genres.json
 qr-code.png
 test.txt
 r.txt
+other.txt
+other.txt
+other.txt
+other.txt
+other.txt
+other.txt
+other.txt

@@ -25,7 +25,7 @@ public class TextClient {
 			//String result = "";
 
 			// Connect with the server
-			Socket connection = new Socket("localhost", controlPort);
+			Socket connection = new Socket(hostDirection, controlPort);
 
 			// Recover input & output from connection
 			BufferedReader input = new BufferedReader(new InputStreamReader(connection.getInputStream()));
@@ -51,7 +51,7 @@ public class TextClient {
 					output.println(dataTCP);
 					System.out.println("Attempting to send file: " + filename);
 					// sendFile(filename);
-					DataClient.sendFile(filename);
+					DataClient.sendFile(filename, dataPortClient);
 				}
 				else if (data.startsWith("prt")) {
 					String[] command = data.split(" ");

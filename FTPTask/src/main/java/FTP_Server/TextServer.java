@@ -104,9 +104,10 @@ public class TextServer {
 				if (data.startsWith("STOR")) {
 					String[] command = data.split(" ");
 					String filename = command[1];
+					System.out.println(filename);
 					//output.println("Attempting to receive file: " + filename);
-					boolean response = DataServer.receiveFile(filename, dataPortClient);
-					if(hasPort && response) {
+					if(hasPort) {
+						DataServer.receiveFile(filename, dataPortClient);
 						addFilenameToList(filename);
 					}
 					else{

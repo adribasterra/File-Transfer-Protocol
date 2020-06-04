@@ -8,48 +8,35 @@ import java.io.*;
 
 public class DataClient {
 	
-	public static int dataPortClient = 20;
 	public static PrintWriter output;
 	
-	public static final boolean sendFile(final String filename) {
-		final File fileData = new File(filename);
+	public static boolean sendFile(String filename, int dataPortClient) {
+		File fileData = new File(filename);
 		if (!fileData.exists()){
 			System.out.println("ERROR: File "+filename+" does not exist here!");
 			return false;
 		}
-		System.out.println(fileData.toURI());
+		//System.out.println(fileData.toURI());
 		
 		try {
-			final ServerSocket sServ = new ServerSocket(dataPortClient);
-			System.out.println("Client waiting for response before sending");
-			
-			final Socket sCon = sServ.accept();
-			System.out.println("File transfer Connection accepted");
+			Socket sCon = new Socket("localhost", dataPortClient);
+			System.out.println("sCon opened");
 
-			final FileInputStream file = new FileInputStream(filename);
-			final BufferedInputStream fileBuffer = new BufferedInputStream(file);
-			
-			final BufferedOutputStream sendBuffer = new BufferedOutputStream(sCon.getOutputStream());
-			
-			// Loop to read a file and write in another
-			final byte [] array = new byte[1000];
-			int n_bytes = fileBuffer.read(array);
-			while (n_bytes > 0)
-			{
-				sendBuffer.write(array,0,n_bytes);
-				n_bytes=fileBuffer.read(array);
+			InputStream inputStream = new FileInputStream(filename);
+			OutputStream outputStream = sCon.getOutputStream();
+
+			int count;
+			byte[] bytes = new byte[4096];
+			while((count = inputStream.read(bytes)) > 0){
+				outputStream.write(bytes, 0, count);
 			}
-
-			// Close the files
-			fileBuffer.close();
-			sendBuffer.close();
-
+			
+			outputStream.close();
+			inputStream.close();
 			sCon.close();
-			sServ.close();
-			System.out.println("File transfer Server closed");
 			return true;
 		}
-		catch (final Exception e) {
+		catch (Exception e) {
 			System.out.println("Error writing byte to text :" + e);
 		}
 		return false;

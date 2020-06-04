@@ -18,6 +18,7 @@ public class DataServer {
 		public static final String CMD_FILENAME_NOT_ALLOWED = "553. Requested action not taken. File name not allowed.";
 
 	public static PrintWriter output;
+	private static int dataPortServer = 20;
 	
 	public static boolean receiveFile(String filename, String hostDirection, int dataPort){
 		File fileData = null;
@@ -27,7 +28,7 @@ public class DataServer {
 			System.out.println("hostDirection in DataServer: " + hostDirection);
 			System.out.println("dataPort in DataServer: " + dataPort);
 			
-			Socket connection = new Socket(hostDirection, dataPort);
+			Socket connection = new Socket(hostDirection, dataPortServer);
 
 			// ObjectInputStream fileInput = new ObjectInputStream(connection.getInputStream());
 			// PrintWriter resOutput = new PrintWriter(connection.getOutputStream(), true);

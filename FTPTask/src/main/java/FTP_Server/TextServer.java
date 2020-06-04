@@ -112,7 +112,7 @@ public class TextServer {
 					}
 					//receiveFile(filename);
 				}
-				else if (data.startsWith("PORT")) {
+				else if (data.startsWith("PRT")) {
 					System.out.println("Hola v1");
 					//Structure of type: h1,h2,h3,h4,p1,p2
 					String[] command = data.split(" ");

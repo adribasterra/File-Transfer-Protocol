@@ -53,7 +53,7 @@ public class TextClient {
 					// sendFile(filename);
 					DataClient.sendFile(filename);
 				}
-				else if (data.startsWith("port")) {
+				else if (data.startsWith("prt")) {
 					String command = data.substring(5, data.length());
 					String[] parts = command.split(",");
 					for(int i = 0; i<parts.length; i++) System.out.print(parts[i] + " ");
@@ -67,7 +67,7 @@ public class TextClient {
 						dataPort = convertToDecimal(port1Hex + port2Hex);
 						System.out.println("dataPort " + dataPort);
 					}
-					dataTCP = "PORT" + " " + hostDirection + " " + dataPort; // PORT <SP> <host-port> <CRLF>
+					dataTCP = "PRT" + " " + hostDirection + " " + dataPort; // PORT <SP> <host-port> <CRLF>
 					System.out.println("dataTCP: " + dataTCP);
 					output.println(dataTCP);
 				}

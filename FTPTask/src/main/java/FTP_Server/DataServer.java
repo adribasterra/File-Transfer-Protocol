@@ -20,34 +20,32 @@ public class DataServer {
 	public static PrintWriter output;
 	private static int dataPortServer = 20;
 	
-	public static boolean receiveFile(String filename, String hostDirection, int dataPort){
+	public static boolean receiveFile(String filename, int dataPortClient){
 		File fileData = null;
 		try {
 			//int filePort = 20;
-			output.println(CMD_FILE_STATUS_OKAY);
-			System.out.println("hostDirection in DataServer: " + hostDirection);
-			System.out.println("dataPort in DataServer: " + dataPort);
+			//output.println(CMD_FILE_STATUS_OKAY);
 			
-			Socket connection = new Socket(hostDirection, dataPortServer);
+			Socket connection = new Socket("localhost", dataPortClient);
 
 			// ObjectInputStream fileInput = new ObjectInputStream(connection.getInputStream());
 			// PrintWriter resOutput = new PrintWriter(connection.getOutputStream(), true);
 
-			//fileData = (File) fileInput.readObject();
+			fileData = (File) fileInput.readObject();
 			fileData = new File(filename);
 			System.out.println(fileData.toURI());
 			//resOutput.println("ok");
 			if (!fileData.createNewFile()){
 				//String msg = "ERROR: A file named "+fileData.getName()+" already exists on the server.\n";
-				output.println(CMD_FILENAME_NOT_ALLOWED);
+				//output.println(CMD_FILENAME_NOT_ALLOWED);
 				//System.out.println(msg);
 				//resOutput.println(msg);
 				connection.close();
-				output.println(CMD_SUCCESS);
+				//output.println(CMD_SUCCESS);
 				return false;
 			}
 			
-			output.println(CMD_FILE_STATUS_OKAY);
+			//output.println(CMD_FILE_STATUS_OKAY);
 			
 
 			BufferedInputStream receiveBuffer = new BufferedInputStream(connection.getInputStream());
@@ -70,17 +68,17 @@ public class DataServer {
 			fileBuffer.close();
 			
 			connection.close();
-			output.println(CMD_SUCCESS);
+			//output.println(CMD_SUCCESS);
 			
 			return true;
 		} catch (Exception e) {
 			//System.out.println("Error receiving file :" + e);
-			output.println(CMD_CANT_OPEN_CONNECTION);
+			//output.println(CMD_CANT_OPEN_CONNECTION);
 		}
 		return false;
 	}
 
-	public static boolean sendFile(String filename, int dataPort) {
+	public static boolean sendFile(String filename, int dataPortClient) {
 		File fileData = new File(filename);
 		if (!fileData.exists()){
 			System.out.println("ERROR: File "+filename+" does not exist here!");
@@ -90,12 +88,10 @@ public class DataServer {
 		try {
 			//int filePort = 20;
 			//String result;
-			System.out.println("dataPort in DataServer " + dataPort);
-			ServerSocket sServ = new ServerSocket(dataPort);
+			System.out.println("dataPort in DataServer " + dataPortServer);
+			ServerSocket sServ = new ServerSocket(dataPortClient);
 			System.out.println("Server waiting for response before sending");
 			
-			output.println(CMD_FILE_STATUS_OKAY);
-
 			Socket sCon = sServ.accept();
 			//System.out.println("File transfer Connection accepted");
 
@@ -125,7 +121,7 @@ public class DataServer {
 		}
 		catch (Exception e) {
 			System.out.println("Error writing byte to text :" + e);
-			output.println(CMD_CANT_OPEN_CONNECTION);
+			//output.println(CMD_CANT_OPEN_CONNECTION);
 		}
 		return false;
 	}

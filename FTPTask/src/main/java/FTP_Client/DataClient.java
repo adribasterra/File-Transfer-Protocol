@@ -8,7 +8,7 @@ import java.io.*;
 
 public class DataClient {
 	
-	public static int dataPort = 20;
+	public static int dataPortClient = 20;
 	public static PrintWriter output;
 	
 	public static final boolean sendFile(final String filename) {
@@ -20,7 +20,7 @@ public class DataClient {
 		System.out.println(fileData.toURI());
 		
 		try {
-			final ServerSocket sServ = new ServerSocket(dataPort);
+			final ServerSocket sServ = new ServerSocket(dataPortClient);
 			System.out.println("Client waiting for response before sending");
 			
 			final Socket sCon = sServ.accept();
@@ -55,16 +55,13 @@ public class DataClient {
 		return false;
 	}
 	
-	public static final boolean receiveFile(String filename, String hostDirection, int dataPort){
+	public static  boolean receiveFile(String filename, int dataPortClient){
 		System.out.println("He entrado");
 		File fileData = null;
 		try {
-			System.out.println("hostDirection in DataClient: " + hostDirection);
-			System.out.println("dataPort in DataClient: " + dataPort);
+			System.out.println("dataPort in DataClient: " + dataPortClient);
 
-			final Socket connection = new Socket(hostDirection, dataPort);
-
-			System.out.println("dataPort in DataClient: " + dataPort);
+			Socket connection = new Socket("localhost", dataPortClient);
 
 			fileData = new File(filename);
 			System.out.println(fileData.toURI());
@@ -91,6 +88,8 @@ public class DataClient {
 				copyBuffer.write(array,0,n_bytes);
 				n_bytes=originalBuffer.read(array);
 			}
+
+			System.out.println("Hola");
 
 			// Close the files
 			originalBuffer.close();

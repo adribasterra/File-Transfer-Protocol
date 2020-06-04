@@ -21,5 +21,4 @@ public class main {
         System.out.println("SERVER\n\n");
 	    TextServer.testServer();
     }
-    
 }

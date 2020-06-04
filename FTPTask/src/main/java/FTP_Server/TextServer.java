@@ -5,6 +5,9 @@ package FTP_Server;
 
 import java.net.*;
 import java.util.Scanner;
+
+import org.graalvm.compiler.nodes.calc.IntegerTestNode;
+
 import java.io.*;
 
 public class TextServer {
@@ -54,10 +57,10 @@ public class TextServer {
 	private static final String user = "user";
 	private static final String password = "password";
 
-	public static int dataPort = -1;
 	public static PrintWriter output;
 	private static boolean hasPort = false;
-	private static String hostDirection = "localhost";
+	private static int dataPortClient;
+	private static String currentDirectory = "files\\";
 
 	public static void testServer() {
 
@@ -86,9 +89,8 @@ public class TextServer {
 			Boolean loggedIn = false;
 			while (!loggedIn) loggedIn = logIn(input, output);
 
-			ShowGuideline();
+			//ShowGuideline();
 
-			String currentDirectory = "files\\";
 			// Read data from client
 			//data = input.readLine();
 
@@ -103,7 +105,8 @@ public class TextServer {
 					String[] command = data.split(" ");
 					String filename = command[1];
 					//output.println("Attempting to receive file: " + filename);
-					if(hasPort && DataServer.receiveFile(filename, hostDirection, dataPort)) {
+					boolean response = DataServer.receiveFile(filename, dataPortClient);
+					if(hasPort && response) {
 						addFilenameToList(filename);
 					}
 					else{
@@ -113,16 +116,10 @@ public class TextServer {
 					//receiveFile(filename);
 				}
 				else if (data.startsWith("PRT")) {
-					System.out.println("Hola v1");
 					//Structure of type: h1,h2,h3,h4,p1,p2
 					String[] command = data.split(" ");
-					if(command.length == 3){
-						System.out.println("Hola v2");
-						hostDirection = command[1];
-						System.out.println("hostDirection: " + hostDirection);
-						dataPort = Integer.parseInt(command[2]);
-						System.out.println("dataPort: " + dataPort);
-						output.print(CMD_OKAY);
+					if(command.length == 2){
+						dataPortClient = Integer.parseInt(command[1]);
 						hasPort = true;
 					}
 					else{
@@ -135,7 +132,7 @@ public class TextServer {
 					String filename = command[1];
 					//output.println("Attempting to receive file: " + filename);
 					if(hasPort){
-						DataServer.sendFile(filename, dataPort);
+						DataServer.sendFile(filename, dataPortClient);
 					}
 					else{
 						System.out.println("Missing PORT");
@@ -197,16 +194,19 @@ public class TextServer {
 				}
 				else if (data.startsWith("RNFR")) {
 					String[] command = data.split(" ");
-					String oldFilename = currentDirectory + command[1];
-					String newFilename = currentDirectory + command[2];
-					System.out.println(oldFilename + " " + newFilename);
-					if(newFilename == currentDirectory) {
-						System.out.println(CMD_FURTHER_INFO);
-						output.println(CMD_FURTHER_INFO);
+					if(command.length == 3){
+						String oldFilename = currentDirectory + command[1];
+						String newFilename = currentDirectory + command[2];
+						System.out.println(oldFilename + " " + newFilename);
+						if(newFilename != currentDirectory) {
+							renameFile(oldFilename, newFilename);
+						}
+						else System.out.println("Names are the same!");
 					}
 					else {
 						//output.println("Attempting to receive file: " + filename);
-						renameFile(oldFilename, newFilename);
+						System.out.println(CMD_FURTHER_INFO);
+						output.println(CMD_FURTHER_INFO);
 					}
 				}
 				else if(data.startsWith("USER")) {
@@ -313,6 +313,7 @@ public class TextServer {
 	}
 	
 	public static boolean addFilenameToList(String filename) {
+		System.out.println("addFilenameToList called");
 		try {
 			Scanner in = new Scanner(new FileReader("fileList.txt"));
 			StringBuilder sb = new StringBuilder();
@@ -335,6 +336,7 @@ public class TextServer {
 	}
 
 	private static Boolean removeFilenameFromList(String filename) {
+		System.out.println("removeFilenameFromList called");
 		try {
 			Scanner in = new Scanner(new FileReader("fileList.txt"));
 			StringBuilder sb = new StringBuilder();
@@ -366,6 +368,7 @@ public class TextServer {
 	}
 
 	public static Boolean deleteFile(String filename) {
+		System.out.println("deleteFile called");
 		try {
 			File fileData = new File(filename);
 			if (!fileData.exists() || !removeFilenameFromList(filename)){
@@ -385,6 +388,7 @@ public class TextServer {
 	}
 
 	public static Boolean renameFile(String oldFilename, String newFilename) {
+		System.out.println("renameFile called");
 		try {
 			File oldFile = new File(oldFilename);
 			File newFile = new File(newFilename);
@@ -417,6 +421,7 @@ public class TextServer {
 	}
 
 	public static Boolean listFiles(PrintWriter output) {
+		System.out.println("listFiles called");
 		try {
 			Scanner in = new Scanner(new FileReader("fileList.txt"));
 			String s = null;
@@ -425,8 +430,8 @@ public class TextServer {
 				output.println(s);
 			}
 			in.close();
-			if (s==null) output.println("(empty)");
-			output.println("END");
+			if (s==null) System.out.println("Is empty");
+			
 			return true;
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -476,7 +481,7 @@ public class TextServer {
 		output.println("\t8. Create directory. \t\t\tCOMMAND: 'mkdir + path'");
 		output.println("\t9. Remove directory. \t\t\tCOMMAND: 'remove + path'");
 		output.println("\t10. Rename file or directory. \t\tCOMMAND: 'rename + path'\n");
-		output.println("\t11. Indicate port for file transfer.  \t\tCOMMAND: 'port h1,h2,h3,h4,p1,p2'\n");
+		output.println("\t11. Indicate port for file transfer.  \t\tCOMMAND: 'prt + number'\n");
 		output.println("'Quit' or 'END' for finishing connection.\n");
 	}
 

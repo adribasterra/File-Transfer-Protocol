@@ -10,7 +10,7 @@ public class TextClient {
 	private static int controlPort = 21;
 	private static String hostDirection = "localhost";
 	private static String dataTCP = "";
-	public static int dataPort;
+	public static int dataPortClient = -1;
 
 	public static PrintWriter output;
 
@@ -54,22 +54,16 @@ public class TextClient {
 					DataClient.sendFile(filename);
 				}
 				else if (data.startsWith("prt")) {
-					String command = data.substring(5, data.length());
-					String[] parts = command.split(",");
-					for(int i = 0; i<parts.length; i++) System.out.print(parts[i] + " ");
-					if(parts.length == 6) {
-						hostDirection = parts[0] + "." + parts[1] + "." + parts[2] + "." + parts[3];
-						System.out.println("hostDirection " + hostDirection);
-						int port1Int = Integer.parseInt(parts[4]);
-						int port2Int = Integer.parseInt(parts[5]);
-						String port1Hex = Integer.toHexString(port1Int);
-						String port2Hex = Integer.toHexString(port2Int);
-						dataPort = convertToDecimal(port1Hex + port2Hex);
-						System.out.println("dataPort " + dataPort);
+					String[] command = data.split(" ");
+					if(command.length == 2){
+						dataPortClient = Integer.parseInt(command[1]);
+						dataTCP = "PRT" + " " + dataPortClient;				// PORT <SP> <host-port> <CRLF>
+						System.out.println("dataTCP: " + dataTCP);
+						output.println(dataTCP);
 					}
-					dataTCP = "PRT" + " " + hostDirection + " " + dataPort; // PORT <SP> <host-port> <CRLF>
-					System.out.println("dataTCP: " + dataTCP);
-					output.println(dataTCP);
+					else{
+						System.out.println("Bad structure of PORT");
+					}
 				}
 				else if (data.startsWith("get")) {
 					String[] command = data.split(" ");
@@ -78,7 +72,7 @@ public class TextClient {
 					output.println(dataTCP);
 					System.out.println("Attempting to get file: " + filename);
 					// receiveFile(filename);
-					DataClient.receiveFile(filename, hostDirection, dataPort);
+					DataClient.receiveFile(filename, dataPortClient);
 				} 
 				else if (data.startsWith("mkdir")) {
 					String[] command = data.split(" ");
@@ -113,36 +107,35 @@ public class TextClient {
 				} 
 				else if (data.startsWith("list")) {
 					String[] command = data.split(" ");
-					String pathDirectory = currentDirectory + command[1];
-					dataTCP = "LIST" + " " + pathDirectory; 				// LIST [<SP> <pathname>] <CRLF>
+					dataTCP = "LIST";
+					//dataTCP = "LIST" + " " + command[1]; 					// LIST [<SP> <pathname>] <CRLF>
 					System.out.println(dataTCP);
 					output.println(dataTCP);
 					receiveListFiles(input);
 				} 
 				else if (data.startsWith("delete")) {
 					String[] command = data.split(" ");
-					String pathDirectory = currentDirectory + command[1];
+					String pathDirectory = command[1];
 					dataTCP = "DELE" + " " + pathDirectory; 				// DELE <SP> <pathname> <CRLF>
 					System.out.println(dataTCP);
 					output.println(dataTCP);
 				} 
 				else if (data.startsWith("rename")) {
 					String[] command = data.split(" ");
-					String pathDirectory = currentDirectory + command[1];
-					dataTCP = "RNFR" + " " + pathDirectory; 				// RNFR <SP> <pathname> <CRLF>
+					dataTCP = "RNFR" + " " + command[1] + " " + command[2];	// RNFR <SP> <pathname> <CRLF>
 					output.println(dataTCP);
 					System.out.println(dataTCP);
 				} 
 				else if (data.startsWith("user")) {
 					String[] command = data.split(" ");
-					String user = currentDirectory + command[1];
+					String user = command[1];
 					dataTCP = "USER" + " " + user; 							// USER <SP> <username> <CRLF>
 					output.println(dataTCP);
 					// System.out.println(dataTCP);
 				} 
 				else if (data.startsWith("password")) {
 					String[] command = data.split(" ");
-					String password = currentDirectory + command[1];
+					String password = command[1];
 					dataTCP = "PASS" + " " + password; 						// PASS <SP> <password> <CRLF>
 					output.println(dataTCP);
 					// System.out.println(dataTCP);
@@ -229,18 +222,6 @@ public class TextClient {
 		}
 
 		return false;
-	}
-
-	private static int convertToDecimal(String hexNumber) {
-		String digits = "0123456789ABCDEF";
-	    String s = hexNumber.toUpperCase();
-	    int value = 0;
-	    for (int i = 0; i < s.length(); i++) {
-	        char c = s.charAt(i);
-	        int d = digits.indexOf(c);
-	        value = 16*value + d;
-	    }
-	    return value;
 	}
 
 /*	

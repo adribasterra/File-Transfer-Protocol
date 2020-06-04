@@ -1,0 +1,5 @@
+chakra.jpg
+genres.json
+qr-code.png
+test.txt
+r.txt

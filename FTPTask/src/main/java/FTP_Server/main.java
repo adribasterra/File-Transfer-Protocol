@@ -5,8 +5,10 @@
  */
 package FTP_Server;
 
+import org.w3c.dom.Text;
+
 /**
- *
+ **
  * @author jojoj
  */
 public class main {
@@ -14,10 +16,9 @@ public class main {
     /**
      * @param args the command line arguments
      */
-    public static void main(String[] args) {
-        // TODO code application logic here
+    public static void main(String[] args){
         System.out.println("SERVER\n\n");
-	TextServer.testServer();
+	    TextServer.testServer();
     }
     
 }

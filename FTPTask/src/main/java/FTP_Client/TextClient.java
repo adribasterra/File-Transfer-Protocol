@@ -8,6 +8,8 @@ import java.io.*;
 public class TextClient {
 	
 	private static int controlPort = 21;
+	private static String hostDirection = "localhost";
+	private static String dataTCP = "";
 
 	public static void testClient() {
 
@@ -20,7 +22,7 @@ public class TextClient {
 			//String result = "";
 
 			// Connect with the server
-			Socket connection = new Socket("localhost", controlPort);
+			Socket connection = new Socket(hostDirection, controlPort);
 
 			// Recover input & output from connection
 			BufferedReader input = new BufferedReader(new InputStreamReader(connection.getInputStream()));
@@ -29,140 +31,131 @@ public class TextClient {
 			Boolean loggegIn = false;
 			while (!loggegIn) loggegIn = logIn(input, output);
 
-			String curDir = "files\\";
-			String baseDir = "files\\";
+			String currentDirectory = "files\\";
+			String baseDirectory = "files\\";
 
-			while(data.compareTo("END") != 0) {
+			while (data.compareTo("END") != 0) {
 
 				// Input for reading from keyboard
 				BufferedReader inputKeyboard = new BufferedReader(new InputStreamReader(System.in));
-				System.out.print("FTP (END to close the server): "+curDir+"> ");
+				System.out.print("FTP (END to close the server): " + currentDirectory + "> ");
 				data = inputKeyboard.readLine();
-
 
 				if (data.startsWith("send")) {
 					String[] command = data.split(" ");
-					String filename = baseDir + command[1];
-					String dataTCP = "STOR" + " " + filename;					//STOR <SP> <pathname> <CRLF> 
+					String filename = baseDirectory + command[1];
+					dataTCP = "STOR" + " " + filename; // STOR <SP> <pathname> <CRLF>
 					output.println(dataTCP);
 					System.out.println("Attempting to send file: " + filename);
-					//sendFile(filename);
+					// sendFile(filename);
 					DataClient.sendFile(filename);
-				}
-				else if (data.startsWith("get")) {
+				} else if (data.startsWith("get")) {
 					String[] command = data.split(" ");
-					String filename = curDir + command[1];
-					String dataTCP = "RETR" + " " + filename;					//RETR <SP> <pathname> <CRLF> 
+					String filename = currentDirectory + command[1];
+					dataTCP = "RETR" + " " + filename; // RETR <SP> <pathname> <CRLF>
 					output.println(dataTCP);
 					System.out.println("Attempting to get file: " + filename);
-					//receiveFile(filename);
+					// receiveFile(filename);
 					DataClient.receiveFile(filename);
-				}
-				else if (data.startsWith("mkdir")) {
+				} else if (data.startsWith("mkdir")) {
 					String[] command = data.split(" ");
-					String directory = curDir + command[1];
-					String dataTCP = "MKD" + " " + directory;					//MKD <SP> <pathname> <CRLF> 
+					String directory = currentDirectory + command[1];
+					dataTCP = "MKD" + " " + directory; // MKD <SP> <pathname> <CRLF>
 					output.println(dataTCP);
 					System.out.println("Attempting to create directory: " + directory);
-					//receiveFile(filename);
-					//new File(directory).mkdir();
-				}
-				else if (data.startsWith("cd")) {
+					// receiveFile(filename);
+					// new File(directory).mkdir();
+				} else if (data.startsWith("cd")) {
 					String[] command = data.split(" ");
-					String dataTCP = "CWD" + " " + command[1]; 					//CWD <SP> <pathname> <CRLF>
+					dataTCP = "CWD" + " " + command[1]; // CWD <SP> <pathname> <CRLF>
 					output.println(dataTCP);
 					String directory = input.readLine();
-					
-					if ( !directory.isEmpty() ) {
-						curDir = directory;
-					}else{
+
+					if (!directory.isEmpty()) {
+						currentDirectory = directory;
+					} else {
 						System.out.println("ERROR: Access forbidden outside the \"files\\\" folder!");
 					}
 				}
 
-				else if(data.startsWith("port")){
-					String[] command = data.split(" ");
+				else if (data.startsWith("port")) {
+					String command = data.substring(5);
 					String hostPort = "";
-					for(int i = 1; i<command.length; i++) hostPort = command[i];
-					String dataTCP = "PORT" + " " + hostPort;					//PORT <SP> <host-port> <CRLF>
+					dataTCP = "PORT" + " " + hostPort; // PORT <SP> <host-port> <CRLF>
 					output.println(dataTCP);
 				}
-				
-				else if(data.startsWith("get path")) {
-					//String[] command = data.split(" ");
-					String dataTCP = "PWD"; 									//PWD <CRLF>
+
+				else if (data.startsWith("get path")) {
+					// String[] command = data.split(" ");
+					dataTCP = "PWD"; // PWD <CRLF>
 					output.println(dataTCP);
-				}
-				else if(data.startsWith("remove")) {
+				} else if (data.startsWith("remove")) {
 					String[] command = data.split(" ");
-					String dataTCP = "RMD" + command[1]; 						//RMD <SP> <pathname> <CRLF>
+					dataTCP = "RMD" + command[1]; // RMD <SP> <pathname> <CRLF>
 					output.println(dataTCP);
-				}
-				else if (data.startsWith("list")) {
+				} else if (data.startsWith("list")) {
 					String[] command = data.split(" ");
-					String pathDirectory = curDir + command[1];
-					String dataTCP = "LIST" + " " + pathDirectory;				//LIST [<SP> <pathname>] <CRLF>
-						System.out.println(dataTCP);
+					String pathDirectory = currentDirectory + command[1];
+					dataTCP = "LIST" + " " + pathDirectory; // LIST [<SP> <pathname>] <CRLF>
+					System.out.println(dataTCP);
 					output.println(dataTCP);
 					receiveListFiles(input);
-				}
-				else if (data.startsWith("delete")) {
+				} else if (data.startsWith("delete")) {
 					String[] command = data.split(" ");
-					String pathDirectory = curDir + command[1];
-					String dataTCP = "DELE" + " " + pathDirectory;				//DELE <SP> <pathname> <CRLF>
-						System.out.println(dataTCP);
+					String pathDirectory = currentDirectory + command[1];
+					dataTCP = "DELE" + " " + pathDirectory; // DELE <SP> <pathname> <CRLF>
+					System.out.println(dataTCP);
 					output.println(dataTCP);
-				}
-				else if (data.startsWith("rename")) {
+				} else if (data.startsWith("rename")) {
 					String[] command = data.split(" ");
-					String pathDirectory = curDir + command[1];
-					String dataTCP = "RNFR" + " " + pathDirectory;				//RNFR <SP> <pathname> <CRLF>
+					String pathDirectory = currentDirectory + command[1];
+					dataTCP = "RNFR" + " " + pathDirectory; // RNFR <SP> <pathname> <CRLF>
 					output.println(dataTCP);
-					//System.out.println(dataTCP);
-				}
-				else if(data.startsWith("user")) {
+					System.out.println(dataTCP);
+				} else if (data.startsWith("user")) {
 					String[] command = data.split(" ");
-					String user = curDir + command[1];
-					String dataTCP = "USER" + " " + user;						//USER <SP> <username> <CRLF>
+					String user = currentDirectory + command[1];
+					dataTCP = "USER" + " " + user; // USER <SP> <username> <CRLF>
 					output.println(dataTCP);
-					//System.out.println(dataTCP);
-				}
-				else if(data.startsWith("password")) {
+					// System.out.println(dataTCP);
+				} else if (data.startsWith("password")) {
 					String[] command = data.split(" ");
-					String password = curDir + command[1];
-					String dataTCP = "PASS" + " " + password;					//PASS <SP> <password> <CRLF>
+					String password = currentDirectory + command[1];
+					dataTCP = "PASS" + " " + password; // PASS <SP> <password> <CRLF>
 					output.println(dataTCP);
-					//System.out.println(dataTCP);
-				}
-				else if(data.compareTo("END")==0) {
+					// System.out.println(dataTCP);
+				} else if(data.startsWith("quit")){
+					dataTCP = "QUIT";
+					output.println(dataTCP);
+
+				} else if (data.compareTo("END") == 0) {
 					output.println(data);
 				}
-				else{
+				else {
 					System.out.println("Error: Command unrecognised");
 				}
-				//result = input.readLine();
+				// result = input.readLine();
 				// Send data to server
-				//output.println(data);
+				// output.println(data);
 				// Read data from server
-				//result = input.readLine();
-				/* if (result.compareTo("ok") !=0) {
-				
-				sendFile(data);
+				// result = input.readLine();
+				/*
+				 * if (result.compareTo("ok") !=0) {
+				 * 
+				 * sendFile(data);
+				 * 
+				 * } if(data.compareTo("END") !=0) { System.out.println("Data = " + data +
+				 * " --- Result = " + result); }
+				 */
 
-				}
-				if(data.compareTo("END") !=0) {
-					System.out.println("Data = " + data + " --- Result = " + result);	
-				}*/
-				
 			}
-
 
 			// Close the connection
 			connection.close();
 			System.out.println("Client Closed");
 
-		}  catch(IOException e) {
-			System.out.println("Error: " + e);		
+		} catch (IOException e) {
+			System.out.println("Error: " + e);
 		}
 	}
 
@@ -171,7 +164,7 @@ public class TextClient {
 			System.out.println("Here is the list of files on the server:");
 
 			String s = input.readLine();
-			while (s.compareTo("END")!=0) {
+			while (s.compareTo("END") != 0) {
 				System.out.println(" > " + s);
 				s = input.readLine();
 			}
@@ -182,33 +175,35 @@ public class TextClient {
 		return false;
 	}
 
-	public static boolean logIn(BufferedReader input, PrintWriter output){
+	public static boolean logIn(BufferedReader input, PrintWriter output) {
 		String data = null;
 		try {
 			BufferedReader inputKeyboard = new BufferedReader(new InputStreamReader(System.in));
 			System.out.println("To use this server you must first log in.");
 			System.out.print("Username: ");
-			
+
 			data = inputKeyboard.readLine();
 			output.println(data);
 			String result = input.readLine();
 			System.out.println(result);
-			if (result.compareTo("User WRONG")==0) return false;
+			if (result.compareTo("User WRONG") == 0)
+				return false;
 
 			System.out.print("Password: ");
 			data = inputKeyboard.readLine();
 			output.println(data);
 			result = input.readLine();
 			System.out.println(result);
-			if (result.compareTo("Password WRONG")==0) return false;
+			if (result.compareTo("Password WRONG") == 0)
+				return false;
 
 			return true;
 
 		} catch (Exception e) {
 			e.printStackTrace();
-			System.out.println("Error : "+e);
+			System.out.println("Error : " + e);
 		}
-		
+
 		return false;
 	}
 

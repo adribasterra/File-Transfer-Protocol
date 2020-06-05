@@ -17,13 +17,14 @@ public class TextClient {
 
 	public static void testClient() {
 
+		/* 	Need this for reading commands from server
+		 * 		String result = input.readLine();
+		 * 		System.out.println(result);
+		 */
+
 		try {
-
-			//int port = 21;
-
 			// Send & recover data
 			String data = "";
-			//String result = "";
 
 			// Connect with the server
 			Socket connection = new Socket(hostDirection, controlPort);
@@ -138,12 +139,12 @@ public class TextClient {
 				}
 				else if (data.startsWith("get path")) {
 					// String[] command = data.split(" ");
-					dataTCP = "PWD"; 										// PWD <CRLF>
+					dataTCP = "PWD"; 											// PWD <CRLF>
 					output.println(dataTCP);
 				} 
 				else if (data.startsWith("remove")) {
 					String[] command = data.split(" ");
-					dataTCP = "RMD" + command[1];							// RMD <SP> <pathname> <CRLF>
+					dataTCP = "RMD" + command[1];								// RMD <SP> <pathname> <CRLF>
 					output.println(dataTCP);
 				} 
 				else if (data.startsWith("user")) {
@@ -243,110 +244,5 @@ public class TextClient {
 
 		return false;
 	}
-
-/*	
-	public static boolean sendFile(String filename) {
-		File fileData = new File(filename);
-		if (!fileData.exists()){
-			System.out.println("ERROR: File "+filename+" does not exist here!");
-			return false;
-		}
-		
-		try {
-			int filePort = 20;
-			String result;
-	
-			ServerSocket sServ = new ServerSocket(filePort);
-			System.out.println("Client waiting for response before sending");
-			
-			Socket sCon = sServ.accept();
-			System.out.println("File transfer Connection accepted");
-
-			BufferedReader resInput = new BufferedReader(new InputStreamReader(sCon.getInputStream()));
-			ObjectOutputStream fileOutput = new ObjectOutputStream(sCon.getOutputStream());
-			
-			//FileInputStream file = new FileInputStream(data);
-			
-			fileOutput.writeObject(fileData);
-			result = resInput.readLine();
-			System.out.println(result);
-
-			System.out.println("Finished transferring file info");
-
-			FileInputStream original = new FileInputStream(filename);
-			BufferedInputStream originalBuffer = new BufferedInputStream(original);
-			
-			BufferedOutputStream copyBuffer = new BufferedOutputStream(sCon.getOutputStream());
-			
-			// Loop to read a file and write in another
-			byte [] array = new byte[1000];
-			int n_bytes = originalBuffer.read(array);
-			while (n_bytes > 0)
-			{
-				copyBuffer.write(array,0,n_bytes);
-				n_bytes=originalBuffer.read(array);
-			}
-
-			// Close the files
-			originalBuffer.close();
-			copyBuffer.close();
-
-			sCon.close();
-			sServ.close();
-			System.out.println("File transfer Server closed");
-			return true;
-		}
-		catch (Exception e) {
-			System.out.println("Error writing byte to text :" + e);
-		}
-		return false;
-	}
-
-
-
-	public static boolean receiveFile(String filename){
-		File fileData = null;
-		try {
-			int filePort = 20;
-			Socket connection = new Socket("localhost", filePort);
-
-			fileData = new File(filename);
-			System.out.println(fileData.toURI());
-			//resOutput.println("ok");
-			if (!fileData.createNewFile()){
-				String msg = "ERROR: A file named "+fileData.getName()+" already exists on the server.\n";
-				System.out.println(msg);
-				//resOutput.println(msg);
-				connection.close();
-				return false;
-			}
-
-			BufferedInputStream originalBuffer = new BufferedInputStream(connection.getInputStream());
-			
-			FileOutputStream  copy = new FileOutputStream (fileData);
-			BufferedOutputStream copyBuffer = new BufferedOutputStream(copy);
-			
-			// Loop to read a file and write in another
-			byte [] array = new byte[1000];
-			int n_bytes = originalBuffer.read(array);
-
-			while (n_bytes > 0)
-			{
-				copyBuffer.write(array,0,n_bytes);
-				n_bytes=originalBuffer.read(array);
-			}
-
-			// Close the files
-			originalBuffer.close();
-			copyBuffer.close();
-
-			connection.close();
-			return true;
-		} catch (Exception e) {
-			System.out.println("Error receiving file :" + e);
-		}
-		return false;
-	}
-*/
 }
 

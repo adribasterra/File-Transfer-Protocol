@@ -101,22 +101,24 @@ public class TextServer {
 
 				System.out.println(data);
 
-				if (data.startsWith("STOR")) {
+				if (data.startsWith("STOR")) { 		//FUNCIONA
 					String[] command = data.split(" ");
-					String filename = command[1];
-					System.out.println(filename);
-					//output.println("Attempting to receive file: " + filename);
-					if(hasPort) {
-						DataServer.receiveFile(filename, dataPortClient);
-						addFilenameToList(filename);
+					if(command.length == 2){
+						String filename = command[1];
+						System.out.println("Receive: " + filename);
+						if(hasPort) {
+							boolean response = DataServer.receiveFile(filename, dataPortClient);
+							if (response) addFilenameToList(filename);
+						}
+						else{ //There is no dataPort
+							output.println(CMD_CANT_OPEN_CONNECTION);
+						}
 					}
-					else{
-						System.out.println("Missing PORT command");
-						output.println(CMD_CANT_OPEN_CONNECTION);
+					else{ //There is no path for file
+						output.print(CMD_BAD_SEQUENCE);
 					}
-					//receiveFile(filename);
 				}
-				else if (data.startsWith("PRT")) {
+				else if (data.startsWith("PRT")) { 	//FUNCIONA
 					//Structure of type: h1,h2,h3,h4,p1,p2
 					String[] command = data.split(" ");
 					if(command.length == 2){
@@ -125,21 +127,20 @@ public class TextServer {
 					}
 					else{
 						output.print(CMD_BAD_SEQUENCE);
-						System.out.println("Bad structure of PORT");
 					}
 				}
-				else if (data.startsWith("RETR")) {
+				else if (data.startsWith("RETR")) { //FUNCIONA
+					System.out.println("Buenos días servidor");
 					String[] command = data.split(" ");
-					String filename = command[1];
-					//output.println("Attempting to receive file: " + filename);
-					if(hasPort){
-						DataServer.sendFile(filename, dataPortClient);
+					if(command.length == 2){
+						String filename = currentDirectory + command[1];
+						System.out.println(filename);
+						System.out.println(hasPort);
+						if(hasPort) DataServer.sendFile(filename, dataPortClient);
+						else output.println(CMD_CANT_OPEN_CONNECTION);
+					} else{
+						output.print(CMD_BAD_SEQUENCE);
 					}
-					else{
-						System.out.println("Missing PORT");
-						output.println(CMD_CANT_OPEN_CONNECTION);
-					}
-					//sendFile(filename);
 				}
 				else if (data.startsWith("MKD")) { 
 					String[] command = data.split(" ");
@@ -178,20 +179,20 @@ public class TextServer {
 					String[] command = data.split(" ");
 					String directory = canonicalDir(currentDirectory, command[1]);
 					
-					/* if(madeIt) { System.out.println(CMD_COMPLETED); }
-					 * else { System.out.println(CMD_FILE_UNAVAILABLE); }
-					 */
 				}
 				
 				else if (data.startsWith("LIST")) {
 					System.out.println("Attempting to list files.");
 					listFiles(output);
 				}
-				else if (data.startsWith("DELE")) {
+				else if (data.startsWith("DELE")) {	//FUNCIONA
 					String[] command = data.split(" ");
-					String filename = currentDirectory + command[1];
+					if(command.length == 2){
+						String filename = currentDirectory + command[1];
+						deleteFile(filename);
+					}
+					else output.print(CMD_BAD_SEQUENCE);
 					//output.println("Attempting to receive file: " + filename);
-					deleteFile(filename);
 				}
 				else if (data.startsWith("RNFR")) {
 					String[] command = data.split(" ");
@@ -202,13 +203,9 @@ public class TextServer {
 						if(newFilename != currentDirectory) {
 							renameFile(oldFilename, newFilename);
 						}
-						else System.out.println("Names are the same!");
+						else output.println(CMD_FILENAME_NOT_ALLOWED);
 					}
-					else {
-						//output.println("Attempting to receive file: " + filename);
-						System.out.println(CMD_FURTHER_INFO);
-						output.println(CMD_FURTHER_INFO);
-					}
+					else output.print(CMD_BAD_SEQUENCE);
 				}
 				else if(data.startsWith("USER")) {
 					String userData = data.substring(5).trim();

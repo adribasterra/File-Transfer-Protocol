@@ -19,5 +19,4 @@ public class main {
         System.out.println("CLIENT\n\n");
         TextClient.testClient();
     }
-    
 }

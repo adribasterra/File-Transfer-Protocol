@@ -21,7 +21,11 @@ public class DataServer {
 	private static int dataPortServer = 20;
 	
 	public static boolean receiveFile(String filename, int dataPortClient){
-		//File fileData = null;
+		File fileData = new File(filename);
+		if(fileData.exists()){
+			System.out.println("ALREADY EXISTS IN SERVER");
+			return false;
+		}
 		try {
 			//int filePort = 20;
 			//output.println(CMD_FILE_STATUS_OKAY);
@@ -55,9 +59,10 @@ public class DataServer {
 	}
 
 	public static boolean sendFile(String filename, int dataPortClient) {
+		File fileData = new File(filename);
 		if (!fileData.exists()){
 			System.out.println("ERROR: File "+filename+" does not exist here!");
-			output.println(CMD_FILE_ACTION_UNAVAILABLE);
+			//output.println(CMD_FILE_ACTION_UNAVAILABLE);
 			return false;
 		}
 		try {
@@ -74,7 +79,6 @@ public class DataServer {
 			
 			BufferedOutputStream copyBuffer = new BufferedOutputStream(sCon.getOutputStream());
 			
-			File fileData = new File(filename);
 			// Loop to read a file and write in another
 			byte [] array = new byte[1000];
 			int n_bytes = originalBuffer.read(array);

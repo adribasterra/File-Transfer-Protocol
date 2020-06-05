@@ -43,8 +43,13 @@ public class DataClient {
 	}
 	
 	public static  boolean receiveFile(String filename, int dataPortClient){
-		System.out.println("He entrado");
-		File fileData = null;
+		File fileData = new File(filename);
+		System.out.println(filename);
+		System.out.println(fileData.exists());
+		if(fileData.exists()){
+			System.out.println("ALREADY EXISTS IN CLIENT");
+			return false;
+		}
 		try {
 			System.out.println("dataPort in DataClient: " + dataPortClient);
 

@@ -1,12 +1,5 @@
-chakra.jpg
+chackra.jpg
 genres.json
+other.txt
 qr-code.png
 test.txt
-r.txt
-other.txt
-other.txt
-other.txt
-other.txt
-other.txt
-other.txt
-other.txt

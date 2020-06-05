@@ -3,13 +3,8 @@ package FTP_Client;
 import java.net.*;
 import java.io.*;
 
-// Example: Client that receives and sends bytes
-// ByteClient
-
 public class DataClient {
-	
-	public static PrintWriter output;
-	
+
 	public static boolean sendFile(String filename, int dataPortClient) {
 		File fileData = new File(filename);
 		if (!fileData.exists()){
@@ -20,7 +15,6 @@ public class DataClient {
 		
 		try {
 			Socket sCon = new Socket("localhost", dataPortClient);
-			System.out.println("sCon opened");
 
 			InputStream inputStream = new FileInputStream(filename);
 			OutputStream outputStream = sCon.getOutputStream();
@@ -44,24 +38,17 @@ public class DataClient {
 	
 	public static  boolean receiveFile(String filename, int dataPortClient){
 		File fileData = new File(filename);
-		System.out.println(filename);
-		System.out.println(fileData.exists());
 		if(fileData.exists()){
 			System.out.println("ALREADY EXISTS IN CLIENT");
 			return false;
 		}
 		try {
-			System.out.println("dataPort in DataClient: " + dataPortClient);
-
 			Socket connection = new Socket("localhost", dataPortClient);
 
 			fileData = new File(filename);
-			System.out.println(fileData.toURI());
-			//resOutput.println("ok");
+			//System.out.println(fileData.toURI());
 			if (!fileData.createNewFile()){
-				String msg = "ERROR: A file named "+fileData.getName()+" already exists on the server.\n";
-				System.out.println(msg);
-				//resOutput.println(msg);
+				System.out.println("ERROR: A file named "+fileData.getName()+" already exists on the server.\n");
 				connection.close();
 				return false;
 			}
@@ -80,8 +67,6 @@ public class DataClient {
 				copyBuffer.write(array,0,n_bytes);
 				n_bytes=originalBuffer.read(array);
 			}
-
-			System.out.println("Hola");
 
 			// Close the files
 			originalBuffer.close();

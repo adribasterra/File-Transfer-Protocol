@@ -13,23 +13,17 @@ public class DataServer {
 		
 		public static final String CMD_CANT_OPEN_CONNECTION = "425. Can't open data connection.";
 		
+		public static final String CMD_FILE_UNAVAILABLE = "550. Requested action not taken. File unavailable.";
+		
 		public static final String CMD_FILE_ACTION_UNAVAILABLE= "450. Requested file action not taken. File unavailable.";
 		
 		public static final String CMD_FILENAME_NOT_ALLOWED = "553. Requested action not taken. File name not allowed.";
 
-	public static PrintWriter output;
-	private static int dataPortServer = 20;
-	
-	public static boolean receiveFile(String filename, int dataPortClient){
-		File fileData = new File(filename);
-		if(fileData.exists()){
-			System.out.println("ALREADY EXISTS IN SERVER");
-			return false;
-		}
+		public static final String CMD_ACTION_ABORTED = "451. Requested action aborted: local error in processing.";
+
+
+	public static boolean receiveFile(String filename, int dataPortClient, PrintWriter output){
 		try {
-			//int filePort = 20;
-			//output.println(CMD_FILE_STATUS_OKAY);
-			
 			ServerSocket sServ = new ServerSocket(dataPortClient);
 			System.out.println("Server waiting for response before receiving");
 
@@ -38,6 +32,7 @@ public class DataServer {
 			InputStream inputStream = sCon.getInputStream();
 			FileOutputStream fileOutputStream = new FileOutputStream(filename);
 
+			//Insufficent storage if bytes.length < file.length
 			byte[] bytes = new byte[1000];
 			int count;
 			while((count = inputStream.read(bytes)) > 0){
@@ -48,31 +43,22 @@ public class DataServer {
 			inputStream.close();
 			sCon.close();
 			sServ.close();
-			//output.println(CMD_SUCCESS);
+			output.println(CMD_SUCCESS);
 			
 			return true;
 		} catch (Exception e) {
 			//System.out.println("Error receiving file :" + e);
-			//output.println(CMD_CANT_OPEN_CONNECTION);
+			output.println(CMD_ACTION_ABORTED);
 		}
 		return false;
 	}
 
-	public static boolean sendFile(String filename, int dataPortClient) {
-		File fileData = new File(filename);
-		if (!fileData.exists()){
-			System.out.println("ERROR: File "+filename+" does not exist here!");
-			//output.println(CMD_FILE_ACTION_UNAVAILABLE);
-			return false;
-		}
+	public static boolean sendFile(String filename, int dataPortClient, PrintWriter output) {
 		try {
-			
-			System.out.println("dataPort in DataServer " + dataPortServer);
 			ServerSocket sServ = new ServerSocket(dataPortClient);
 			System.out.println("Server waiting for response before sending");
 			
 			Socket sCon = sServ.accept();
-			//System.out.println("File transfer Connection accepted");
 
 			FileInputStream original = new FileInputStream(filename);
 			BufferedInputStream originalBuffer = new BufferedInputStream(original);
@@ -95,12 +81,11 @@ public class DataServer {
 			sCon.close();
 			output.println(CMD_SUCCESS);
 			sServ.close();
-			//System.out.println("File transfer Server closed");
 			return true;
 		}
 		catch (Exception e) {
 			System.out.println("Error writing byte to text :" + e);
-			//output.println(CMD_CANT_OPEN_CONNECTION);
+			output.println(CMD_ACTION_ABORTED);
 		}
 		return false;
 	}

@@ -11,6 +11,7 @@ public class TextClient {
 	private static String hostDirection = "localhost";
 	private static String dataTCP = "";
 	public static int dataPortClient = -1;
+	private static boolean hasPort = false;
 
 	public static PrintWriter output;
 
@@ -31,6 +32,7 @@ public class TextClient {
 			BufferedReader input = new BufferedReader(new InputStreamReader(connection.getInputStream()));
 			output = new PrintWriter(connection.getOutputStream(), true);
 
+			hasPort = false;
 			Boolean loggegIn = false;
 			while (!loggegIn) loggegIn = logIn(input, output);
 
@@ -44,13 +46,14 @@ public class TextClient {
 				System.out.print("FTP (END to close the server): " + currentDirectory + "> ");
 				data = inputKeyboard.readLine();
 
-				if (data.startsWith("send")) { 	//FUNCIONA
+				if (data.startsWith("send")) {
 					String[] command = data.split(" ");
 					if(command.length == 2){
 						String filename = baseDirectory + command[1];
-						dataTCP = "STOR" + " " + filename; 					// STOR <SP> <pathname> <CRLF>
+						dataTCP = "STOR" + " " + filename; 						// STOR <SP> <pathname> <CRLF>
 						System.out.println("Attempting to send file: " + filename);
-						DataClient.sendFile(filename, dataPortClient);
+						if(hasPort)	DataClient.sendFile(filename, dataPortClient);
+						input.readLine();
 					}
 					else {
 						dataTCP = "STOR";
@@ -58,32 +61,60 @@ public class TextClient {
 					}
 					output.println(dataTCP);
 				}
-				else if (data.startsWith("prt")) { 	//FUNCIONA
+				else if (data.startsWith("prt")) {
 					String[] command = data.split(" ");
 					if(command.length == 2){
 						dataPortClient = Integer.parseInt(command[1]);
-						dataTCP = "PRT" + " " + dataPortClient;				// PORT <SP> <host-port> <CRLF>
+						dataTCP = "PRT" + " " + dataPortClient;					// PORT <SP> <host-port> <CRLF>
 						System.out.println("dataTCP: " + dataTCP);
 						output.println(dataTCP);
+						hasPort = true;
 					}
 					else{
 						System.out.println("Format is not correct");
 					}
 				}
-				else if (data.startsWith("get")) { 	//FUNCIONA
+				else if (data.startsWith("get")) {
 					String[] command = data.split(" ");
 					if(command.length == 2){
 						String filename = command[1];
-						dataTCP = "RETR" + " " + filename; 					// RETR <SP> <pathname> <CRLF>
+						dataTCP = "RETR" + " " + filename; 						// RETR <SP> <pathname> <CRLF>
 						System.out.println("Attempting to get file: " + filename);
-						DataClient.receiveFile(currentDirectory + filename, dataPortClient);
+						if(hasPort)	DataClient.receiveFile(currentDirectory + filename, dataPortClient);
 					}
 					else{
 						System.out.println("Format is not correct");
 						dataTCP = "RETR";
 					}
 					output.println(dataTCP);
+				}
+				else if (data.startsWith("delete")) {
+					String[] command = data.split(" ");
+					if(command.length == 2){
+						String pathDirectory = command[1];
+						dataTCP = "DELE" + " " + pathDirectory; 				// DELE <SP> <pathname> <CRLF>
+					}
+					else dataTCP = "DELE";
+					System.out.println(dataTCP);
+					output.println(dataTCP);
 				} 
+				else if (data.startsWith("rename")) {
+					String[] command = data.split(" ");
+					if(command.length == 3){
+						dataTCP = "RNFR" + " " + command[1] + " " + command[2];	// RNFR <SP> <pathname> <CRLF>
+					}
+					else dataTCP = "RNFR";
+					output.println(dataTCP);
+					System.out.println(dataTCP);
+				} 
+				else if (data.startsWith("list")) {
+					String[] command = data.split(" "); //For directory
+					dataTCP = "LIST";
+					//dataTCP = "LIST" + " " + command[1]; 						// LIST [<SP> <pathname>] <CRLF>
+					System.out.println(dataTCP);
+					output.println(dataTCP);
+					receiveListFiles(input);
+				}
 				else if (data.startsWith("mkdir")) {
 					String[] command = data.split(" ");
 					String directory = currentDirectory + command[1];
@@ -115,33 +146,6 @@ public class TextClient {
 					dataTCP = "RMD" + command[1];							// RMD <SP> <pathname> <CRLF>
 					output.println(dataTCP);
 				} 
-				else if (data.startsWith("list")) {
-					String[] command = data.split(" "); //For directory
-					dataTCP = "LIST";
-					//dataTCP = "LIST" + " " + command[1]; 					// LIST [<SP> <pathname>] <CRLF>
-					System.out.println(dataTCP);
-					output.println(dataTCP);
-					receiveListFiles(input);
-				} 
-				else if (data.startsWith("delete")) {	//FUNCIONA
-					String[] command = data.split(" ");
-					if(command.length == 2){
-						String pathDirectory = command[1];
-						dataTCP = "DELE" + " " + pathDirectory; 				// DELE <SP> <pathname> <CRLF>
-					}
-					else dataTCP = "DELE";
-					System.out.println(dataTCP);
-					output.println(dataTCP);
-				} 
-				else if (data.startsWith("rename")) {
-					String[] command = data.split(" ");
-					if(command.length == 3){
-						dataTCP = "RNFR" + " " + command[1] + " " + command[2];	// RNFR <SP> <pathname> <CRLF>
-					}
-					else dataTCP = "RNFR";
-					output.println(dataTCP);
-					System.out.println(dataTCP);
-				}
 				else if (data.startsWith("user")) {
 					String[] command = data.split(" ");
 					String user = command[1];

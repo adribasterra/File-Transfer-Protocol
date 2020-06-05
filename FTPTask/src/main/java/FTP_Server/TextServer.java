@@ -84,8 +84,8 @@ public class TextServer {
 			output.println(CMD_SERVICE_READY);
 			System.out.println(CMD_SERVICE_READY);
 
-			Boolean loggedIn = false;
-			while (!loggedIn) loggedIn = logIn(input, output);
+			//Boolean loggedIn = false;
+			//while (!loggedIn) loggedIn = logIn(input, output);
 
 			//ShowGuideline();
 

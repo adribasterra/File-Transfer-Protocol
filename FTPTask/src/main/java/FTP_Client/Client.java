@@ -23,7 +23,7 @@ public class Client {
     /**
      * @param args the command line arguments
      */
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) throws IOException, InterruptedException {
         // TODO code application logic here
 
         String Host = "localhost";
@@ -49,6 +49,7 @@ public class Client {
             
         System.out.println("introducir otra cadena: ");
         cad = in.readLine();
+         Thread.sleep(5 * 1000);
         
         }
         output.close();

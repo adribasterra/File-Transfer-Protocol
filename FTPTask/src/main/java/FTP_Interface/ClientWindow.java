@@ -27,14 +27,12 @@ public class ClientWindow extends javax.swing.JFrame {
     public ClientWindow() {
         initComponents();
         this.setLocationRelativeTo(null);
-        setBackground(new Color(0.0f,0.0f,0.0f,0.0f));
+        setBackground(new Color(0.0f, 0.0f, 0.0f, 0.0f));
     }
-    
-    
+
     ServerWindow ServerPanel = new ServerWindow();
     //RenameFilesWindow RenamePanel = new RenameFilesWindow();
     DirectorySWindow DirectPanel = new DirectorySWindow();
-    
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -123,57 +121,58 @@ public class ClientWindow extends javax.swing.JFrame {
         //ServerPanel.dispose();
         RenameFilesWindow RenamePanel = new RenameFilesWindow();
         RenamePanel.setVisible(true);
-        
+
     }//GEN-LAST:event_addButtonMouseClicked
 
     private void formWindowOpened(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowOpened
         // TODO add your handling code here:
-               for (double i=0.0;i<=1.0;i = i+ 0.1){
-        
-           String val = i+ "";
-           float f = Float.valueOf(val);
-           this.setOpacity(f);
-            try{
-            
-               Thread.sleep(50);
+        for (double i = 0.0; i <= 1.0; i = i + 0.1) {
+
+            String val = i + "";
+            float f = Float.valueOf(val);
+            this.setOpacity(f);
+            try {
+
+                Thread.sleep(50);
+            } catch (Exception e) {
             }
-            catch (Exception e){}
-            
+
         }
     }//GEN-LAST:event_formWindowOpened
 
     private void UploadBuutonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_UploadBuutonMouseClicked
         // TODO add your handling code here:
         DirectPanel.setVisible(true);
-        
+
     }//GEN-LAST:event_UploadBuutonMouseClicked
 
     private void downloadButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_downloadButtonMouseClicked
         // TODO add your handling code here:
-          int controlPort = 21;
+        int controlPort = 21;
         try {
-            
-            
-                //int port = 21
+
+            //int port = 21
+            // Connect with the server
+            Socket connection = new Socket("localhost", controlPort);
+            //connection = ExitConection;
+
+            // Recover input & output from connection
+            PrintWriter output = new PrintWriter(connection.getOutputStream(), true);
+
+            String s = ComandField.getText();
+            output.println(s);
+            //Ponemos a "Dormir" el programa durante los ms que queremos
+            Thread.sleep(5 * 1000);
+
+            connection.close();
+            System.out.println("SE CERRO");
+        } catch (IOException ex) {
+            Logger.getLogger(main.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (InterruptedException ex) {
+            Logger.getLogger(ClientWindow.class.getName()).log(Level.SEVERE, null, ex);
+        }
         
-        
-                // Connect with the server
-                Socket connection = new Socket("localhost", controlPort);
-                //connection = ExitConection;
-            
-             // Recover input & output from connection
-                PrintWriter output = new PrintWriter(connection.getOutputStream(), true);
-                
-                String s = ComandField.getText();
-                output.println(s);
-                
-                //connection.close();
-        
-            
-             } catch (IOException ex) {
-             Logger.getLogger(main.class.getName()).log(Level.SEVERE, null, ex);
-            }
-        
+
     }//GEN-LAST:event_downloadButtonMouseClicked
 
     private void jButton1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton1MouseClicked

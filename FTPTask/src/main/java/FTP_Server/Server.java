@@ -26,14 +26,14 @@ public class Server {
         
         ServerSocket server;
         server = new ServerSocket(21);
-        System.out.println("iniciaciando...");
+        System.out.println("Character Server waiting for requests");
         while(true){
         
         Socket Client = new Socket();
         Client = server.accept();
         ServerThread Thread = new ServerThread(Client);
         Thread.start();
-        System.out.println("Hilo arrancando");
+        System.out.println("An anonymous user is conecting to the server...");
                 
         
         }

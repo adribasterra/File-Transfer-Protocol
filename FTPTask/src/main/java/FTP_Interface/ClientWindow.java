@@ -5,7 +5,15 @@
  */
 package FTP_Interface;
 
+import static FTP_Client.TextClient.logIn;
 import java.awt.Color;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
+import java.net.Socket;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -19,14 +27,12 @@ public class ClientWindow extends javax.swing.JFrame {
     public ClientWindow() {
         initComponents();
         this.setLocationRelativeTo(null);
-        setBackground(new Color(0.0f,0.0f,0.0f,0.0f));
+        setBackground(new Color(0.0f, 0.0f, 0.0f, 0.0f));
     }
-    
-    
+
     ServerWindow ServerPanel = new ServerWindow();
     //RenameFilesWindow RenamePanel = new RenameFilesWindow();
     DirectorySWindow DirectPanel = new DirectorySWindow();
-    
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -37,9 +43,9 @@ public class ClientWindow extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        ComandField = new javax.swing.JTextField();
         jButton1 = new javax.swing.JButton();
         downloadButton = new javax.swing.JButton();
-        jLabel1 = new javax.swing.JLabel();
         UploadBuuton = new javax.swing.JButton();
         addButton = new javax.swing.JButton();
         ClientLabel = new javax.swing.JLabel();
@@ -55,6 +61,9 @@ public class ClientWindow extends javax.swing.JFrame {
             }
         });
         getContentPane().setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+
+        ComandField.setText("jTextField1");
+        getContentPane().add(ComandField, new org.netbeans.lib.awtextra.AbsoluteConstraints(550, 100, 170, 30));
 
         jButton1.setBorder(null);
         jButton1.setBorderPainted(false);
@@ -77,9 +86,6 @@ public class ClientWindow extends javax.swing.JFrame {
             }
         });
         getContentPane().add(downloadButton, new org.netbeans.lib.awtextra.AbsoluteConstraints(570, 160, 130, 50));
-
-        jLabel1.setText("jLabel1");
-        getContentPane().add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(550, 90, 180, 40));
 
         UploadBuuton.setBorder(null);
         UploadBuuton.setBorderPainted(false);
@@ -115,34 +121,58 @@ public class ClientWindow extends javax.swing.JFrame {
         //ServerPanel.dispose();
         RenameFilesWindow RenamePanel = new RenameFilesWindow();
         RenamePanel.setVisible(true);
-        
+
     }//GEN-LAST:event_addButtonMouseClicked
 
     private void formWindowOpened(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowOpened
         // TODO add your handling code here:
-               for (double i=0.0;i<=1.0;i = i+ 0.1){
-        
-           String val = i+ "";
-           float f = Float.valueOf(val);
-           this.setOpacity(f);
-            try{
-            
-               Thread.sleep(50);
+        for (double i = 0.0; i <= 1.0; i = i + 0.1) {
+
+            String val = i + "";
+            float f = Float.valueOf(val);
+            this.setOpacity(f);
+            try {
+
+                Thread.sleep(50);
+            } catch (Exception e) {
             }
-            catch (Exception e){}
-            
+
         }
     }//GEN-LAST:event_formWindowOpened
 
     private void UploadBuutonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_UploadBuutonMouseClicked
         // TODO add your handling code here:
         DirectPanel.setVisible(true);
-        
+
     }//GEN-LAST:event_UploadBuutonMouseClicked
 
     private void downloadButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_downloadButtonMouseClicked
         // TODO add your handling code here:
+        int controlPort = 21;
+        try {
+
+            //int port = 21
+            // Connect with the server
+            Socket connection = new Socket("localhost", controlPort);
+            //connection = ExitConection;
+
+            // Recover input & output from connection
+            PrintWriter output = new PrintWriter(connection.getOutputStream(), true);
+
+            String s = ComandField.getText();
+            output.println(s);
+            //Ponemos a "Dormir" el programa durante los ms que queremos
+            Thread.sleep(5 * 1000);
+
+            connection.close();
+            System.out.println("SE CERRO");
+        } catch (IOException ex) {
+            Logger.getLogger(main.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (InterruptedException ex) {
+            Logger.getLogger(ClientWindow.class.getName()).log(Level.SEVERE, null, ex);
+        }
         
+
     }//GEN-LAST:event_downloadButtonMouseClicked
 
     private void jButton1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton1MouseClicked
@@ -187,10 +217,10 @@ public class ClientWindow extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel ClientLabel;
+    private javax.swing.JTextField ComandField;
     private javax.swing.JButton UploadBuuton;
     private javax.swing.JButton addButton;
     private javax.swing.JButton downloadButton;
     private javax.swing.JButton jButton1;
-    private javax.swing.JLabel jLabel1;
     // End of variables declaration//GEN-END:variables
 }

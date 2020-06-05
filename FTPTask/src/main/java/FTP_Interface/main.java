@@ -456,7 +456,7 @@ public class main extends javax.swing.JFrame {
             
              } catch (IOException ex) {
              Logger.getLogger(main.class.getName()).log(Level.SEVERE, null, ex);
-        }
+            }
     }
     
     //Condition for the server conection

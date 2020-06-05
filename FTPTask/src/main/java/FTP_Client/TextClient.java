@@ -6,18 +6,18 @@ import java.net.*;
 import java.io.*;
 
 public class TextClient {
-	
-	private static int controlPort = 21;
-	private static String hostDirection = "localhost";
-	private static String dataTCP = "";
-	public static int dataPortClient = -1;
-	private static boolean hasPort = false;
 
-	public static PrintWriter output;
+    private static int controlPort = 21;
+    private static String hostDirection = "localhost";
+    private static String dataTCP = "";
+    public static int dataPortClient = -1;
+    private static boolean hasPort = false;
 
-	public static void testClient() {
+    public static PrintWriter output;
 
-		/* 	Need this for reading commands from server
+    public static void testClient() {
+
+        /* 	Need this for reading commands from server
 		 * 		String result = input.readLine();
 		 * 		System.out.println(result);
 		 */
@@ -34,8 +34,8 @@ public class TextClient {
 			output = new PrintWriter(connection.getOutputStream(), true);
 
 			hasPort = false;
-			Boolean loggegIn = false;
-			while (!loggegIn) loggegIn = logIn(input, output);
+			//Boolean loggegIn = false;
+			//while (!loggegIn) loggegIn = logIn(input, output);
 
 			ShowGuideline();
 
@@ -100,7 +100,7 @@ public class TextClient {
 					else dataTCP = "DELE";
 					System.out.println(dataTCP);
 					output.println(dataTCP);
-				} 
+				}
 				else if (data.startsWith("rename")) {
 					String[] command = data.split(" ");
 					if(command.length == 3){
@@ -109,7 +109,7 @@ public class TextClient {
 					else dataTCP = "RNFR";
 					output.println(dataTCP);
 					System.out.println(dataTCP);
-				} 
+				}
 				else if (data.startsWith("list")) {
 					String[] command = data.split(" "); //For directory
 					dataTCP = "LIST";
@@ -143,31 +143,31 @@ public class TextClient {
 					// String[] command = data.split(" ");
 					dataTCP = "PWD"; 											// PWD <CRLF>
 					output.println(dataTCP);
-				} 
+				}
 				else if (data.startsWith("remove")) {
 					String[] command = data.split(" ");
 					dataTCP = "RMD" + command[1];								// RMD <SP> <pathname> <CRLF>
 					output.println(dataTCP);
-				} 
+				}
 				else if (data.startsWith("user")) {
 					String[] command = data.split(" ");
 					String user = command[1];
 					dataTCP = "USER" + " " + user; 								// USER <SP> <username> <CRLF>
 					output.println(dataTCP);
 					// System.out.println(dataTCP);
-				} 
+				}
 				else if (data.startsWith("password")) {
 					String[] command = data.split(" ");
 					String password = command[1];
 					dataTCP = "PASS" + " " + password; 							// PASS <SP> <password> <CRLF>
 					output.println(dataTCP);
 					// System.out.println(dataTCP);
-				} 
+				}
 				else if(data.startsWith("quit")){
 					dataTCP = "QUIT";
 					output.println(dataTCP);
 
-				} 
+				}
 				else if (data.compareTo("END") == 0) {
 					output.println(data);
 				}
@@ -181,9 +181,9 @@ public class TextClient {
 				// result = input.readLine();
 				/*
 				 * if (result.compareTo("ok") !=0) {
-				 * 
+				 *
 				 * sendFile(data);
-				 * 
+				 *
 				 * } if(data.compareTo("END") !=0) { System.out.println("Data = " + data +
 				 * " --- Result = " + result); }
 				 */
@@ -263,4 +263,3 @@ public class TextClient {
 		System.out.println("'Quit' or 'END' for finishing connection.\n");
 	}
 }
-

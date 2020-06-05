@@ -2,56 +2,50 @@ package FTP_Server;
 // Example: Server that receive and sends characters. It converts the text to upper case.
 
 // CharacterServer.java
-
 import java.net.*;
 import java.util.Scanner;
 
-import org.graalvm.compiler.nodes.calc.IntegerTestNode;
-
+//import org.graalvm.compiler.nodes.calc.IntegerTestNode;
 import java.io.*;
 
 public class TextServer {
 
-		public static final String CMD_SERVICE_READY = "220. Service ready for new user.";
+    public static final String CMD_SERVICE_READY = "220. Service ready for new user.";
 
-		public static final String CMD_OKAY = "200. Okay.";
+    public static final String CMD_OKAY = "200. Okay.";
 
-		public static final String CMD_COMPLETED = "250. Requested file action okay, completed.";
+    public static final String CMD_COMPLETED = "250. Requested file action okay, completed.";
 
-		public static final String CMD_BAD_SEQUENCE = "503. Bad sequence of commands.";
+    public static final String CMD_BAD_SEQUENCE = "503. Bad sequence of commands.";
 
-		public static final String CMD_FILE_STATUS_OKAY = "150. File status okay; about to open data connection.";
+    public static final String CMD_FILE_STATUS_OKAY = "150. File status okay; about to open data connection.";
 
-		public static final String CMD_SUCCESS = "226. Closing data connection. Requested file action successful.";
+    public static final String CMD_SUCCESS = "226. Closing data connection. Requested file action successful.";
 
-		public static final String CMD_CANT_OPEN_CONNECTION = "425. Can't open data connection.";
+    public static final String CMD_CANT_OPEN_CONNECTION = "425. Can't open data connection.";
 
-		public static final String CMD_ACTION_ABORTED = "451. Requested action aborted: local error in processing.";
+    public static final String CMD_ACTION_ABORTED = "451. Requested action aborted: local error in processing.";
 
-		public static final String CMD_FILE_ACTION_UNAVAILABLE= "450. Requested file action not taken. File unavailable.";
+    public static final String CMD_FILE_ACTION_UNAVAILABLE = "450. Requested file action not taken. File unavailable.";
 
-		public static final String CMD_FILE_UNAVAILABLE = "550. Requested action not taken. File unavailable.";
+    public static final String CMD_FILE_UNAVAILABLE = "550. Requested action not taken. File unavailable.";
 
-		public static final String CMD_TRANSFER_ABORTER = "426. Connection closed; transfer aborted.";
+    public static final String CMD_TRANSFER_ABORTER = "426. Connection closed; transfer aborted.";
 
-		public static final String CMD_INSUFFICIENT_STORAGE = "452. Requested action not taken. Insufficient storage space in system.";
+    public static final String CMD_INSUFFICIENT_STORAGE = "452. Requested action not taken. Insufficient storage space in system.";
 
-		public static final String CMD_FILENAME_NOT_ALLOWED = "553. Requested action not taken. File name not allowed.";
-
-		public static final String CMD_FURTHER_INFO = "350. Requested file action pending further information.";
-
-		public static final String CMD_CLOSING = "221. Service closing control connection.";
+    public static final String CMD_FILENAME_NOT_ALLOWED = "553. Requested action not taken. File name not allowed.";
 
 		public final static String CMD_USER_OKAY = "331. User name okay, need password.";
 
 		public final static String CMD_USER_ERROR = "530. User not logged, error";
 
 		public final static String CMD_USER_LOGGED = "230. User logged in, proceed";
-		
+
 		public final static String CMD_GET_DIRECTORY = "257. "; //+ current path directory
-		
+
 		public final static String CMD_PASSIVE_MODE = "227. Entering Passive Mode "; //+ (h1,h2,h3,h4,p1,p2)
-		
+
 
 	private static int controlPort = 21;
 	private static final String user = "user";
@@ -198,7 +192,7 @@ public class TextServer {
 						System.out.println(CMD_BAD_SEQUENCE);
 					}
 				}
-				else if (data.startsWith("MKD")) { 
+				else if (data.startsWith("MKD")) {
 					String[] command = data.split(" ");
 					String fileDir = canonicalDir(currentDirectory, command[1]);
 					if(new File(fileDir).mkdir()) {
@@ -210,7 +204,7 @@ public class TextServer {
 					String[] command = data.split(" ");
 					String directory = canonicalDir(currentDirectory, command[1]);
 					output.println(directory);
-					
+
 					if ( !directory.isEmpty() && new File(directory).isDirectory() ) {
 						currentDirectory = directory;
 						output.println(CMD_COMPLETED);
@@ -225,12 +219,12 @@ public class TextServer {
 					output.println(currentDirectory);
 					output.println(CMD_GET_DIRECTORY + currentDirectory);
 				}
-				
+
 				else if(data.startsWith("RMD")) {
 					//Remove directory
 					String[] command = data.split(" ");
 					String directory = canonicalDir(currentDirectory, command[1]);
-				}				
+				}
 				else if(data.startsWith("USER")) {
 					String userData = data.substring(5).trim();
 					if(userData.compareTo(user)==0) {
@@ -307,7 +301,7 @@ public class TextServer {
 		}
 		return false;
 	}
-	
+
 	public static String canonicalDir(String curDir, String directory) {
 		String[] paths;
 		if (directory.contains("/")) {
@@ -328,7 +322,7 @@ public class TextServer {
 		}
 		return directory;
 	}
-	
+
 	public static boolean addFilenameToList(String filename) {
 		try {
 			Scanner in = new Scanner(new FileReader("fileList.txt"));
@@ -443,7 +437,7 @@ public class TextServer {
 			}
 			input.close();
 			if (line == null) System.out.println("Is empty");
-			
+
 			return true;
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -454,10 +448,10 @@ public class TextServer {
 	}
 
           //INTERFACE
-        
+
         public static String listFiles() {
 		try {
-                    
+
                 String path = "fileList.txt";
                 System.out.println(new File(path).getAbsolutePath());
 				Scanner in = new Scanner(new FileReader("fileList.txt"));
@@ -476,7 +470,7 @@ public class TextServer {
 			output.println(CMD_ACTION_ABORTED);
 		}
 		return null;
-                
+
 	}
 
 	public static void ShowGuideline() {

@@ -82,6 +82,7 @@ public class TextServer {
 			output = new PrintWriter(sCon.getOutputStream(), true);
 
 			output.println(CMD_SERVICE_READY);
+			System.out.println(CMD_SERVICE_READY);
 
 			Boolean loggedIn = false;
 			while (!loggedIn) loggedIn = logIn(input, output);
@@ -105,17 +106,25 @@ public class TextServer {
 						if(fileData.exists()){
 							System.out.println("ALREADY EXISTS IN SERVER");
 							output.println(CMD_FILENAME_NOT_ALLOWED);
+							System.out.println(CMD_FILENAME_NOT_ALLOWED);
 						}
 						else{
 							output.println(CMD_FILE_STATUS_OKAY);
+							System.out.println(CMD_FILE_STATUS_OKAY);
 							if(hasPort) {
 								boolean response = DataServer.receiveFile(filename, dataPortClient, output);
 								if (response) addFilenameToList(filename);
 							}
-							else output.println(CMD_CANT_OPEN_CONNECTION); //There is no dataPort
+							else {
+								output.println(CMD_CANT_OPEN_CONNECTION); //There is no dataPort
+								System.out.println(CMD_CANT_OPEN_CONNECTION);
+							}
 						}
 					}
-					else output.print(CMD_BAD_SEQUENCE); //There is no path for file
+					else {
+						output.print(CMD_BAD_SEQUENCE); //There is no path for file
+						System.out.println(CMD_BAD_SEQUENCE);
+					}
 				}
 				else if (data.startsWith("PRT")) {
 					//Structure of type: h1,h2,h3,h4,p1,p2
@@ -124,8 +133,12 @@ public class TextServer {
 						dataPortClient = Integer.parseInt(command[1]);
 						hasPort = true;
 						output.println(CMD_OKAY);
+						System.out.println(CMD_OKAY);
 					}
-					else output.print(CMD_BAD_SEQUENCE);
+					else {
+						output.print(CMD_BAD_SEQUENCE);
+						System.out.println(CMD_BAD_SEQUENCE);
+					}
 				}
 				else if (data.startsWith("RETR")) {
 					String[] command = data.split(" ");
@@ -135,13 +148,21 @@ public class TextServer {
 						if (!fileData.exists()){
 							System.out.println("ERROR: File "+filename+" does not exist here!");
 							output.println(CMD_FILE_ACTION_UNAVAILABLE);
+							System.out.println(CMD_FILE_ACTION_UNAVAILABLE);
 						}
 						else{
 							output.println(CMD_FILE_STATUS_OKAY);
+							System.out.println(CMD_FILE_STATUS_OKAY);
 							if(hasPort) DataServer.sendFile(filename, dataPortClient, output);
-							else output.println(CMD_CANT_OPEN_CONNECTION);
+							else {
+								output.println(CMD_CANT_OPEN_CONNECTION);
+								System.out.println(CMD_CANT_OPEN_CONNECTION);
+							}
 						}
-					} else output.print(CMD_BAD_SEQUENCE);
+					} else {
+						output.print(CMD_BAD_SEQUENCE);
+						System.out.println(CMD_BAD_SEQUENCE);
+					}
 				}
 				else if (data.startsWith("LIST")) {
 					listFiles(output);
@@ -151,9 +172,13 @@ public class TextServer {
 					if(command.length == 2){
 						String filename = currentDirectory + command[1];
 						boolean result = deleteFile(filename);
-						if(result) output.println(CMD_COMPLETED);
+						if(result) {
+							output.println(CMD_COMPLETED);
+							System.out.println(CMD_COMPLETED);
+						}
 					}
 					else output.print(CMD_BAD_SEQUENCE);
+					System.out.println(CMD_BAD_SEQUENCE);
 				}
 				else if (data.startsWith("RNFR")) {
 					String[] command = data.split(" ");
@@ -163,9 +188,15 @@ public class TextServer {
 						if(newFilename != currentDirectory) {
 							renameFile(oldFilename, newFilename);
 						}
-						else output.println(CMD_FILENAME_NOT_ALLOWED);
+						else {
+							output.println(CMD_FILENAME_NOT_ALLOWED);
+							System.out.println(CMD_FILENAME_NOT_ALLOWED);
+						}
 					}
-					else output.print(CMD_BAD_SEQUENCE);
+					else {
+						output.print(CMD_BAD_SEQUENCE);
+						System.out.println(CMD_BAD_SEQUENCE);
+					}
 				}
 				else if (data.startsWith("MKD")) { 
 					String[] command = data.split(" ");
@@ -218,6 +249,7 @@ public class TextServer {
 				else if(data.startsWith("QUIT")){
 					sCon.close();
 					output.println(CMD_CLOSING);
+					System.out.println(CMD_CLOSING);
 					connectionClosed = true;
 				}
 				else{
@@ -229,6 +261,7 @@ public class TextServer {
 			if(!connectionClosed){
 				sCon.close();
 				output.println(CMD_CLOSING);
+				System.out.println(CMD_CLOSING);
 			}
 
 			hasPort = false;
@@ -238,6 +271,7 @@ public class TextServer {
 		} catch (Exception e) {
 			e.printStackTrace();
 			output.println(CMD_ACTION_ABORTED);
+			System.out.println(CMD_ACTION_ABORTED);
 		}
 	}
 
@@ -246,6 +280,7 @@ public class TextServer {
 			String userData = input.readLine();
 			if(userData.compareTo(user)==0) {
 				output.println(CMD_USER_OKAY);
+				System.out.println(CMD_USER_OKAY);
 				output.println("User OK");
 			}else{
 				output.println("User WRONG");
@@ -255,9 +290,11 @@ public class TextServer {
 			String passwordData = input.readLine();
 			if(passwordData.compareTo(password)==0) {
 				output.println(CMD_USER_LOGGED);
+				System.out.println(CMD_USER_LOGGED);
 				output.println("Password OK");
 			}else{
 				output.println(CMD_USER_ERROR);
+				System.out.println(CMD_USER_ERROR);
 				output.println("Password WRONG");
 				return false;
 			}
@@ -266,6 +303,7 @@ public class TextServer {
 		} catch (Exception e) {
 			e.printStackTrace();
 			output.println(CMD_ACTION_ABORTED);
+			System.out.println(CMD_ACTION_ABORTED);
 		}
 		return false;
 	}
@@ -309,6 +347,7 @@ public class TextServer {
 		} catch (Exception e) {
 			e.printStackTrace();
 			output.println(CMD_ACTION_ABORTED);
+			System.out.println(CMD_ACTION_ABORTED);
 		}
 		return false;
 	}
@@ -339,6 +378,7 @@ public class TextServer {
 		} catch (Exception e) {
 			e.printStackTrace();
 			output.println(CMD_ACTION_ABORTED);
+			System.out.println(CMD_ACTION_ABORTED);
 		}
 		return false;
 	}
@@ -349,6 +389,7 @@ public class TextServer {
 			File fileData = new File(filename);
 			if (!fileData.exists() || !removeFilenameFromList(filename)){
 				output.println(CMD_FILE_UNAVAILABLE);
+				System.out.println(CMD_FILE_UNAVAILABLE);
 				return false;
 			}
 			return fileData.delete();
@@ -356,6 +397,7 @@ public class TextServer {
 		} catch (Exception e) {
 			e.printStackTrace();
 			output.println(CMD_ACTION_ABORTED);
+			System.out.println(CMD_ACTION_ABORTED);
 		}
 		return false;
 	}
@@ -366,22 +408,26 @@ public class TextServer {
 			File newFile = new File(newFilename);
 			if (!oldFile.exists() || !removeFilenameFromList(oldFilename)){
 				output.println(CMD_FILE_ACTION_UNAVAILABLE);
+				System.out.println(CMD_FILE_ACTION_UNAVAILABLE);
 				return false;
 			}
 			if (newFile.exists()){
 				output.println(CMD_FILE_UNAVAILABLE);
+				System.out.println(CMD_FILE_UNAVAILABLE);
 				return false;
 			}
 			Boolean success = oldFile.renameTo(newFile);
 			if (success) {
 				addFilenameToList(newFilename);
 				output.println(CMD_COMPLETED);
+				System.out.println(CMD_COMPLETED);
 			}
 			return success;
 
 		} catch (Exception e) {
 			e.printStackTrace();
 			output.println(CMD_ACTION_ABORTED);
+			System.out.println(CMD_ACTION_ABORTED);
 		}
 		return false;
 	}
@@ -402,6 +448,7 @@ public class TextServer {
 		} catch (Exception e) {
 			e.printStackTrace();
 			output.println(CMD_ACTION_ABORTED);
+			System.out.println(CMD_ACTION_ABORTED);
 		}
 		return false;
 	}

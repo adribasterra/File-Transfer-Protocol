@@ -37,6 +37,8 @@ public class TextClient {
 			Boolean loggegIn = false;
 			while (!loggegIn) loggegIn = logIn(input, output);
 
+			ShowGuideline();
+
 			String currentDirectory = "files\\";
 			String baseDirectory = "files\\";
 
@@ -243,6 +245,22 @@ public class TextClient {
 		}
 
 		return false;
+	}
+
+	public static void ShowGuideline() {
+		System.out.println("Possible actions:\n");
+		System.out.println("\t1. List files in directory. \t\tCOMMAND: 'list + path'");
+		System.out.println("\t2. Download file. \t\t\tCOMMAND: 'get + file'");
+		System.out.println("\t3. Upload file. \t\t\tCOMMAND: 'send + file'");
+		System.out.println("\t4. Close connection. \t\t\tCOMMAND: 'quit'");
+		System.out.println("\t5. Delete file. \t\t\tCOMMAND: 'delete + path'\n");
+		System.out.println("\t6. Get path of working directory. \tCOMMAND: 'get path'");
+		System.out.println("\t7. Change current directory. \t\tCOMMAND: 'cd + path'");
+		System.out.println("\t8. Create directory. \t\t\tCOMMAND: 'mkdir + path'");
+		System.out.println("\t9. Remove directory. \t\t\tCOMMAND: 'remove + path'");
+		System.out.println("\t10. Rename file or directory. \t\tCOMMAND: 'rename + path'\n");
+		System.out.println("\t11. Indicate port for file transfer.  \t\tCOMMAND: 'prt + number'\n");
+		System.out.println("'Quit' or 'END' for finishing connection.\n");
 	}
 }
 

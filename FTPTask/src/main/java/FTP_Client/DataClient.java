@@ -1,57 +1,33 @@
 package FTP_Client;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
-
-// Example: Client that receives and sends bytes
-// ByteClient
-
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.net.ServerSocket;
-import java.net.Socket;
+import java.net.*;
+import java.io.*;
 
 public class DataClient {
-	
-	private static int dataPort = 20;
-	
-	public static boolean sendFile(String filename) {
+
+	public static boolean sendFile(String filename, int dataPortClient) {
 		File fileData = new File(filename);
 		if (!fileData.exists()){
 			System.out.println("ERROR: File "+filename+" does not exist here!");
 			return false;
 		}
-		System.out.println(fileData.toURI());
+		//System.out.println(fileData.toURI());
 		
 		try {
-			ServerSocket sServ = new ServerSocket(dataPort);
-			System.out.println("Client waiting for response before sending");
-			
-			Socket sCon = sServ.accept();
-			System.out.println("File transfer Connection accepted");
+			Socket sCon = new Socket("localhost", dataPortClient);
 
-			FileInputStream file = new FileInputStream(filename);
-			BufferedInputStream fileBuffer = new BufferedInputStream(file);
-			
-			BufferedOutputStream sendBuffer = new BufferedOutputStream(sCon.getOutputStream());
-			
-			// Loop to read a file and write in another
-			byte [] array = new byte[1000];
-			int n_bytes = fileBuffer.read(array);
-			while (n_bytes > 0)
-			{
-				sendBuffer.write(array,0,n_bytes);
-				n_bytes=fileBuffer.read(array);
+			InputStream inputStream = new FileInputStream(filename);
+			OutputStream outputStream = sCon.getOutputStream();
+
+			int count;
+			byte[] bytes = new byte[4096];
+			while((count = inputStream.read(bytes)) > 0){
+				outputStream.write(bytes, 0, count);
 			}
-
-			// Close the files
-			fileBuffer.close();
-			sendBuffer.close();
-
+			
+			outputStream.close();
+			inputStream.close();
 			sCon.close();
-			sServ.close();
-			System.out.println("File transfer Server closed");
 			return true;
 		}
 		catch (Exception e) {
@@ -60,18 +36,19 @@ public class DataClient {
 		return false;
 	}
 	
-	public static boolean receiveFile(String filename){
-		File fileData = null;
+	public static  boolean receiveFile(String filename, int dataPortClient){
+		File fileData = new File(filename);
+		if(fileData.exists()){
+			System.out.println("ALREADY EXISTS IN CLIENT");
+			return false;
+		}
 		try {
-			Socket connection = new Socket("localhost", dataPort);
+			Socket connection = new Socket("localhost", dataPortClient);
 
 			fileData = new File(filename);
-			System.out.println(fileData.toURI());
-			//resOutput.println("ok");
+			//System.out.println(fileData.toURI());
 			if (!fileData.createNewFile()){
-				String msg = "ERROR: A file named "+fileData.getName()+" already exists on the server.\n";
-				System.out.println(msg);
-				//resOutput.println(msg);
+				System.out.println("ERROR: A file named "+fileData.getName()+" already exists on the server.\n");
 				connection.close();
 				return false;
 			}

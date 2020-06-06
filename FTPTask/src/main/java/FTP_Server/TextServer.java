@@ -98,7 +98,7 @@ public class TextServer {
 				if (data.startsWith("STOR")) {
 					String[] command = data.split(" ");
 					if(command.length == 2){
-						String filename = command[1];
+						String filename = currentDirectory + command[1];
 						File fileData = new File(filename);
 						if(fileData.exists()){
 							System.out.println("ALREADY EXISTS IN SERVER");
@@ -199,24 +199,32 @@ public class TextServer {
 				}
 
 				else if(data.startsWith("PWD")) {
-					output.println(currentDirectory);
 					output.println(CMD_GET_DIRECTORY + currentDirectory);
 				}
 				else if (data.startsWith("CWD")) {
 					String[] command = data.split(" ");
-					String directory = canonicalDir(currentDirectory, command[1]);
-					output.println(directory);
+					if(command.length == 2){
+						String directory = canonicalDir(currentDirectory, command[1]);
+						output.println(directory);
+						File dir = new File(directory);
 
-					if (!directory.isEmpty() && new File(directory).isDirectory()) {
-						currentDirectory = directory;
-						output.println(CMD_COMPLETED);
-					}
-					else if (directory.isEmpty()) {
-						System.out.println("ERROR: Access forbidden outside the \"files\\\" folder!");
+						if(dir.exists()){
+							if (dir.isDirectory()) {
+								currentDirectory = directory;
+								output.println(CMD_COMPLETED);
+							}
+							else if (directory.isEmpty()) {
+								System.out.println("ERROR: Access forbidden outside the \"files\\\" folder!");
+							}
+						}
+						else{
+							output.println(CMD_FILE_UNAVAILABLE);
+							System.out.println("ERROR: Directory : " + directory + " does not exist!");
+						}
 					}
 					else{
-						output.println(CMD_FILE_UNAVAILABLE);
-						System.out.println("ERROR: Directory : " + directory + " does not exist!");
+						output.print(CMD_BAD_SEQUENCE);
+						System.out.println(CMD_BAD_SEQUENCE);
 					}
 				}
 				else if (data.startsWith("MKD")) {
@@ -230,15 +238,19 @@ public class TextServer {
 				else if(data.startsWith("RMD")) {
 					//Remove directory
 					String[] command = data.split(" ");
-					String directory = canonicalDir(currentDirectory, command[1]);
-					File directoryToDelete = new File(directory);
-					String[]entries = directoryToDelete.list();
-					for(String s: entries){
-						File currentDir = new File(directoryToDelete.getPath(),s);
-						currentDir.delete();
+					if(command.length == 2){
+						String directory = canonicalDir(currentDirectory, command[1]);
+						File directoryToDelete = new File(directory);
+						String[]entries = directoryToDelete.list();
+						for(String s: entries){
+							File currentDir = new File(directoryToDelete.getPath(),s);
+							currentDir.delete();
+						}
+						directoryToDelete.delete();
+						System.out.println("Se supone que lo he borrado");
+						output.println(CMD_COMPLETED);
 					}
-					directoryToDelete.delete();
-					System.out.println("Se supone que lo he borrado");
+					else output.println(CMD_FILE_UNAVAILABLE);
 				}
 				else if(data.startsWith("USER")) {
 					String userData = data.substring(5).trim();
@@ -260,6 +272,7 @@ public class TextServer {
 					output.println(CMD_CLOSING);
 					System.out.println(CMD_CLOSING);
 					connectionClosed = true;
+					data = "END";
 				}
 				else{
 					output.println(CMD_BAD_SEQUENCE);

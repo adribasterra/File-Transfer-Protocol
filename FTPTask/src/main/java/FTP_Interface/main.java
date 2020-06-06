@@ -318,26 +318,27 @@ public class main extends javax.swing.JFrame {
     }//GEN-LAST:event_ClienteBotonMouseClicked
 
     private void cerrarMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_cerrarMouseClicked
-        int dialog = JOptionPane.YES_NO_OPTION;
-        int result = JOptionPane.showConfirmDialog(null, "Do you want to close?","Exit",dialog);
-        
-        //try {
-            // TODO add your handling code here:
-            // Connect with the server
-       //     Socket desconection = new Socket("localhost", controlPort);
-        //    desconection.close();
-            
-             if(result == 0){
-                output.print("END");
-            try {
+       
+        try {
+            int dialog = JOptionPane.YES_NO_OPTION;
+            int result = JOptionPane.showConfirmDialog(null, "Do you want to close?","Exit",dialog);
+            int controlPort = 21;
+// Recover input & output from connection
+            output = new PrintWriter(connection.getOutputStream(), true);
+            if(result == 0){
+                output.println("END");
+                
+                Thread.sleep(5 * 1000);
+                output.close();
                 connection.close();
-            } catch (IOException ex) {
-                Logger.getLogger(main.class.getName()).log(Level.SEVERE, null, ex);
+                this.dispose();
             }
-             }
-        //} catch (IOException ex) {
-        //    Logger.getLogger(main.class.getName()).log(Level.SEVERE, null, ex);
-        //}
+        } catch (IOException ex) {
+            Logger.getLogger(main.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (InterruptedException ex) {
+            Logger.getLogger(main.class.getName()).log(Level.SEVERE, null, ex);
+        } 
+
     }//GEN-LAST:event_cerrarMouseClicked
 
     private void mdesenfoqueMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_mdesenfoqueMouseClicked
@@ -446,13 +447,7 @@ public class main extends javax.swing.JFrame {
                 // Connect with the server
                 connection = new Socket("localhost", controlPort);
                 //connection = ExitConection;
-            
-             // Recover input & output from connection
-                input = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-                output = new PrintWriter(connection.getOutputStream(), true);
-        
-             Boolean loggegIn = true;
-             while (!loggegIn) loggegIn = logIn(input, output);
+
             
              } catch (IOException ex) {
              Logger.getLogger(main.class.getName()).log(Level.SEVERE, null, ex);

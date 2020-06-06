@@ -43,6 +43,9 @@
   </Layout>
   <SubComponents>
     <Component class="javax.swing.JFileChooser" name="jFileChooser1">
+      <AuxValues>
+        <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="9"/>
+      </AuxValues>
     </Component>
   </SubComponents>
 </Form>

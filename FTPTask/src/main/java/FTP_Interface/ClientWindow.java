@@ -5,15 +5,22 @@
  */
 package FTP_Interface;
 
+import FTP_Client.DataClient;
+import static FTP_Client.TextClient.dataPortClient;
 import static FTP_Client.TextClient.logIn;
+import static FTP_Client.TextClient.output;
 import java.awt.Color;
 import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.JFileChooser;
 
 /**
  *
@@ -28,6 +35,7 @@ public class ClientWindow extends javax.swing.JFrame {
         initComponents();
         this.setLocationRelativeTo(null);
         setBackground(new Color(0.0f, 0.0f, 0.0f, 0.0f));
+        SendButton.setVisible(false);
     }
 
     ServerWindow ServerPanel = new ServerWindow();
@@ -43,8 +51,10 @@ public class ClientWindow extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        SendButton = new javax.swing.JButton();
         ComandField = new javax.swing.JTextField();
-        jButton1 = new javax.swing.JButton();
+        RenameButton = new javax.swing.JButton();
+        DeleteButton = new javax.swing.JButton();
         downloadButton = new javax.swing.JButton();
         UploadBuuton = new javax.swing.JButton();
         addButton = new javax.swing.JButton();
@@ -62,19 +72,42 @@ public class ClientWindow extends javax.swing.JFrame {
         });
         getContentPane().setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
+        SendButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/FTP_Images/Sendbutton2.png"))); // NOI18N
+        SendButton.setBorder(null);
+        SendButton.setBorderPainted(false);
+        SendButton.setContentAreaFilled(false);
+        SendButton.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        SendButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                SendButtonMouseClicked(evt);
+            }
+        });
+        getContentPane().add(SendButton, new org.netbeans.lib.awtextra.AbsoluteConstraints(590, 410, 111, 42));
+
         ComandField.setText("jTextField1");
         getContentPane().add(ComandField, new org.netbeans.lib.awtextra.AbsoluteConstraints(550, 100, 170, 30));
 
-        jButton1.setBorder(null);
-        jButton1.setBorderPainted(false);
-        jButton1.setContentAreaFilled(false);
-        jButton1.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-        jButton1.addMouseListener(new java.awt.event.MouseAdapter() {
+        RenameButton.setBorder(null);
+        RenameButton.setBorderPainted(false);
+        RenameButton.setContentAreaFilled(false);
+        RenameButton.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        RenameButton.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
-                jButton1MouseClicked(evt);
+                RenameButtonMouseClicked(evt);
             }
         });
-        getContentPane().add(jButton1, new org.netbeans.lib.awtextra.AbsoluteConstraints(570, 340, 130, 40));
+        getContentPane().add(RenameButton, new org.netbeans.lib.awtextra.AbsoluteConstraints(570, 220, 130, 50));
+
+        DeleteButton.setBorder(null);
+        DeleteButton.setBorderPainted(false);
+        DeleteButton.setContentAreaFilled(false);
+        DeleteButton.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        DeleteButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                DeleteButtonMouseClicked(evt);
+            }
+        });
+        getContentPane().add(DeleteButton, new org.netbeans.lib.awtextra.AbsoluteConstraints(570, 340, 130, 40));
 
         downloadButton.setBorder(null);
         downloadButton.setBorderPainted(false);
@@ -142,7 +175,25 @@ public class ClientWindow extends javax.swing.JFrame {
 
     private void UploadBuutonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_UploadBuutonMouseClicked
         // TODO add your handling code here:
-        DirectPanel.setVisible(true);
+        //DirectPanel.setVisible(true);
+
+        //We create the JFileChooser object
+        JFileChooser fc = new JFileChooser();
+
+        //We open the window and we save the selected option
+        int selection = fc.showOpenDialog(this);
+
+        //if the client press accept...
+        if (selection == JFileChooser.APPROVE_OPTION) {
+
+            //We select the file
+            File file = fc.getSelectedFile();
+
+            //Write the path of the file
+            this.ComandField.setText(file.getAbsolutePath());
+            SendButton.setVisible(true);
+
+        }
 
     }//GEN-LAST:event_UploadBuutonMouseClicked
 
@@ -160,24 +211,121 @@ public class ClientWindow extends javax.swing.JFrame {
             PrintWriter output = new PrintWriter(connection.getOutputStream(), true);
 
             String s = ComandField.getText();
-            output.println(s);
+            output.println("RETR " + s);
+
             //Ponemos a "Dormir" el programa durante los ms que queremos
             Thread.sleep(5 * 1000);
 
+            output.println("END");
+
             connection.close();
-            System.out.println("SE CERRO");
+
         } catch (IOException ex) {
             Logger.getLogger(main.class.getName()).log(Level.SEVERE, null, ex);
         } catch (InterruptedException ex) {
             Logger.getLogger(ClientWindow.class.getName()).log(Level.SEVERE, null, ex);
         }
-        
+
 
     }//GEN-LAST:event_downloadButtonMouseClicked
 
-    private void jButton1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton1MouseClicked
+
+    private void DeleteButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_DeleteButtonMouseClicked
         // TODO add your handling code here:
-    }//GEN-LAST:event_jButton1MouseClicked
+        int controlPort = 21;
+        String dataTCP = "";
+        try {
+
+            //int port = 21
+            // Connect with the server
+            Socket connection = new Socket("localhost", controlPort);
+            //connection = ExitConection;
+
+            // Recover input & output from connection
+            PrintWriter output = new PrintWriter(connection.getOutputStream(), true);
+
+            String s = "delete " + ComandField.getText();
+            if (s.startsWith("delete")) {
+                String[] command = s.split(" ");
+                if (command.length == 2) {
+                    String pathDirectory = command[1];
+                    dataTCP = "DELE" + " " + pathDirectory; 				// DELE <SP> <pathname> <CRLF>
+                } else {
+                    dataTCP = "DELE";
+                }
+                System.out.println(dataTCP);
+                output.println(dataTCP);
+            }
+            //output.println("DELE " + s);
+
+            //Ponemos a "Dormir" e
+            Thread.sleep(5 * 1000);
+
+            output.println("END");
+
+            connection.close();
+
+        } catch (IOException ex) {
+            Logger.getLogger(main.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (InterruptedException ex) {
+            Logger.getLogger(ClientWindow.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_DeleteButtonMouseClicked
+
+    private void RenameButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_RenameButtonMouseClicked
+        // TODO add your handling code here:
+
+
+    }//GEN-LAST:event_RenameButtonMouseClicked
+
+    private void SendButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_SendButtonMouseClicked
+        // TODO add your handling code here:
+        SendButton.setVisible(false);
+        int controlPort = 21;
+        String baseDirectory = "files\\";
+        boolean hasPort = true;
+        String dataTCP = "";
+        try {
+
+            //int port = 21
+            // Connect with the server
+            Socket connection = new Socket("localhost", controlPort);
+            //connection = ExitConection;
+
+            // Recover input & output from connection
+            PrintWriter output = new PrintWriter(connection.getOutputStream(), true);
+            BufferedReader input = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+
+            String s = "send " + ComandField.getText();
+            if (s.startsWith("send")) {
+                String[] command = s.split(" ");
+                if (command.length == 2) {
+                    String filename = baseDirectory + command[1];
+                    dataTCP = "STOR" + " " + filename; 						// STOR <SP> <pathname> <CRLF>
+                    System.out.println("Attempting to send file: " + filename);
+                    if(hasPort)	DataClient.sendFile(filename, dataPortClient);
+                    input.readLine();
+                } else {
+                    dataTCP = "STOR";
+                    System.out.println("Format is not correct.");
+                }
+                output.println(dataTCP);
+            }
+            //output.println("DELE " + s);
+
+            //Ponemos a "Dormir" e
+            Thread.sleep(5 * 1000);
+
+           // output.println("END");
+
+           // connection.close();
+
+        } catch (IOException ex) {
+            Logger.getLogger(main.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (InterruptedException ex) {
+            Logger.getLogger(ClientWindow.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_SendButtonMouseClicked
 
     /**
      * @param args the command line arguments
@@ -218,9 +366,11 @@ public class ClientWindow extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel ClientLabel;
     private javax.swing.JTextField ComandField;
+    private javax.swing.JButton DeleteButton;
+    private javax.swing.JButton RenameButton;
+    private javax.swing.JButton SendButton;
     private javax.swing.JButton UploadBuuton;
     private javax.swing.JButton addButton;
     private javax.swing.JButton downloadButton;
-    private javax.swing.JButton jButton1;
     // End of variables declaration//GEN-END:variables
 }

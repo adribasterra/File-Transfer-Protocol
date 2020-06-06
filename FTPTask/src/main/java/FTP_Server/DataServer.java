@@ -44,11 +44,13 @@ public class DataServer {
 			sCon.close();
 			sServ.close();
 			output.println(CMD_SUCCESS);
+			System.out.println(CMD_SUCCESS);
 			
 			return true;
 		} catch (Exception e) {
 			//System.out.println("Error receiving file :" + e);
 			output.println(CMD_ACTION_ABORTED);
+			System.out.println(CMD_ACTION_ABORTED);
 		}
 		return false;
 	}
@@ -80,12 +82,14 @@ public class DataServer {
 
 			sCon.close();
 			output.println(CMD_SUCCESS);
+			System.out.println(CMD_SUCCESS);
 			sServ.close();
 			return true;
 		}
 		catch (Exception e) {
 			System.out.println("Error writing byte to text :" + e);
 			output.println(CMD_ACTION_ABORTED);
+			System.out.println(CMD_ACTION_ABORTED);
 		}
 		return false;
 	}

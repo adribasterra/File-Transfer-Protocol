@@ -3,4 +3,3 @@ genres.json
 qr-code.png
 test.txt
 other.txt
-adri\me\chakra.jpg

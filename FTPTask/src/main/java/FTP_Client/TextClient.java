@@ -41,7 +41,7 @@ public class TextClient {
 			ShowGuideline();
 
 			String currentDirectory = "files\\";
-			String baseDirectory = "files\\";
+			String baseDirectory = System.getProperty("user.dir");
 
 			while (data.compareTo("END") != 0) {
 
@@ -53,7 +53,7 @@ public class TextClient {
 				if (data.startsWith("send")) {
 					String[] command = data.split(" ");
 					if(command.length == 2){
-						String filename = baseDirectory + command[1];
+						String filename = currentDirectory + command[1];
 						dataTCP = "STOR" + " " + filename; 						// STOR <SP> <pathname> <CRLF>
 						System.out.println("Attempting to send file: " + filename);
 						if(hasPort)	DataClient.sendFile(filename, dataPortClient);
@@ -126,7 +126,7 @@ public class TextClient {
 				else if (data.startsWith("cd")) {
 					String[] command = data.split(" ");
 					if(command.length == 2){
-						dataTCP = "CWD" + " " + command[1]; 						// CWD <SP> <pathname> <CRLF>
+						dataTCP = "CWD" + " " + command[1]; 					// CWD <SP> <pathname> <CRLF>
 						String directory = input.readLine();
 	
 						if (!directory.isEmpty()) {
@@ -140,7 +140,7 @@ public class TextClient {
 				}
 				else if (data.startsWith("mkdir")) {
 					String[] command = data.split(" ");
-					String directory = currentDirectory + command[1];
+					String directory = command[1];
 					dataTCP = "MKD" + " " + directory; 							// MKD <SP> <pathname> <CRLF>
 					output.println(dataTCP);
 					System.out.println("Attempting to create directory: " + directory);
@@ -149,7 +149,10 @@ public class TextClient {
 				}
 				else if (data.startsWith("remove")) {
 					String[] command = data.split(" ");
-					dataTCP = "RMD" + command[1];								// RMD <SP> <pathname> <CRLF>
+					if(command.length == 2){
+						dataTCP = "RMD" + " " + command[1];						// RMD <SP> <pathname> <CRLF>
+					}
+					else dataTCP = "RMD";
 					output.println(dataTCP);
 				}
 				else if (data.startsWith("user")) {
@@ -176,7 +179,6 @@ public class TextClient {
 				}
 				else if(data.startsWith("path")){
 					System.out.println(System.getProperty("user.dir"));
-					
 					//First part: divides the path in parts
 					String[] command = data.split(" ");
 					String path = System.getProperty("user.dir");
@@ -202,6 +204,37 @@ public class TextClient {
 					for(int j = 0; j<tam; j++){
 						System.out.println(j + " " + stack.pop() + ", ");
 					}
+
+					//Second part
+					LinkedList<String> result = new LinkedList<String>();
+					int back = 0;
+					while(!stack.isEmpty()){
+						String top = stack.pop();
+				
+						if(top.equals("\\.") || top.equals("\\") || top.equals("/.") || top.equals("/")){
+							//nothing
+						}else if(top.equals("\\..") || top.equals("/..")){
+							back++;
+						}else{
+							if(back > 0){
+								back--;
+							}else{
+								result.push(top);
+							}
+						}
+					}
+				
+					//if empty, return "/"
+					if(result.isEmpty()){
+						System.out.println("Is empty");
+					}
+				
+					StringBuilder sb = new StringBuilder();
+					while(!result.isEmpty()){
+						String s = result.pop();
+						sb.append(s);
+					}
+					System.out.println("End: " + sb.toString());
 				}
 				else {
 					System.out.println("Error: Command unrecognised");

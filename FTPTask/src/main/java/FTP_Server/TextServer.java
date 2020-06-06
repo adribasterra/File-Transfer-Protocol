@@ -3,6 +3,8 @@ package FTP_Server;
 
 // CharacterServer.java
 import java.net.*;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.Scanner;
 
 //import org.graalvm.compiler.nodes.calc.IntegerTestNode;
@@ -180,6 +182,8 @@ public class TextServer {
 					if(command.length == 3){
 						String oldFilename = currentDirectory + command[1];
 						String newFilename = currentDirectory + command[2];
+						System.out.println(oldFilename);
+						System.out.println(newFilename);
 						if(newFilename != currentDirectory) {
 							renameFile(oldFilename, newFilename);
 						}
@@ -194,7 +198,7 @@ public class TextServer {
 					}
 				}
 
-				else if(data.startsWith("PWD")) { 		//WORKS
+				else if(data.startsWith("PWD")) {
 					output.println(currentDirectory);
 					output.println(CMD_GET_DIRECTORY + currentDirectory);
 				}
@@ -227,6 +231,14 @@ public class TextServer {
 					//Remove directory
 					String[] command = data.split(" ");
 					String directory = canonicalDir(currentDirectory, command[1]);
+					File directoryToDelete = new File(directory);
+					String[]entries = directoryToDelete.list();
+					for(String s: entries){
+						File currentDir = new File(directoryToDelete.getPath(),s);
+						currentDir.delete();
+					}
+					directoryToDelete.delete();
+					System.out.println("Se supone que lo he borrado");
 				}
 				else if(data.startsWith("USER")) {
 					String userData = data.substring(5).trim();
@@ -323,6 +335,7 @@ public class TextServer {
 				directory = directory + path + "\\";
 			}
 		}
+		System.out.println("De esta función sale: " + directory);
 		return directory;
 	}
 
@@ -403,7 +416,8 @@ public class TextServer {
 		try {
 			File oldFile = new File(oldFilename);
 			File newFile = new File(newFilename);
-			if (!oldFile.exists() || !removeFilenameFromList(oldFilename)){
+			
+			if (!oldFile.exists()){
 				output.println(CMD_FILE_ACTION_UNAVAILABLE);
 				System.out.println(CMD_FILE_ACTION_UNAVAILABLE);
 				return false;
@@ -414,11 +428,16 @@ public class TextServer {
 				return false;
 			}
 			Boolean success = oldFile.renameTo(newFile);
-			if (success) {
+			if (success && oldFile.isFile()) {
+				removeFilenameFromList(oldFilename);
+				System.out.println("Is file");
 				addFilenameToList(newFilename);
-				output.println(CMD_COMPLETED);
-				System.out.println(CMD_COMPLETED);
 			}
+			else if(success && oldFile.isDirectory()){
+				System.out.println("Is directory");
+			}
+			output.println(CMD_COMPLETED);
+			System.out.println(CMD_COMPLETED);
 			return success;
 
 		} catch (Exception e) {

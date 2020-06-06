@@ -4,6 +4,7 @@ package FTP_Client;
 
 import java.net.*;
 import java.io.*;
+import java.util.*;
 
 public class TextClient {
 
@@ -118,31 +119,33 @@ public class TextClient {
 					output.println(dataTCP);
 					receiveListFiles(input);
 				}
+				else if (data.startsWith("get path")) {
+					dataTCP = "PWD"; 											// PWD <CRLF>
+					output.println(dataTCP);
+				}
+				else if (data.startsWith("cd")) {
+					String[] command = data.split(" ");
+					if(command.length == 2){
+						dataTCP = "CWD" + " " + command[1]; 						// CWD <SP> <pathname> <CRLF>
+						String directory = input.readLine();
+	
+						if (!directory.isEmpty()) {
+							currentDirectory = directory;
+						} else {
+							System.out.println("ERROR: Access forbidden outside the \"files\\\" folder!");
+						}
+					}
+					else { dataTCP = "CWD"; }
+					output.println(dataTCP);
+				}
 				else if (data.startsWith("mkdir")) {
 					String[] command = data.split(" ");
 					String directory = currentDirectory + command[1];
-					dataTCP = "MKD" + " " + directory; 						// MKD <SP> <pathname> <CRLF>
+					dataTCP = "MKD" + " " + directory; 							// MKD <SP> <pathname> <CRLF>
 					output.println(dataTCP);
 					System.out.println("Attempting to create directory: " + directory);
 					// receiveFile(filename);
 					// new File(directory).mkdir();
-				}
-				else if (data.startsWith("cd")) {
-					String[] command = data.split(" ");
-					dataTCP = "CWD" + " " + command[1]; 					// CWD <SP> <pathname> <CRLF>
-					output.println(dataTCP);
-					String directory = input.readLine();
-
-					if (!directory.isEmpty()) {
-						currentDirectory = directory;
-					} else {
-						System.out.println("ERROR: Access forbidden outside the \"files\\\" folder!");
-					}
-				}
-				else if (data.startsWith("get path")) {
-					// String[] command = data.split(" ");
-					dataTCP = "PWD"; 											// PWD <CRLF>
-					output.println(dataTCP);
 				}
 				else if (data.startsWith("remove")) {
 					String[] command = data.split(" ");
@@ -170,6 +173,35 @@ public class TextClient {
 				}
 				else if (data.compareTo("END") == 0) {
 					output.println(data);
+				}
+				else if(data.startsWith("path")){
+					System.out.println(System.getProperty("user.dir"));
+					
+					//First part: divides the path in parts
+					String[] command = data.split(" ");
+					String path = System.getProperty("user.dir");
+
+					Stack<String> stack = new Stack<String>();
+	 
+					while(path.length()> 0 && (path.charAt(path.length()-1) =='\\' || path.charAt(path.length()-1) =='/')){
+						path = path.substring(0, path.length()-1);
+					}
+					
+					int start = 0;
+					
+					for(int i=1; i<path.length(); i++){
+						if(path.charAt(i) == '\\' || path.charAt(i) == '/'){
+							stack.push(path.substring(start, i));
+							start = i;
+						}else if(i==path.length()-1){
+							stack.push(path.substring(start));
+						}
+					}
+					System.out.println("The end " + stack.size());
+					int tam = stack.size();
+					for(int j = 0; j<tam; j++){
+						System.out.println(j + " " + stack.pop() + ", ");
+					}
 				}
 				else {
 					System.out.println("Error: Command unrecognised");

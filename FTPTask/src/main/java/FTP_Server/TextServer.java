@@ -193,6 +193,28 @@ public class TextServer {
 						System.out.println(CMD_BAD_SEQUENCE);
 					}
 				}
+
+				else if(data.startsWith("PWD")) { 		//WORKS
+					output.println(currentDirectory);
+					output.println(CMD_GET_DIRECTORY + currentDirectory);
+				}
+				else if (data.startsWith("CWD")) {
+					String[] command = data.split(" ");
+					String directory = canonicalDir(currentDirectory, command[1]);
+					output.println(directory);
+
+					if (!directory.isEmpty() && new File(directory).isDirectory()) {
+						currentDirectory = directory;
+						output.println(CMD_COMPLETED);
+					}
+					else if (directory.isEmpty()) {
+						System.out.println("ERROR: Access forbidden outside the \"files\\\" folder!");
+					}
+					else{
+						output.println(CMD_FILE_UNAVAILABLE);
+						System.out.println("ERROR: Directory : " + directory + " does not exist!");
+					}
+				}
 				else if (data.startsWith("MKD")) {
 					String[] command = data.split(" ");
 					String fileDir = canonicalDir(currentDirectory, command[1]);
@@ -201,26 +223,6 @@ public class TextServer {
 					}
 					else { output.println(CMD_FILE_UNAVAILABLE); }
 				}
-				else if (data.startsWith("CWD")) {
-					String[] command = data.split(" ");
-					String directory = canonicalDir(currentDirectory, command[1]);
-					output.println(directory);
-
-					if ( !directory.isEmpty() && new File(directory).isDirectory() ) {
-						currentDirectory = directory;
-						output.println(CMD_COMPLETED);
-					}else if ( directory.isEmpty() ) {
-						System.out.println("ERROR: Access forbidden outside the \"files\\\" folder!");
-					}else{
-						output.println(CMD_FILE_UNAVAILABLE);
-						System.out.println("ERROR: Directory : "+directory+" does not exist!");
-					}
-				}
-				else if(data.startsWith("PWD")) {
-					output.println(currentDirectory);
-					output.println(CMD_GET_DIRECTORY + currentDirectory);
-				}
-
 				else if(data.startsWith("RMD")) {
 					//Remove directory
 					String[] command = data.split(" ");

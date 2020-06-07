@@ -455,7 +455,7 @@ public class TextServer {
 
                 String path = "fileList.txt";
                 System.out.println(new File(path).getAbsolutePath());
-				Scanner in = new Scanner(new FileReader("fileList.txt"));
+				Scanner in = new Scanner(new FileReader("src/main/java/FTP_Server/fileList.txt"));
 				String s = null;
 				StringBuilder sb = new StringBuilder();
 				while (in.hasNextLine()) {

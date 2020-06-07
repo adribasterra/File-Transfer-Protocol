@@ -55,7 +55,7 @@ public class main extends javax.swing.JFrame {
     static Socket ExitConection = null;
     static boolean ServerConnect = false;
     private static int controlPort = 21;
-    private static Socket connection;
+    static Socket connection;
     private static BufferedReader input;
     private static PrintWriter output;
     // Send & recover data

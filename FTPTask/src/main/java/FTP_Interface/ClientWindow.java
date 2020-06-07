@@ -200,30 +200,38 @@ public class ClientWindow extends javax.swing.JFrame {
     private void downloadButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_downloadButtonMouseClicked
         // TODO add your handling code here:
         int controlPort = 21;
+        String dataTCP = "";
+        String currentDirectory = "files\\";
+        boolean hasPort = true;
         try {
 
+            //Thread.sleep(5 * 1000);
             //int port = 21
             // Connect with the server
-            Socket connection = new Socket("localhost", controlPort);
+            // Socket connection = new Socket("localhost", controlPort);
             //connection = ExitConection;
-
             // Recover input & output from connection
-            PrintWriter output = new PrintWriter(connection.getOutputStream(), true);
+            PrintWriter output = new PrintWriter(main.connection.getOutputStream(), true);
 
-            String s = ComandField.getText();
-            output.println("RETR " + s);
-
-            //Ponemos a "Dormir" el programa durante los ms que queremos
-            Thread.sleep(5 * 1000);
-
-            output.println("END");
-
-            connection.close();
+            String s = "get " + ComandField.getText();
+            if (s.startsWith("get")) {
+                String[] command = s.split(" ");
+                if (command.length == 2) {
+                    String filename = command[1];
+                    dataTCP = "RETR" + " " + filename; 						// RETR <SP> <pathname> <CRLF>
+                    System.out.println("Attempting to get file: " + filename);
+                    if (hasPort) {
+                        DataClient.receiveFile(currentDirectory + filename, dataPortClient);
+                    }
+                } else {
+                    System.out.println("Format is not correct");
+                    dataTCP = "RETR";
+                }
+                output.println(dataTCP);
+            }
 
         } catch (IOException ex) {
             Logger.getLogger(main.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (InterruptedException ex) {
-            Logger.getLogger(ClientWindow.class.getName()).log(Level.SEVERE, null, ex);
         }
 
 
@@ -234,6 +242,8 @@ public class ClientWindow extends javax.swing.JFrame {
         // TODO add your handling code here:
         int controlPort = 21;
         String dataTCP = "";
+        String currentDirectory = "files\\";
+        boolean hasPort = true;
         try {
 
             //int port = 21
@@ -255,25 +265,44 @@ public class ClientWindow extends javax.swing.JFrame {
                 }
                 System.out.println(dataTCP);
                 output.println(dataTCP);
-            }
-            //output.println("DELE " + s);
-
-            //Ponemos a "Dormir" e
-            Thread.sleep(5 * 1000);
-
-            output.println("END");
-
-            connection.close();
+            };
 
         } catch (IOException ex) {
             Logger.getLogger(main.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (InterruptedException ex) {
-            Logger.getLogger(ClientWindow.class.getName()).log(Level.SEVERE, null, ex);
         }
     }//GEN-LAST:event_DeleteButtonMouseClicked
 
     private void RenameButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_RenameButtonMouseClicked
         // TODO add your handling code here:
+        int controlPort = 21;
+        String dataTCP = "";
+        String currentDirectory = "files\\";
+        boolean hasPort = true;
+        try {
+
+            //Thread.sleep(5 * 1000);
+            //int port = 21
+            // Connect with the server
+            // Socket connection = new Socket("localhost", controlPort);
+            //connection = ExitConection;
+            // Recover input & output from connection
+            PrintWriter output = new PrintWriter(main.connection.getOutputStream(), true);
+
+            String s = "rename " + ComandField.getText();
+            if (s.startsWith("rename")) {
+                String[] command = s.split(" ");
+                if (command.length == 3) {
+                    dataTCP = "RNFR" + " " + command[1] + " " + command[2];	// RNFR <SP> <pathname> <CRLF>
+                } else {
+                    dataTCP = "RNFR";
+                }
+                output.println(dataTCP);
+                System.out.println(dataTCP);
+            }
+
+        } catch (IOException ex) {
+            Logger.getLogger(main.class.getName()).log(Level.SEVERE, null, ex);
+        }
 
 
     }//GEN-LAST:event_RenameButtonMouseClicked
@@ -303,7 +332,9 @@ public class ClientWindow extends javax.swing.JFrame {
                     String filename = baseDirectory + command[1];
                     dataTCP = "STOR" + " " + filename; 						// STOR <SP> <pathname> <CRLF>
                     System.out.println("Attempting to send file: " + filename);
-                    if(hasPort)	DataClient.sendFile(filename, dataPortClient);
+                    if (hasPort) {
+                        DataClient.sendFile(filename, dataPortClient);
+                    }
                     input.readLine();
                 } else {
                     dataTCP = "STOR";
@@ -316,10 +347,8 @@ public class ClientWindow extends javax.swing.JFrame {
             //Ponemos a "Dormir" e
             Thread.sleep(5 * 1000);
 
-           // output.println("END");
-
-           // connection.close();
-
+            // output.println("END");
+            // connection.close();
         } catch (IOException ex) {
             Logger.getLogger(main.class.getName()).log(Level.SEVERE, null, ex);
         } catch (InterruptedException ex) {

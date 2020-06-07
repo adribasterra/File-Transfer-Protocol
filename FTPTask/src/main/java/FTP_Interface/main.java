@@ -42,12 +42,14 @@ public class main extends javax.swing.JFrame {
         SeButton.setVisible(false);
         ServerConnect=false;
         clientConectSButton1.setVisible(false);
+        register.setVisible(false);
         
     }
     
     ServerWindow ServerPanel = new ServerWindow();
     ClientWindow ClientPanel =  new ClientWindow();
     RenameFilesWindow RenamePanel = new RenameFilesWindow();
+    RegisterPanel register = new RegisterPanel();
     LoginWindow LoginPanel = new LoginWindow();
     TextClient Login = new TextClient();
     static Socket ExitConection = null;
@@ -275,6 +277,7 @@ public class main extends javax.swing.JFrame {
         LogButton.setVisible(false);
         SeButton.setVisible(false);
         clientConectSButton1.setVisible(false);
+        register.setVisible(false);
 
     }//GEN-LAST:event_mainMouseClicked
 
@@ -356,6 +359,7 @@ public class main extends javax.swing.JFrame {
         SButton.setVisible(true);
         CSButton.setVisible(false);
         clientConectSButton1.setVisible(false);
+        register.dispose();
     }//GEN-LAST:event_mdesenfoqueMouseClicked
 
     private void ClientDesenfoqueMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_ClientDesenfoqueMouseClicked

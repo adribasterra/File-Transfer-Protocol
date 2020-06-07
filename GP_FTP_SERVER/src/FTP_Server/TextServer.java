@@ -77,8 +77,8 @@ public class TextServer {
 			BufferedReader input = new BufferedReader(new InputStreamReader(sCon.getInputStream()));
 			PrintWriter output = new PrintWriter(sCon.getOutputStream(), true);
 
-			Boolean loggedIn = false;
-			while (!loggedIn) loggedIn = logIn(input, output);
+			//Boolean loggedIn = false;
+			//while (!loggedIn) loggedIn = logIn(input, output);
 
 
 			String curDir = "files\\";
@@ -116,19 +116,27 @@ public class TextServer {
 				else if (data.startsWith("cd")) {
 					String[] command = data.split(" ");
 					String directory = canonicalDir(curDir, command[1]);
-					output.println(directory);
 					
 					if ( !directory.isEmpty() && new File(directory).isDirectory() ) {
 						curDir = directory;
+						output.println(directory);
 					}else if ( directory.isEmpty() ) {
 						System.out.println("ERROR: Access forbidden outside the \"files\\\" folder!");
+						output.println("");
 					}else{
 						System.out.println("ERROR: Directory : "+directory+" does not exist!");
+						output.println("");
 					};
 				}
 				else if (data.startsWith("LIST")) {
 					System.out.println("Attempting to list files.");
-					listFiles(output);
+					String[] params = data.split(" ");
+					if (params.length>1) {
+						String dir = canonicalDir(curDir, params[1]);
+						listFiles(dir, output);
+					} else {
+						listFiles(output);
+					}
 				}
 				else if (data.startsWith("DELE")) {
 					String[] command = data.split(" ");
@@ -218,6 +226,8 @@ public class TextServer {
 		String[] paths;
 		if (directory.contains("/")) {
 			paths = directory.split("/");
+		} else if (directory.contains("\\")) {
+			paths = directory.split("\\");
 		} else {
 			paths = new String[]{directory};
 		}
@@ -225,7 +235,7 @@ public class TextServer {
 		for (String path : paths){
 			if (path.compareTo("..")==0){
 				int i = directory.lastIndexOf("\\", directory.length()-2);
-				if (i==-1) return "";
+				if (i==-1) return directory;
 				directory = directory.substring(0, i+1);
 			}
 			else if (path.compareTo(".")!=0){
@@ -345,6 +355,32 @@ public class TextServer {
 			}
 			in.close();
 			if (s==null) output.println("(empty)");
+			output.println("END");
+			return true;
+		} catch (Exception e) {
+			e.printStackTrace();
+			System.out.println(CMD_ACTION_ABORTED);
+		}
+		return false;
+	}
+
+	public static Boolean listFiles(String directory, PrintWriter output) {
+		try {
+			Scanner in = new Scanner(new FileReader("fileList.txt"));
+			String s = null;
+			String fileDir = null;
+			while (in.hasNextLine()) {
+				s = in.nextLine();
+				fileDir = "files\\" + s;
+				if (fileDir.startsWith(directory)) {
+					System.out.println(directory);
+					fileDir = fileDir.substring(directory.length());
+					System.out.println(fileDir);
+					output.println(fileDir);
+				}
+			}
+			in.close();
+			if (fileDir==null) output.println("(empty)");
 			output.println("END");
 			return true;
 		} catch (Exception e) {

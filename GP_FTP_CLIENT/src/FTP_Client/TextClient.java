@@ -26,8 +26,8 @@ public class TextClient {
 			BufferedReader input = new BufferedReader(new InputStreamReader(connection.getInputStream()));
 			PrintWriter output = new PrintWriter(connection.getOutputStream(), true);
 
-			Boolean loggegIn = false;
-			while (!loggegIn) loggegIn = logIn(input, output);
+			//Boolean loggegIn = false;
+			//while (!loggegIn) loggegIn = logIn(input, output);
 
 			String curDir = "files\\";
 			String baseDir = "files\\";
@@ -42,21 +42,21 @@ public class TextClient {
 
 				if (data.startsWith("send")) {
 					String[] command = data.split(" ");
-					String filename = baseDir + command[1];
+					String filename = command[1];
 					String dataTCP = "STOR" + " " + filename;						//STOR <SP> <pathname> <CRLF> 
 					output.println(dataTCP);
 					System.out.println("Attempting to send file: " + filename);
 					//sendFile(filename);
-					DataClient.sendFile(filename);
+					DataClient.sendFile(baseDir + filename);
 				}
 				else if (data.startsWith("get")) {
 					String[] command = data.split(" ");
-					String filename = curDir + command[1];
+					String filename = command[1];
 					String dataTCP = "RETR" + " " + filename;						//RETR <SP> <pathname> <CRLF> 
 					output.println(dataTCP);
 					System.out.println("Attempting to get file: " + filename);
 					//receiveFile(filename);
-					DataClient.receiveFile(filename);
+					DataClient.receiveFile(baseDir + filename);
 				}
 				else if (data.startsWith("mkdir")) {
 					String[] command = data.split(" ");
@@ -78,11 +78,17 @@ public class TextClient {
 				}
 				else if (data.startsWith("list")) {
 					String[] command = data.split(" ");
-					String pathDirectory = curDir + command[1];
-					String dataTCP = "LIST" + " " + pathDirectory;				//LIST [<SP> <pathname>] <CRLF>
-						System.out.println(dataTCP);
+					String dataTCP;
+					String pathDirectory = null;
+					if (command.length>1){
+						pathDirectory = command[1];
+						dataTCP = "LIST" + " " + pathDirectory;				//LIST [<SP> <pathname>] <CRLF>
+					}else{
+						dataTCP = "LIST";
+					}
+					System.out.println(dataTCP);
 					output.println(dataTCP);
-					receiveListFiles(input);
+					receiveListFiles(pathDirectory, input);
 				}
 				else if (data.startsWith("delete")) {
 					String[] command = data.split(" ");
@@ -144,9 +150,10 @@ public class TextClient {
 		}
 	}
 
-	public static boolean receiveListFiles(BufferedReader input) {
+	public static boolean receiveListFiles(String directory, BufferedReader input) {
 		try {
-			System.out.println("Here is the list of files on the server:");
+			if(directory==null) System.out.println("Here is the list of files on the server:");
+			else System.out.println("Here is the list of files in "+directory+":");
 
 			String s = input.readLine();
 			while (s.compareTo("END")!=0) {

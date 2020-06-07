@@ -99,7 +99,6 @@ public class ServerThread extends Thread {
     BufferedReader input;
     //PrintWriter output;
     Socket sCon = null;
-    
 
     public ServerThread(Socket r) {
         sCon = r;
@@ -109,8 +108,10 @@ public class ServerThread extends Thread {
             // Recover input & output from connection
             input = new BufferedReader(new InputStreamReader(sCon.getInputStream()));
             output = new PrintWriter(sCon.getOutputStream(), true);
+            output.println(CMD_SERVICE_READY);
+            System.out.println(CMD_SERVICE_READY);
             //output.println(CMD_SERVICE_READY);
-            
+
             hasPort = false;
 
         } catch (IOException ex) {
@@ -121,14 +122,14 @@ public class ServerThread extends Thread {
 
     public void run() {
         String data = "";
-         System.out.println("The user with  " + sCon.toString()+" has connected");
-         boolean connectionClosed = false;
+        System.out.println("\033[32mThe user with  " + sCon.toString() + " has connected");
+        boolean connectionClosed = false;
         while (!data.trim().equals("END")) {
             try {
                 // Read data from client
                 data = input.readLine();
                 System.out.println(data);
-                 if (data.startsWith("STOR")) {
+                if (data.startsWith("STOR")) {
                     String[] command = data.split(" ");
                     if (command.length == 2) {
                         String filename = command[1];
@@ -136,8 +137,10 @@ public class ServerThread extends Thread {
                         if (fileData.exists()) {
                             System.out.println("ALREADY EXISTS IN SERVER");
                             output.println(CMD_FILENAME_NOT_ALLOWED);
+                            System.out.println(CMD_FILENAME_NOT_ALLOWED);
                         } else {
                             output.println(CMD_FILE_STATUS_OKAY);
+                            System.out.println(CMD_FILE_STATUS_OKAY);
                             if (hasPort) {
                                 boolean response = DataServer.receiveFile(filename, dataPortClient, output);
                                 if (response) {
@@ -145,10 +148,12 @@ public class ServerThread extends Thread {
                                 }
                             } else {
                                 output.println(CMD_CANT_OPEN_CONNECTION); //There is no dataPort
+                                System.out.println(CMD_CANT_OPEN_CONNECTION);
                             }
                         }
                     } else {
                         output.print(CMD_BAD_SEQUENCE); //There is no path for file
+                        System.out.println(CMD_BAD_SEQUENCE);
                     }
                 } else if (data.startsWith("PRT")) {
                     //Structure of type: h1,h2,h3,h4,p1,p2
@@ -157,8 +162,10 @@ public class ServerThread extends Thread {
                         dataPortClient = Integer.parseInt(command[1]);
                         hasPort = true;
                         output.println(CMD_OKAY);
+                        System.out.println(CMD_OKAY);
                     } else {
                         output.print(CMD_BAD_SEQUENCE);
+                        System.out.println(CMD_BAD_SEQUENCE);
                     }
                 } else if (data.startsWith("RETR")) {
                     String[] command = data.split(" ");
@@ -168,16 +175,20 @@ public class ServerThread extends Thread {
                         if (!fileData.exists()) {
                             System.out.println("ERROR: File " + filename + " does not exist here!");
                             output.println(CMD_FILE_ACTION_UNAVAILABLE);
+                            System.out.println(CMD_FILE_ACTION_UNAVAILABLE);
                         } else {
                             output.println(CMD_FILE_STATUS_OKAY);
+                            System.out.println(CMD_FILE_STATUS_OKAY);
                             if (hasPort) {
                                 DataServer.sendFile(filename, dataPortClient, output);
                             } else {
                                 output.println(CMD_CANT_OPEN_CONNECTION);
+                                System.out.println(CMD_CANT_OPEN_CONNECTION);
                             }
                         }
                     } else {
                         output.print(CMD_BAD_SEQUENCE);
+                        System.out.println(CMD_BAD_SEQUENCE);
                     }
                 } else if (data.startsWith("LIST")) {
                     listFiles(output);
@@ -188,10 +199,12 @@ public class ServerThread extends Thread {
                         boolean result = deleteFile(filename);
                         if (result) {
                             output.println(CMD_COMPLETED);
+                            System.out.println(CMD_COMPLETED);
                         }
                     } else {
                         output.print(CMD_BAD_SEQUENCE);
                     }
+                    System.out.println(CMD_BAD_SEQUENCE);
                 } else if (data.startsWith("RNFR")) {
                     String[] command = data.split(" ");
                     if (command.length == 3) {
@@ -201,9 +214,11 @@ public class ServerThread extends Thread {
                             renameFile(oldFilename, newFilename);
                         } else {
                             output.println(CMD_FILENAME_NOT_ALLOWED);
+                            System.out.println(CMD_FILENAME_NOT_ALLOWED);
                         }
                     } else {
                         output.print(CMD_BAD_SEQUENCE);
+                        System.out.println(CMD_BAD_SEQUENCE);
                     }
                 } else if (data.startsWith("MKD")) {
                     String[] command = data.split(" ");
@@ -249,6 +264,7 @@ public class ServerThread extends Thread {
                 } else if (data.startsWith("QUIT")) {
                     sCon.close();
                     output.println(CMD_CLOSING);
+                    System.out.println(CMD_CLOSING);
                     connectionClosed = true;
                 } else {
                     output.println(CMD_BAD_SEQUENCE);
@@ -257,9 +273,10 @@ public class ServerThread extends Thread {
             } catch (Exception e) {
                 e.printStackTrace();
                 output.println(CMD_ACTION_ABORTED);
+                System.out.println(CMD_ACTION_ABORTED);
             }
         }
-        System.out.println("The user connected to --> "+sCon.toString() + "has dsconnected ");
+        System.out.println("\033[31mThe user connected to --> " + sCon.toString() + "has dsconnected ");
 
         try {
 
@@ -267,6 +284,8 @@ public class ServerThread extends Thread {
             if (!connectionClosed) {
                 sCon.close();
                 output.println(CMD_CLOSING);
+                System.out.println(CMD_CLOSING);
+
             }
 
             hasPort = false;

@@ -5,30 +5,23 @@
  */
 package FTP_Interface;
 
-//import static FTP_Server.TextServer.listFiles;
-import static FTP_Server.TextServer.listFiles;
 import java.awt.Color;
 
 /**
  *
  * @author jojoj
  */
-public class ServerWindow extends javax.swing.JFrame {
+public class RegisterPanel extends javax.swing.JFrame {
 
     /**
-     * Creates new form ServerWindow
+     * Creates new form RegisterPanel
      */
-    public ServerWindow() {
+    public RegisterPanel() {
         initComponents();
         this.setLocationRelativeTo(null);
         setBackground(new Color(0.0f,0.0f,0.0f,0.0f));
-        ServerInfo.setText(listFiles());
-       // condcion = true;
-        //System.out.println(listFiles());
     }
-    
-    public static boolean condcion = true;
-    
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -38,12 +31,9 @@ public class ServerWindow extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        ServerInfo = new javax.swing.JLabel();
-        jTextField1 = new javax.swing.JTextField();
-        backButton = new javax.swing.JButton();
-        main = new javax.swing.JLabel();
+        jLabel1 = new javax.swing.JLabel();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setAlwaysOnTop(true);
         setUndecorated(true);
         setOpacity(0.0F);
@@ -54,26 +44,16 @@ public class ServerWindow extends javax.swing.JFrame {
             }
         });
         getContentPane().setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
-        getContentPane().add(ServerInfo, new org.netbeans.lib.awtextra.AbsoluteConstraints(170, 150, 220, 230));
 
-        jTextField1.setText("jTextField1");
-        jTextField1.setBorder(null);
-        getContentPane().add(jTextField1, new org.netbeans.lib.awtextra.AbsoluteConstraints(200, 80, 170, 40));
-
-        backButton.setBorder(null);
-        backButton.setContentAreaFilled(false);
-        backButton.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-        getContentPane().add(backButton, new org.netbeans.lib.awtextra.AbsoluteConstraints(230, 410, 90, 40));
-
-        main.setIcon(new javax.swing.ImageIcon(getClass().getResource("/FTP_Images/panel servidor.png"))); // NOI18N
-        getContentPane().add(main, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 900, 550));
+        jLabel1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/FTP_Images/Registerpanel.png"))); // NOI18N
+        getContentPane().add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 290, 442));
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
     private void formWindowOpened(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowOpened
         // TODO add your handling code here:
-        for (double i=0.0;i<=1.0;i = i+ 0.1){
+         for (double i=0.0;i<=1.0;i = i+ 0.1){
         
            String val = i+ "";
            float f = Float.valueOf(val);
@@ -85,7 +65,6 @@ public class ServerWindow extends javax.swing.JFrame {
             catch (Exception e){}
             
         }
-        
     }//GEN-LAST:event_formWindowOpened
 
     /**
@@ -99,34 +78,31 @@ public class ServerWindow extends javax.swing.JFrame {
          */
         try {
             for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Windows".equals(info.getName())) {
+                if ("Nimbus".equals(info.getName())) {
                     javax.swing.UIManager.setLookAndFeel(info.getClassName());
                     break;
                 }
             }
         } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(ServerWindow.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(RegisterPanel.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(ServerWindow.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(RegisterPanel.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(ServerWindow.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(RegisterPanel.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(ServerWindow.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(RegisterPanel.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
         //</editor-fold>
 
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new ServerWindow().setVisible(true);
+                new RegisterPanel().setVisible(true);
             }
         });
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JLabel ServerInfo;
-    private javax.swing.JButton backButton;
-    private javax.swing.JTextField jTextField1;
-    private javax.swing.JLabel main;
+    private javax.swing.JLabel jLabel1;
     // End of variables declaration//GEN-END:variables
 }

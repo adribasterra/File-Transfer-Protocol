@@ -3,6 +3,7 @@ package FTP_Server;
 // ByteServer
 
 import java.net.*;
+import java.util.Scanner;
 import java.io.*;
 
 public class DataServer {
@@ -94,7 +95,7 @@ public class DataServer {
 		return false;
 	}
 
-	public static Boolean listFiles(int dataPort, PrintWriter output, String fileName) {
+	public static Boolean listFiles(int dataPort, PrintWriter output, String path) {
 		System.out.println("listFiles in DataServer called");
 		try {
 			ServerSocket sServ = new ServerSocket(dataPort);
@@ -102,11 +103,15 @@ public class DataServer {
 			
 			Socket sCon = sServ.accept();
 
-			Scanner input = new Scanner(new FileReader(fileName));
+			if(path == "files\\"){
+				path = "";
+			} 
+
+			Scanner input = new Scanner(new FileReader("fileList.txt"));
 			String line = null;
 			while (input.hasNextLine()) {
 				line = input.nextLine();
-				output.println(line);
+				if(line.startsWith(path)) { output.println(line); }
 			}
 			input.close();
 			if (line == null) System.out.println("Is empty");

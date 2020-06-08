@@ -5,7 +5,7 @@ package FTP_Server;
 import java.net.*;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.Scanner;
+import java.util.*;
 
 //import org.graalvm.compiler.nodes.calc.IntegerTestNode;
 import java.io.*;
@@ -151,7 +151,7 @@ public class TextServer {
 						else{
 							output.println(CMD_FILE_STATUS_OKAY);
 							System.out.println(CMD_FILE_STATUS_OKAY);
-							if(hasPort) DataServer.sendFile(filename, dataPortClient, output);
+							if(hasPort) { DataServer.sendFile(filename, dataPortClient, output); }
 							else {
 								output.println(CMD_CANT_OPEN_CONNECTION);
 								System.out.println(CMD_CANT_OPEN_CONNECTION);
@@ -167,15 +167,16 @@ public class TextServer {
 					if(hasPort){
 						if(command.length == 2) {
 							String path = command[1];
-							String fileName = path + "fileList.txt";
-							File fileData = new File(fileName);
+							//String fileName = path + "fileList.txt";
+							File fileData = new File(path);
 							if(fileData.exists()){
 								output.println(CMD_FILE_STATUS_OKAY);
 								System.out.println(CMD_FILE_STATUS_OKAY);
-								DataServer.listFiles(dataPortClient, output, fileName);
+								System.out.println("Path: " + path);
+								DataServer.listFiles(dataPortClient, output, path);
 							}
 							else{ //Does not exists a fileList.txt in that path
-								System.out.println("ERROR: File " + fileName + " does not exist here!");
+								System.out.println("ERROR: Directory " + path + " does not exist here!");
 								output.println(CMD_FILE_ACTION_UNAVAILABLE);
 								System.out.println(CMD_FILE_ACTION_UNAVAILABLE);
 							}

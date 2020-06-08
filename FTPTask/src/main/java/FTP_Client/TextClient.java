@@ -56,24 +56,29 @@ public class TextClient {
 					if(command.length == 2){
 						String filename = command[1];
 						dataTCP = "STOR" + " " + filename; 						// STOR <SP> <pathname> <CRLF>
+						output.println(dataTCP);
 						System.out.println("Attempting to send file: " + filename);
 						if(hasPort)	DataClient.sendFile(filename, dataPortClient);
 						//System.out.println(input.readLine());
 					}
 					else {
 						dataTCP = "STOR";
+						output.println(dataTCP);
 						System.out.println("Format is not correct.");
 					}
-					output.println(dataTCP);
 					//System.out.println(input.readLine());
 				}
 				else if (data.startsWith("prt")) {
 					String[] command = data.split(" ");
 					if(command.length == 2){
-						dataPortClient = Integer.parseInt(command[1]);
-						dataTCP = "PRT" + " " + dataPortClient;					// PORT <SP> <host-port> <CRLF>
-						output.println(dataTCP);
-						hasPort = true;
+						try{
+							dataPortClient = Integer.parseInt(command[1]);
+							dataTCP = "PRT" + " " + dataPortClient;				// PORT <SP> <host-port> <CRLF>
+							output.println(dataTCP);
+							hasPort = true;
+						} catch(NumberFormatException e){
+							System.out.println("It is not a number.");
+						}
 					}
 					else{
 						System.out.println("Format is not correct");
@@ -85,6 +90,7 @@ public class TextClient {
 					if(command.length == 2){
 						String filename = command[1];
 						dataTCP = "RETR" + " " + filename; 						// RETR <SP> <pathname> <CRLF>
+						output.println(dataTCP);
 						System.out.println("Attempting to get file: " + filename);
 						if(hasPort)	DataClient.receiveFile(filename, dataPortClient);
 						//System.out.println(input.readLine());
@@ -92,22 +98,22 @@ public class TextClient {
 					else{
 						System.out.println("Format is not correct");
 						dataTCP = "RETR";
+						output.println(dataTCP);
 					}
-					output.println(dataTCP);
 					//System.out.println(input.readLine());
 				}
 				else if (data.startsWith("list")) {
 					String[] command = data.split(" "); //For directory
 					if(command.length == 2){
-						dataTCP = "LIST" + command[1];
+						dataTCP = "LIST" + " " + command[1];
+						output.println(dataTCP);
 						//dataTCP = "LIST" + " " + command[1]; 						// LIST [<SP> <pathname>] <CRLF>
 						if(hasPort)	DataClient.receiveListFiles(dataPortClient, input);
 					}
 					else {
 						dataTCP = "LIST";
+						output.println(dataTCP);
 					}
-					output.println(dataTCP);
-
 				}
 				else if (data.startsWith("delete")) {
 					String[] command = data.split(" ");
@@ -117,8 +123,8 @@ public class TextClient {
 					}
 					else { dataTCP = "DELE"; }
 					System.out.println(dataTCP);
-					output.println(dataTCP);
 					//System.out.println(input.readLine());
+					output.println(dataTCP);
 				}
 				else if (data.startsWith("rename")) {
 					String[] command = data.split(" ");
@@ -126,8 +132,8 @@ public class TextClient {
 						dataTCP = "RNFR" + " " + command[1] + " " + command[2];	// RNFR <SP> <pathname> <CRLF>
 					}
 					else { dataTCP = "RNFR"; }
-					output.println(dataTCP);
 					//System.out.println(input.readLine());
+					output.println(dataTCP);
 				}
 				else if (data.startsWith("wdir")) {
 					dataTCP = "PWD"; 											// PWD <CRLF>
@@ -158,9 +164,9 @@ public class TextClient {
 					System.out.println("Attempting to create directory: " + directory);
 					//System.out.println(input.readLine());
 				}
-        else if(data.startsWith("wdir")){
-  					dataTCP = "PWD"; 											// PWD <CRLF>
-        }
+				else if(data.startsWith("wdir")){
+					dataTCP = "PWD"; 											// PWD <CRLF>
+				}
 				else if (data.startsWith("remove")) {
 					String[] command = data.split(" ");
 					if(command.length == 2){
@@ -187,7 +193,6 @@ public class TextClient {
 				else if(data.startsWith("quit")){
 					dataTCP = "QUIT";
 					output.println(dataTCP);
-
 				}
 				else if (data.compareTo("END") == 0) {
 					output.println(data);

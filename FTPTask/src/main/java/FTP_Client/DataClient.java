@@ -91,6 +91,8 @@ public class DataClient {
 				System.out.println(" > " + s);
 				s = input.readLine();
 			}
+			
+			connection.close();
 			return true;
 		} catch (Exception e) {
 			e.printStackTrace();

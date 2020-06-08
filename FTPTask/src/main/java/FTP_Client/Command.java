@@ -16,6 +16,7 @@ public class Command {
 
         String param = command[1];
         setPathAndFileName(curDir, param);
+        String filename = null;
 
         String dataTCP = "STOR" + " " + filename;						//STOR <SP> <pathname> <CRLF> 
     }
@@ -30,7 +31,7 @@ public class Command {
         }
     }
 
-    public static Boolean setPathAndFileName(String curDir, String directory) {
+    public static boolean setPathAndFileName(String curDir, String directory) {
         String[] paths;
 		if (directory.contains("/")) {
 			paths = directory.split("/");
@@ -43,7 +44,7 @@ public class Command {
 		for (String path : paths){
 			if (path.compareTo("..")==0){
 				int i = directory.lastIndexOf("\\", directory.length()-2);
-				if (i==-1) return directory;
+				//if (i==-1) return directory;
 				directory = directory.substring(0, i+1);
 			}
 			else if (path.compareTo(".")!=0){

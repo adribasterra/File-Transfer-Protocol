@@ -21,6 +21,7 @@ import java.net.Socket;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JFileChooser;
+import javax.swing.JOptionPane;
 
 /**
  *
@@ -41,6 +42,7 @@ public class ClientWindow extends javax.swing.JFrame {
     ServerWindow ServerPanel = new ServerWindow();
     //RenameFilesWindow RenamePanel = new RenameFilesWindow();
     DirectorySWindow DirectPanel = new DirectorySWindow();
+    
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -299,9 +301,11 @@ public class ClientWindow extends javax.swing.JFrame {
                 output.println(dataTCP);
                 System.out.println(dataTCP);
             }
+           
+            
 
         } catch (IOException ex) {
-            Logger.getLogger(main.class.getName()).log(Level.SEVERE, null, ex);
+          Logger.getLogger(main.class.getName()).log(Level.SEVERE, null, ex);
         }
 
 

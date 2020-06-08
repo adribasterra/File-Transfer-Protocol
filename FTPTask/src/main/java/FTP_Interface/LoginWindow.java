@@ -7,6 +7,7 @@ package FTP_Interface;
 
 import java.awt.Color;
 import java.awt.Component;
+import java.io.File;
 import javax.swing.JOptionPane;
 
 /**
@@ -15,8 +16,7 @@ import javax.swing.JOptionPane;
  */
 public class LoginWindow extends javax.swing.JFrame {
 
-    private Component confirmation;
-    private String user, pass;
+   
     
     /**
      * Creates new form LoginWindow
@@ -27,13 +27,8 @@ public class LoginWindow extends javax.swing.JFrame {
         setBackground(new Color(0.0f,0.0f,0.0f,0.0f));
     }
     
-    public void data(String us, String pas){
-    
-        user = "Admin";
-        pass = "admin";
-    
-    }
-    
+
+    RegisterPanel regi = new RegisterPanel();
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -122,7 +117,7 @@ public class LoginWindow extends javax.swing.JFrame {
 
     private void loginButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_loginButtonMouseClicked
         // TODO add your handling code here:
-            data(user, pass);
+            /*data(user, pass);
     if(user.equals(userText.getText()) && pass.equals(passtext.getText())){
          main Main = new main();
          Main.setVisible(true);
@@ -147,7 +142,11 @@ public class LoginWindow extends javax.swing.JFrame {
     }else if(passtext.getText().compareTo(pass)!=0){
         JOptionPane.showMessageDialog(this,"Invalid password\nPlease enter it.");
         passtext.setFocusable(true);
-    }
+    }*/
+            regi.CreateFolder();
+            regi.readFile();
+            regi.countlines();
+            regi.logic(userText.getText(), passtext.getText());
         
     }//GEN-LAST:event_loginButtonMouseClicked
 

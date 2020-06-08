@@ -6,6 +6,9 @@
 package FTP_Interface;
 
 import java.awt.Color;
+import java.awt.Component;
+import java.io.File;
+import javax.swing.JOptionPane;
 
 /**
  *
@@ -13,6 +16,8 @@ import java.awt.Color;
  */
 public class LoginWindow extends javax.swing.JFrame {
 
+   
+    
     /**
      * Creates new form LoginWindow
      */
@@ -21,6 +26,9 @@ public class LoginWindow extends javax.swing.JFrame {
         this.setLocationRelativeTo(null);
         setBackground(new Color(0.0f,0.0f,0.0f,0.0f));
     }
+    
+
+    RegisterPanel regi = new RegisterPanel();
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -31,6 +39,10 @@ public class LoginWindow extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        registrerButton = new javax.swing.JButton();
+        loginButton = new javax.swing.JButton();
+        passtext = new javax.swing.JPasswordField();
+        userText = new javax.swing.JTextField();
         LOpanel = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
@@ -43,19 +55,46 @@ public class LoginWindow extends javax.swing.JFrame {
                 formWindowOpened(evt);
             }
         });
+        getContentPane().setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+
+        registrerButton.setBorder(null);
+        registrerButton.setBorderPainted(false);
+        registrerButton.setContentAreaFilled(false);
+        registrerButton.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        registrerButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                registrerButtonMouseClicked(evt);
+            }
+        });
+        getContentPane().add(registrerButton, new org.netbeans.lib.awtextra.AbsoluteConstraints(230, 373, 40, 30));
+
+        loginButton.setBorder(null);
+        loginButton.setBorderPainted(false);
+        loginButton.setContentAreaFilled(false);
+        loginButton.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        loginButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                loginButtonMouseClicked(evt);
+            }
+        });
+        getContentPane().add(loginButton, new org.netbeans.lib.awtextra.AbsoluteConstraints(80, 280, 110, 40));
+
+        passtext.setFont(new java.awt.Font("Arial", 0, 18)); // NOI18N
+        passtext.setForeground(new java.awt.Color(255, 255, 255));
+        passtext.setActionCommand("<Not Set>");
+        passtext.setBorder(null);
+        passtext.setOpaque(false);
+        getContentPane().add(passtext, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 220, 210, 30));
+
+        userText.setFont(new java.awt.Font("Arial", 0, 18)); // NOI18N
+        userText.setForeground(new java.awt.Color(255, 255, 255));
+        userText.setToolTipText("");
+        userText.setBorder(null);
+        userText.setOpaque(false);
+        getContentPane().add(userText, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 130, 220, 30));
 
         LOpanel.setIcon(new javax.swing.ImageIcon(getClass().getResource("/FTP_Images/loginpanel.png"))); // NOI18N
-
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
-        getContentPane().setLayout(layout);
-        layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(LOpanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-        );
-        layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(LOpanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-        );
+        getContentPane().add(LOpanel, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, -1, -1));
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
@@ -75,6 +114,48 @@ public class LoginWindow extends javax.swing.JFrame {
             
         }
     }//GEN-LAST:event_formWindowOpened
+
+    private void loginButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_loginButtonMouseClicked
+        // TODO add your handling code here:
+            /*data(user, pass);
+    if(user.equals(userText.getText()) && pass.equals(passtext.getText())){
+         main Main = new main();
+         Main.setVisible(true);
+         this.dispose();
+    }else if(userText.getText().equals("") && passtext.getText().equals("")){
+        JOptionPane.showMessageDialog(this,"User and / or Password are empty\nPlease enter them.");
+        userText.setFocusable(true);
+    }else if(userText.getText().equals("")){
+        JOptionPane.showMessageDialog(this,"User is empty\nPlease enter it.");
+        userText.setFocusable(true);
+    }else if(passtext.getText().equals("")){
+        JOptionPane.showMessageDialog(this,"Password is empty\nPlease enter it.");
+        passtext.setFocusable(true);
+    }
+    else if(userText.getText().compareTo(user)!=0 && passtext.getText().compareTo(pass)!=0){
+        JOptionPane.showMessageDialog(this,"Invalid username and / or password\nPlease enter them.");
+         userText.setFocusable(true);
+    }
+    else if(userText.getText().compareTo(user)!=0){
+        JOptionPane.showMessageDialog(this,"Invalid user\nPlease enter it.");
+        userText.setFocusable(true);
+    }else if(passtext.getText().compareTo(pass)!=0){
+        JOptionPane.showMessageDialog(this,"Invalid password\nPlease enter it.");
+        passtext.setFocusable(true);
+    }*/
+            regi.CreateFolder();
+            regi.readFile();
+            regi.countlines();
+            regi.logic(userText.getText(), passtext.getText());
+        
+    }//GEN-LAST:event_loginButtonMouseClicked
+
+    private void registrerButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_registrerButtonMouseClicked
+        // TODO add your handling code here:
+        RegisterPanel register = new RegisterPanel();
+        register.setVisible(true);
+        this.dispose();
+    }//GEN-LAST:event_registrerButtonMouseClicked
 
     /**
      * @param args the command line arguments
@@ -113,5 +194,9 @@ public class LoginWindow extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel LOpanel;
+    private javax.swing.JButton loginButton;
+    private javax.swing.JPasswordField passtext;
+    private javax.swing.JButton registrerButton;
+    private javax.swing.JTextField userText;
     // End of variables declaration//GEN-END:variables
 }

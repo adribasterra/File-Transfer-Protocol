@@ -33,7 +33,7 @@ public class Server {
         Client = server.accept();
         ServerThread Thread = new ServerThread(Client);
         Thread.start();
-        System.out.println("An anonymous user is conecting to the server...");
+        System.out.println("\033[34mAn anonymous user is conecting to the server...");
                 
         
         }

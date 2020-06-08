@@ -24,7 +24,7 @@ public class ServerWindow extends javax.swing.JFrame {
         setBackground(new Color(0.0f,0.0f,0.0f,0.0f));
         ServerInfo.setText(listFiles());
        // condcion = true;
-        System.out.println(listFiles());
+        //System.out.println(listFiles());
     }
     
     public static boolean condcion = true;

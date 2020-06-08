@@ -110,8 +110,8 @@ public class TextServer {
 							output.println(CMD_FILE_STATUS_OKAY);
 							System.out.println(CMD_FILE_STATUS_OKAY);
 							if(hasPort) {
-								boolean response = DataServer.receiveFile(filename, dataPortClient, output);
-								if (response) addFilenameToList(filename);
+								boolean response = DataServer.receiveFile(currentDirectory + filename, dataPortClient, output);
+								if (response) addFilenameToList(currentDirectory + filename);
 							}
 							else {
 								output.println(CMD_CANT_OPEN_CONNECTION); //There is no dataPort
@@ -163,7 +163,29 @@ public class TextServer {
 					}
 				}
 				else if (data.startsWith("LIST")) {
-					listFiles(output);
+					String[] command = data.split(" ");
+					if(hasPort){
+						if(command.length == 2) {
+							String path = command[1];
+							String fileName = path + "fileList.txt";
+							File fileData = new File(fileName);
+							if(fileData.exists()){
+								output.println(CMD_FILE_STATUS_OKAY);
+								System.out.println(CMD_FILE_STATUS_OKAY);
+								DataServer.listFiles(dataPortClient, output, fileName);
+							}
+							else{ //Does not exists a fileList.txt in that path
+								System.out.println("ERROR: File " + fileName + " does not exist here!");
+								output.println(CMD_FILE_ACTION_UNAVAILABLE);
+								System.out.println(CMD_FILE_ACTION_UNAVAILABLE);
+							}
+						}
+						else if(command.length == 1) DataServer.listFiles(dataPortClient, output, currentDirectory);
+					}
+					else {
+						output.println(CMD_CANT_OPEN_CONNECTION);
+						System.out.println(CMD_CANT_OPEN_CONNECTION);
+					}
 				}
 				else if (data.startsWith("DELE")) {
 					String[] command = data.split(" ");

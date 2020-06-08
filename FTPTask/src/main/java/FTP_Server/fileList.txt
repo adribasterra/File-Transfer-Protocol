@@ -3,3 +3,4 @@ genres.json
 qr-code.png
 test.txt
 r.txt
+adri\me\other.txt

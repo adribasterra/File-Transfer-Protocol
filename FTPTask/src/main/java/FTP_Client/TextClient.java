@@ -98,10 +98,16 @@ public class TextClient {
 				}
 				else if (data.startsWith("list")) {
 					String[] command = data.split(" "); //For directory
-					dataTCP = "LIST";
-					//dataTCP = "LIST" + " " + command[1]; 						// LIST [<SP> <pathname>] <CRLF>
+					if(command.length == 2){
+						dataTCP = "LIST" + command[1];
+						//dataTCP = "LIST" + " " + command[1]; 						// LIST [<SP> <pathname>] <CRLF>
+						if(hasPort)	DataClient.receiveListFiles(dataPortClient, input);
+					}
+					else {
+						dataTCP = "LIST";
+					}
 					output.println(dataTCP);
-					receiveListFiles(input);
+
 				}
 				else if (data.startsWith("delete")) {
 					String[] command = data.split(" ");

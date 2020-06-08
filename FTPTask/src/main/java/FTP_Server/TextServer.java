@@ -232,7 +232,7 @@ public class TextServer {
 					String[] command = data.split(" ");
 					if(command.length == 2){
 						String directory = canonicalDir(currentDirectory, command[1]);
-						//output.println(directory);
+						output.println(directory);
 						File dir = new File(directory);
 
 						if(dir.exists()){
@@ -390,6 +390,7 @@ public class TextServer {
 			in.close();
 
 			PrintWriter listWriter = new PrintWriter(new FileOutputStream("fileList.txt"));
+			//NO VA
 			listWriter.println(sb.toString()+filename.subString(6));
 			listWriter.close();
 

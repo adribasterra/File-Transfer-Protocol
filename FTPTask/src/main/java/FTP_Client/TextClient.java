@@ -109,7 +109,8 @@ public class TextClient {
 						String pathDirectory = command[1];
 						dataTCP = "DELE" + " " + pathDirectory; 				// DELE <SP> <pathname> <CRLF>
 					}
-					else dataTCP = "DELE";
+					else { dataTCP = "DELE"; }
+					System.out.println(dataTCP);
 					output.println(dataTCP);
 					//System.out.println(input.readLine());
 				}
@@ -132,7 +133,7 @@ public class TextClient {
 					if(command.length == 2){
 						dataTCP = "CWD" + " " + command[1]; 					// CWD <SP> <pathname> <CRLF>
 						String directory = input.readLine();
-	
+
 						if (!directory.isEmpty()) {
 							currentDirectory = directory;
 						} else {
@@ -151,6 +152,9 @@ public class TextClient {
 					System.out.println("Attempting to create directory: " + directory);
 					//System.out.println(input.readLine());
 				}
+        else if(data.startsWith("wdir")){
+  					dataTCP = "PWD"; 											// PWD <CRLF>
+        }
 				else if (data.startsWith("remove")) {
 					String[] command = data.split(" ");
 					if(command.length == 2){
@@ -177,7 +181,7 @@ public class TextClient {
 				else if(data.startsWith("quit")){
 					dataTCP = "QUIT";
 					output.println(dataTCP);
-					
+
 				}
 				else if (data.compareTo("END") == 0) {
 					output.println(data);
@@ -189,13 +193,13 @@ public class TextClient {
 					String path = System.getProperty("user.dir");
 
 					Stack<String> stack = new Stack<String>();
-	 
+
 					while(path.length()> 0 && (path.charAt(path.length()-1) =='\\' || path.charAt(path.length()-1) =='/')){
 						path = path.substring(0, path.length()-1);
 					}
-					
+
 					int start = 0;
-					
+
 					for(int i=1; i<path.length(); i++){
 						if(path.charAt(i) == '\\' || path.charAt(i) == '/'){
 							stack.push(path.substring(start, i));

@@ -38,17 +38,17 @@ public class TextServer {
 
     public static final String CMD_FILENAME_NOT_ALLOWED = "553. Requested action not taken. File name not allowed.";
 
-	public final static String CMD_USER_OKAY = "331. User name okay, need password.";
+	  public final static String CMD_USER_OKAY = "331. User name okay, need password.";
 
-	public final static String CMD_USER_ERROR = "530. User not logged, error";
+	  public final static String CMD_USER_ERROR = "530. User not logged, error";
 
-	public final static String CMD_USER_LOGGED = "230. User logged in, proceed";
+	  public final static String CMD_USER_LOGGED = "230. User logged in, proceed";
 
-	public final static String CMD_GET_DIRECTORY = "257. "; //+ current path directory
+	  public final static String CMD_GET_DIRECTORY = "257. "; //+ current path directory
 
-	public final static String CMD_PASSIVE_MODE = "227. Entering Passive Mode "; //+ (h1,h2,h3,h4,p1,p2)
+	  public final static String CMD_PASSIVE_MODE = "227. Entering Passive Mode "; //+ (h1,h2,h3,h4,p1,p2)
 
-	public final static String CMD_CLOSING = "221. Service closing control connection.";
+	  public final static String CMD_CLOSING = "221. Service closing control connection.";
 
 	private static int controlPort = 21;
 	private static final String user = "user";
@@ -98,8 +98,9 @@ public class TextServer {
 				if (data.startsWith("STOR")) {
 					String[] command = data.split(" ");
 					if(command.length == 2){
-						String filename = currentDirectory + command[1];
-						File fileData = new File(filename);
+						String filename = command[1];
+						File fileData = new File(currentDirectory + filename);
+						System.out.println(fileData);
 						if(fileData.exists()){
 							System.out.println("ALREADY EXISTS IN SERVER");
 							output.println(CMD_FILENAME_NOT_ALLOWED);
@@ -429,7 +430,7 @@ public class TextServer {
 		try {
 			File oldFile = new File(oldFilename);
 			File newFile = new File(newFilename);
-			
+
 			if (!oldFile.exists()){
 				output.println(CMD_FILE_ACTION_UNAVAILABLE);
 				System.out.println(CMD_FILE_ACTION_UNAVAILABLE);

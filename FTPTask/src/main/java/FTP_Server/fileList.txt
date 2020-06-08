@@ -2,4 +2,4 @@ chackra.jpg
 genres.json
 qr-code.png
 test.txt
-other.txt
+r.txt

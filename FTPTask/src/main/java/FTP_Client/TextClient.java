@@ -6,6 +6,8 @@ import java.net.*;
 import java.io.*;
 import java.util.*;
 
+import jdk.javadoc.internal.doclets.formats.html.SourceToHTMLConverter;
+
 public class TextClient {
 
     private static int controlPort = 21;
@@ -59,6 +61,12 @@ public class TextClient {
 						output.println(dataTCP);
 						System.out.println("Attempting to send file: " + filename);
 						if(hasPort)	DataClient.sendFile(filename, dataPortClient);
+						try{
+							String response = input.readLine();
+							System.out.println(response);
+						} catch (IOException e){
+							System.out.println(e);
+						}
 						//System.out.println(input.readLine());
 					}
 					else {

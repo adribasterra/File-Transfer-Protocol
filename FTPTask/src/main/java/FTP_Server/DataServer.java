@@ -3,6 +3,7 @@ package FTP_Server;
 // ByteServer
 
 import java.net.*;
+import java.util.Scanner;
 import java.io.*;
 
 public class DataServer {
@@ -22,9 +23,9 @@ public class DataServer {
 		public static final String CMD_ACTION_ABORTED = "451. Requested action aborted: local error in processing.";
 
 
-	public static boolean receiveFile(String filename, int dataPortClient, PrintWriter output){
+	public static boolean receiveFile(String filename, int dataPort, PrintWriter output){
 		try {
-			ServerSocket sServ = new ServerSocket(dataPortClient);
+			ServerSocket sServ = new ServerSocket(dataPort);
 			System.out.println("Server waiting for response before receiving");
 
 			Socket sCon = sServ.accept();
@@ -55,9 +56,9 @@ public class DataServer {
 		return false;
 	}
 
-	public static boolean sendFile(String filename, int dataPortClient, PrintWriter output) {
+	public static boolean sendFile(String filename, int dataPort, PrintWriter output) {
 		try {
-			ServerSocket sServ = new ServerSocket(dataPortClient);
+			ServerSocket sServ = new ServerSocket(dataPort);
 			System.out.println("Server waiting for response before sending");
 			
 			Socket sCon = sServ.accept();
@@ -89,6 +90,41 @@ public class DataServer {
 		catch (Exception e) {
 			System.out.println("Error writing byte to text :" + e);
 			output.println(CMD_ACTION_ABORTED);
+			System.out.println(CMD_ACTION_ABORTED);
+		}
+		return false;
+	}
+
+	public static Boolean listFiles(int dataPort, PrintWriter output, String path) {
+		System.out.println("listFiles in DataServer called");
+		try {
+			ServerSocket sServ = new ServerSocket(dataPort);
+			System.out.println("Server waiting for response before sending");
+			
+			Socket sCon = sServ.accept();
+
+			path = path.substring(6);
+			path = path.replace('/', '\\');
+
+			System.out.println(path);
+
+			Scanner input = new Scanner(new FileReader("fileList.txt"));
+			String line = null;
+			while (input.hasNextLine()) {
+				line = input.nextLine();
+				if(line.startsWith(path)) { output.println(line); }
+			}
+			input.close();
+			if (line == null) System.out.println("Is empty");
+		
+			sCon.close();
+			//output.println(CMD_SUCCESS);
+			System.out.println(CMD_SUCCESS);
+			sServ.close();
+			return true;
+		} catch (Exception e) {
+			e.printStackTrace();
+			//output.println(CMD_ACTION_ABORTED);
 			System.out.println(CMD_ACTION_ABORTED);
 		}
 		return false;

@@ -105,7 +105,8 @@ public class TextClient {
 				else if (data.startsWith("list")) {
 					String[] command = data.split(" "); //For directory
 					if(command.length == 2){
-						dataTCP = "LIST" + " " + command[1];
+						String path = currentDirectory + command[1];
+						dataTCP = "LIST" + " " + path;
 						output.println(dataTCP);
 						//dataTCP = "LIST" + " " + command[1]; 						// LIST [<SP> <pathname>] <CRLF>
 						if(hasPort)	DataClient.receiveListFiles(dataPortClient, input);
@@ -113,6 +114,7 @@ public class TextClient {
 					else {
 						dataTCP = "LIST";
 						output.println(dataTCP);
+						if(hasPort)	DataClient.receiveListFiles(dataPortClient, input);
 					}
 				}
 				else if (data.startsWith("delete")) {

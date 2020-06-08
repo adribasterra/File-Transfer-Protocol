@@ -103,9 +103,10 @@ public class DataServer {
 			
 			Socket sCon = sServ.accept();
 
-			if(path == "files\\"){
-				path = "";
-			} 
+			path = path.substring(6);
+			path = path.replace('/', '\\');
+
+			System.out.println(path);
 
 			Scanner input = new Scanner(new FileReader("fileList.txt"));
 			String line = null;
@@ -117,13 +118,13 @@ public class DataServer {
 			if (line == null) System.out.println("Is empty");
 		
 			sCon.close();
-			output.println(CMD_SUCCESS);
+			//output.println(CMD_SUCCESS);
 			System.out.println(CMD_SUCCESS);
 			sServ.close();
 			return true;
 		} catch (Exception e) {
 			e.printStackTrace();
-			output.println(CMD_ACTION_ABORTED);
+			//output.println(CMD_ACTION_ABORTED);
 			System.out.println(CMD_ACTION_ABORTED);
 		}
 		return false;

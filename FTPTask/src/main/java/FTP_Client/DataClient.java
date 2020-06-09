@@ -88,8 +88,12 @@ public class DataClient {
 
 			String s = input.readLine();
 			while (s.compareTo("END") != 0) {
-				System.out.println(" > " + s);
-				s = input.readLine();
+				try{
+					System.out.println(" > " + s);
+					s = input.readLine();
+				} catch (IOException e){
+					System.out.println(e);
+				}
 			}
 			
 			connection.close();

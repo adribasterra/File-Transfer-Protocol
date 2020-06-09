@@ -59,13 +59,21 @@ public class TextClient {
 						String filename = command[1];
 						dataTCP = "STOR" + " " + filename; 						// STOR <SP> <pathname> <CRLF>
 						output.println(dataTCP);
-						System.out.println("Attempting to send file: " + filename);
-						if(hasPort)	DataClient.sendFile(filename, dataPortClient);
 						try{
 							String response = input.readLine();
 							System.out.println(response);
 						} catch (IOException e){
 							System.out.println(e);
+						}
+						System.out.println("Attempting to send file: " + filename);
+						if(hasPort)	{
+							DataClient.sendFile(filename, dataPortClient);
+							try{
+								String response = input.readLine();
+								System.out.println(response);
+							} catch (IOException e){
+								System.out.println(e);
+							}
 						}
 						//System.out.println(input.readLine());
 					}
@@ -73,6 +81,12 @@ public class TextClient {
 						dataTCP = "STOR";
 						output.println(dataTCP);
 						System.out.println("Format is not correct.");
+						try{
+							String response = input.readLine();
+							System.out.println(response);
+						} catch (IOException e){
+							System.out.println(e);
+						}
 					}
 					//System.out.println(input.readLine());
 				}
@@ -84,6 +98,12 @@ public class TextClient {
 							dataTCP = "PRT" + " " + dataPortClient;				// PORT <SP> <host-port> <CRLF>
 							output.println(dataTCP);
 							hasPort = true;
+							try{
+								String response = input.readLine();
+								System.out.println(response);
+							} catch (IOException e){
+								System.out.println(e);
+							}
 						} catch(NumberFormatException e){
 							System.out.println("It is not a number.");
 						}
@@ -100,13 +120,27 @@ public class TextClient {
 						dataTCP = "RETR" + " " + filename; 						// RETR <SP> <pathname> <CRLF>
 						output.println(dataTCP);
 						System.out.println("Attempting to get file: " + filename);
-						if(hasPort)	DataClient.receiveFile(filename, dataPortClient);
+						if(hasPort) { 
+							DataClient.receiveFile(filename, dataPortClient);
+							try{
+								String response = input.readLine();
+								System.out.println(response);
+							} catch (IOException e){
+								System.out.println(e);
+							}
+						}
 						//System.out.println(input.readLine());
 					}
 					else{
 						System.out.println("Format is not correct");
 						dataTCP = "RETR";
 						output.println(dataTCP);
+						try{
+							String response = input.readLine();
+							System.out.println(response);
+						} catch (IOException e){
+							System.out.println(e);
+						}
 					}
 					//System.out.println(input.readLine());
 				}
@@ -118,11 +152,23 @@ public class TextClient {
 						output.println(dataTCP);
 						//dataTCP = "LIST" + " " + command[1]; 						// LIST [<SP> <pathname>] <CRLF>
 						if(hasPort)	DataClient.receiveListFiles(dataPortClient, input);
+						try{
+							String response = input.readLine();
+							System.out.println(response);
+						} catch (IOException e){
+							System.out.println(e);
+						}
 					}
 					else {
 						dataTCP = "LIST";
 						output.println(dataTCP);
 						if(hasPort)	DataClient.receiveListFiles(dataPortClient, input);
+						try{
+							String response = input.readLine();
+							System.out.println(response);
+						} catch (IOException e){
+							System.out.println(e);
+						}
 					}
 				}
 				else if (data.startsWith("delete")) {
@@ -135,6 +181,12 @@ public class TextClient {
 					System.out.println(dataTCP);
 					//System.out.println(input.readLine());
 					output.println(dataTCP);
+					try{
+						String response = input.readLine();
+						System.out.println(response);
+					} catch (IOException e){
+						System.out.println(e);
+					}
 				}
 				else if (data.startsWith("rename")) {
 					String[] command = data.split(" ");
@@ -144,26 +196,48 @@ public class TextClient {
 					else { dataTCP = "RNFR"; }
 					//System.out.println(input.readLine());
 					output.println(dataTCP);
+					try{
+						String response = input.readLine();
+						System.out.println(response);
+					} catch (IOException e){
+						System.out.println(e);
+					}
 				}
 				else if (data.startsWith("wdir")) {
 					dataTCP = "PWD"; 											// PWD <CRLF>
 					output.println(dataTCP);
 					//System.out.println(input.readLine());
+					try{
+						String response = input.readLine();
+						System.out.println(response);
+					} catch (IOException e){
+						System.out.println(e);
+					}
 				}
 				else if (data.startsWith("cd")) {
 					String[] command = data.split(" ");
 					if(command.length == 2){
 						dataTCP = "CWD" + " " + command[1]; 					// CWD <SP> <pathname> <CRLF>
+						output.println(dataTCP);
+						System.out.println(dataTCP);
 						String directory = input.readLine();
-
+						
 						if (!directory.isEmpty()) {
 							currentDirectory = directory;
 						} else {
 							System.out.println("ERROR: Access forbidden outside the \"files\\\" folder!");
 						}
 					}
-					else { dataTCP = "CWD"; }
-					output.println(dataTCP);
+					else { 
+						dataTCP = "CWD";
+						output.println(dataTCP);
+						try{
+							String response = input.readLine();
+							System.out.println(response);
+						} catch (IOException e){
+							System.out.println(e);
+						}
+					}
 					//System.out.println(input.readLine());
 				}
 				else if (data.startsWith("mkdir")) {
@@ -173,6 +247,12 @@ public class TextClient {
 					output.println(dataTCP);
 					System.out.println("Attempting to create directory: " + directory);
 					//System.out.println(input.readLine());
+					try{
+						String response = input.readLine();
+						System.out.println(response);
+					} catch (IOException e){
+						System.out.println(e);
+					}
 				}
 				else if(data.startsWith("wdir")){
 					dataTCP = "PWD"; 											// PWD <CRLF>
@@ -184,6 +264,12 @@ public class TextClient {
 					}
 					else dataTCP = "RMD";
 					output.println(dataTCP);
+					try{
+						String response = input.readLine();
+						System.out.println(response);
+					} catch (IOException e){
+						System.out.println(e);
+					}
 					//System.out.println(input.readLine());
 				}
 				else if (data.startsWith("user")) {
@@ -191,6 +277,12 @@ public class TextClient {
 					String user = command[1];
 					dataTCP = "USER" + " " + user; 								// USER <SP> <username> <CRLF>
 					output.println(dataTCP);
+					try{
+						String response = input.readLine();
+						System.out.println(response);
+					} catch (IOException e){
+						System.out.println(e);
+					}
 					//System.out.println(input.readLine());
 				}
 				else if (data.startsWith("password")) {
@@ -198,14 +290,32 @@ public class TextClient {
 					String password = command[1];
 					dataTCP = "PASS" + " " + password; 							// PASS <SP> <password> <CRLF>
 					output.println(dataTCP);
+					try{
+						String response = input.readLine();
+						System.out.println(response);
+					} catch (IOException e){
+						System.out.println(e);
+					}
 					//System.out.println(input.readLine());
 				}
 				else if(data.startsWith("quit")){
 					dataTCP = "QUIT";
 					output.println(dataTCP);
+					try{
+						String response = input.readLine();
+						System.out.println(response);
+					} catch (IOException e){
+						System.out.println(e);
+					}
 				}
 				else if (data.compareTo("END") == 0) {
 					output.println(data);
+					try{
+						String response = input.readLine();
+						System.out.println(response);
+					} catch (IOException e){
+						System.out.println(e);
+					}
 				}
 				else if(data.startsWith("path")){
 					System.out.println(System.getProperty("user.dir"));

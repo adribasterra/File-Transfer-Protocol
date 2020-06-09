@@ -5,7 +5,7 @@ import java.io.*;
 
 public class DataClient {
 
-	public static boolean sendFile(String filename, int dataPortClient) {
+	public static boolean sendFile(String filename, int dataPort) {
 		File fileData = new File(filename);
 		if (!fileData.exists()){
 			System.out.println("ERROR: File "+filename+" does not exist here!");
@@ -14,7 +14,7 @@ public class DataClient {
 		//System.out.println(fileData.toURI());
 		
 		try {
-			Socket sCon = new Socket("localhost", dataPortClient);
+			Socket sCon = new Socket("localhost", dataPort);
 
 			InputStream inputStream = new FileInputStream(filename);
 			OutputStream outputStream = sCon.getOutputStream();
@@ -36,14 +36,14 @@ public class DataClient {
 		return false;
 	}
 	
-	public static  boolean receiveFile(String filename, int dataPortClient){
+	public static  boolean receiveFile(String filename, int dataPort){
 		File fileData = new File(filename);
 		if(fileData.exists()){
 			System.out.println("ALREADY EXISTS IN CLIENT");
 			return false;
 		}
 		try {
-			Socket connection = new Socket("localhost", dataPortClient);
+			Socket connection = new Socket("localhost", dataPort);
 
 			fileData = new File(filename);
 			//System.out.println(fileData.toURI());
@@ -76,6 +76,30 @@ public class DataClient {
 			return true;
 		} catch (Exception e) {
 			System.out.println("Error receiving file :" + e);
+		}
+		return false;
+	}
+
+	public static boolean receiveListFiles(int dataPort, BufferedReader input) {
+		try {
+			Socket connection = new Socket("localhost", dataPort);
+
+			System.out.println("Here is the list of files on the server:");
+
+			String s = input.readLine();
+			while (s.compareTo("END") != 0) {
+				try{
+					System.out.println(" > " + s);
+					s = input.readLine();
+				} catch (IOException e){
+					System.out.println(e);
+				}
+			}
+			
+			connection.close();
+			return true;
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
 		return false;
 	}

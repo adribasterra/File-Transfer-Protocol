@@ -6,8 +6,18 @@
 package FTP_Interface;
 
 //import static FTP_Server.TextServer.listFiles;
+import static FTP_Client.TextClient.dataPortClient;
+import static FTP_Client.TextClient.output;
 import static FTP_Server.TextServer.listFiles;
 import java.awt.Color;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.JOptionPane;
 
 /**
  *
@@ -21,14 +31,24 @@ public class ServerWindow extends javax.swing.JFrame {
     public ServerWindow() {
         initComponents();
         this.setLocationRelativeTo(null);
-        setBackground(new Color(0.0f,0.0f,0.0f,0.0f));
-        ServerInfo.setText(listFiles());
-       // condcion = true;
+        setBackground(new Color(0.0f, 0.0f, 0.0f, 0.0f));
+        ArrayList<String> listFil = listFiles();
+        String text = "<html>";
+        for (String s : listFil) {
+
+            text = text + s + "<br/>";
+
+        }
+        text = text + "/html>";
+        ServerInfo.setText(text);
+
+        // condcion = true;
         //System.out.println(listFiles());
     }
-    
+
     public static boolean condcion = true;
     
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -38,10 +58,11 @@ public class ServerWindow extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        cdButton = new javax.swing.JButton();
         ServerInfo = new javax.swing.JLabel();
-        jTextField1 = new javax.swing.JTextField();
+        pathText = new javax.swing.JTextField();
         backButton = new javax.swing.JButton();
-        main = new javax.swing.JLabel();
+        mainLabel = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setAlwaysOnTop(true);
@@ -54,39 +75,92 @@ public class ServerWindow extends javax.swing.JFrame {
             }
         });
         getContentPane().setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+
+        cdButton.setBorder(null);
+        cdButton.setBorderPainted(false);
+        cdButton.setContentAreaFilled(false);
+        cdButton.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        cdButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                cdButtonMouseClicked(evt);
+            }
+        });
+        getContentPane().add(cdButton, new org.netbeans.lib.awtextra.AbsoluteConstraints(353, 90, 40, 30));
         getContentPane().add(ServerInfo, new org.netbeans.lib.awtextra.AbsoluteConstraints(170, 150, 220, 230));
 
-        jTextField1.setText("jTextField1");
-        jTextField1.setBorder(null);
-        getContentPane().add(jTextField1, new org.netbeans.lib.awtextra.AbsoluteConstraints(200, 80, 170, 40));
+        pathText.setFont(new java.awt.Font("Arial", 1, 18)); // NOI18N
+        pathText.setBorder(null);
+        getContentPane().add(pathText, new org.netbeans.lib.awtextra.AbsoluteConstraints(200, 90, 140, 30));
 
         backButton.setBorder(null);
         backButton.setContentAreaFilled(false);
         backButton.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        backButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                backButtonMouseClicked(evt);
+            }
+        });
         getContentPane().add(backButton, new org.netbeans.lib.awtextra.AbsoluteConstraints(230, 410, 90, 40));
 
-        main.setIcon(new javax.swing.ImageIcon(getClass().getResource("/FTP_Images/panel servidor.png"))); // NOI18N
-        getContentPane().add(main, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 900, 550));
+        mainLabel.setIcon(new javax.swing.ImageIcon(getClass().getResource("/FTP_Images/panel servidor.png"))); // NOI18N
+        getContentPane().add(mainLabel, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 900, 550));
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
     private void formWindowOpened(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowOpened
         // TODO add your handling code here:
-        for (double i=0.0;i<=1.0;i = i+ 0.1){
-        
-           String val = i+ "";
-           float f = Float.valueOf(val);
-           this.setOpacity(f);
-            try{
-            
-               Thread.sleep(50);
+        for (double i = 0.0; i <= 1.0; i = i + 0.1) {
+
+            String val = i + "";
+            float f = Float.valueOf(val);
+            this.setOpacity(f);
+            try {
+
+                Thread.sleep(50);
+            } catch (Exception e) {
             }
-            catch (Exception e){}
-            
+
         }
-        
+
     }//GEN-LAST:event_formWindowOpened
+
+    private void backButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_backButtonMouseClicked
+        // TODO add your handling code here:
+
+    }//GEN-LAST:event_backButtonMouseClicked
+
+    private void cdButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_cdButtonMouseClicked
+        // TODO add your handling code here:
+        String dataTCP = "";
+        String currentDirectory = "files\\";
+        try {
+
+            BufferedReader input = new BufferedReader(new InputStreamReader(main.connection.getInputStream()));
+            PrintWriter output = new PrintWriter(main.connection.getOutputStream(), true);
+            String s = "cd " + pathText.getText();
+            if (s.startsWith("cd")) {
+                String[] command = s.split(" ");
+                if (command.length == 2) {
+                    dataTCP = "CWD" + " " + command[1]; 					// CWD <SP> <pathname> <CRLF>
+                    String directory = input.readLine();
+
+                    if (!directory.isEmpty()) {
+                        currentDirectory = directory;
+                    } else {
+                        System.out.println("ERROR: Access forbidden outside the \"files\\\" folder!");
+                    }
+                } else {
+                    dataTCP = "CWD";
+                }
+                output.println(dataTCP);
+                //System.out.println(input.readLine());
+            }
+
+        } catch (IOException ex) {
+            Logger.getLogger(main.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_cdButtonMouseClicked
 
     /**
      * @param args the command line arguments
@@ -124,9 +198,10 @@ public class ServerWindow extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JLabel ServerInfo;
+    public javax.swing.JLabel ServerInfo;
     private javax.swing.JButton backButton;
-    private javax.swing.JTextField jTextField1;
-    private javax.swing.JLabel main;
+    private javax.swing.JButton cdButton;
+    private javax.swing.JLabel mainLabel;
+    private javax.swing.JTextField pathText;
     // End of variables declaration//GEN-END:variables
 }

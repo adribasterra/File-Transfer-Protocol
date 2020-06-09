@@ -44,11 +44,13 @@ public class main extends javax.swing.JFrame {
         clientConectSButton1.setVisible(false);
         register.setVisible(false);
         
+        
     }
     
     ServerWindow ServerPanel = new ServerWindow();
     ClientWindow ClientPanel =  new ClientWindow();
     RenameFilesWindow RenamePanel = new RenameFilesWindow();
+    portPanel portw = new portPanel();
     RegisterPanel register = new RegisterPanel();
     LoginWindow LoginPanel = new LoginWindow();
     TextClient Login = new TextClient();
@@ -283,7 +285,8 @@ public class main extends javax.swing.JFrame {
 
     private void formWindowOpened(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowOpened
         // TODO add your handling code here:
-        JOptionPane.showMessageDialog(null,"Please, remember that you have to connect into the server");
+        //JOptionPane.showMessageDialog(null,"Please, remember that you have to connect into the server");
+        
         
         
 
@@ -360,6 +363,7 @@ public class main extends javax.swing.JFrame {
         CSButton.setVisible(false);
         clientConectSButton1.setVisible(false);
         register.dispose();
+        portw.dispose();
     }//GEN-LAST:event_mdesenfoqueMouseClicked
 
     private void ClientDesenfoqueMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_ClientDesenfoqueMouseClicked
@@ -405,6 +409,16 @@ public class main extends javax.swing.JFrame {
     private void CSButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_CSButtonMouseClicked
         // TODO add your handling code here:
             ConnectServer();
+            CSButton.setVisible(false);
+            mdesenfoque.setVisible(true);
+            ClienteBoton.setVisible(false);
+            ServidorBoton.setVisible(false);
+            LogButton.setVisible(false);
+            SettingsPanel.setVisible(false);
+            SeButton.setVisible(false);
+            clientConectSButton1.setVisible(true);
+            
+            portw.setVisible(true);
         
     }//GEN-LAST:event_CSButtonMouseClicked
 
@@ -440,8 +454,10 @@ public class main extends javax.swing.JFrame {
     public static void ConnectServer(){
         
         ServerConnect=true;
+        
         clientConectSButton1.setVisible(true);
         CSButton.setVisible(false);
+        
         try {
             
             

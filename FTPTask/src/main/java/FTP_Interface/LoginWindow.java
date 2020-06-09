@@ -39,13 +39,14 @@ public class LoginWindow extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        cerrarButton = new javax.swing.JButton();
         registrerButton = new javax.swing.JButton();
         loginButton = new javax.swing.JButton();
         passtext = new javax.swing.JPasswordField();
         userText = new javax.swing.JTextField();
         LOpanel = new javax.swing.JLabel();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setAlwaysOnTop(true);
         setUndecorated(true);
         setOpacity(0.0F);
@@ -56,6 +57,17 @@ public class LoginWindow extends javax.swing.JFrame {
             }
         });
         getContentPane().setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+
+        cerrarButton.setBorder(null);
+        cerrarButton.setBorderPainted(false);
+        cerrarButton.setContentAreaFilled(false);
+        cerrarButton.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        cerrarButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                cerrarButtonMouseClicked(evt);
+            }
+        });
+        getContentPane().add(cerrarButton, new org.netbeans.lib.awtextra.AbsoluteConstraints(263, 10, 20, 20));
 
         registrerButton.setBorder(null);
         registrerButton.setBorderPainted(false);
@@ -157,6 +169,13 @@ public class LoginWindow extends javax.swing.JFrame {
         this.dispose();
     }//GEN-LAST:event_registrerButtonMouseClicked
 
+    private void cerrarButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_cerrarButtonMouseClicked
+        // TODO add your handling code here:
+        this.dispose();
+        main mainn = new main();
+        mainn.setVisible(true);
+    }//GEN-LAST:event_cerrarButtonMouseClicked
+
     /**
      * @param args the command line arguments
      */
@@ -194,6 +213,7 @@ public class LoginWindow extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel LOpanel;
+    private javax.swing.JButton cerrarButton;
     private javax.swing.JButton loginButton;
     private javax.swing.JPasswordField passtext;
     private javax.swing.JButton registrerButton;

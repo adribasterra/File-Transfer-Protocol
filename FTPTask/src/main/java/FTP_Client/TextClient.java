@@ -4,6 +4,8 @@ package FTP_Client;
 
 import java.net.*;
 import java.io.*;
+import java.util.*;
+
 
 public class TextClient {
 
@@ -33,6 +35,7 @@ public class TextClient {
 			BufferedReader input = new BufferedReader(new InputStreamReader(connection.getInputStream()));
 			output = new PrintWriter(connection.getOutputStream(), true);
 
+			System.out.println(input.readLine()); //Get the 220. command
 			hasPort = false;
 			//Boolean loggegIn = false;
 			//while (!loggegIn) loggegIn = logIn(input, output);
@@ -40,56 +43,132 @@ public class TextClient {
 			ShowGuideline();
 
 			String currentDirectory = "files\\";
-			String baseDirectory = "files\\";
+			//String baseDirectory = System.getProperty("user.dir");
 
 			while (data.compareTo("END") != 0) {
 
 				// Input for reading from keyboard
 				BufferedReader inputKeyboard = new BufferedReader(new InputStreamReader(System.in));
-				System.out.print("FTP (END to close the server): " + currentDirectory + "> ");
+				System.out.print("FTP (END to close the server): > ");
 				data = inputKeyboard.readLine();
 
 				if (data.startsWith("send")) {
 					String[] command = data.split(" ");
 					if(command.length == 2){
-						String filename = baseDirectory + command[1];
+						String filename = command[1];
 						dataTCP = "STOR" + " " + filename; 						// STOR <SP> <pathname> <CRLF>
+						output.println(dataTCP);
+						try{
+							String response = input.readLine();
+							System.out.println(response);
+						} catch (IOException e){
+							System.out.println(e);
+						}
 						System.out.println("Attempting to send file: " + filename);
-						if(hasPort)	DataClient.sendFile(filename, dataPortClient);
-						input.readLine();
+						if(hasPort)	{
+							DataClient.sendFile(filename, dataPortClient);
+							try{
+								String response = input.readLine();
+								System.out.println(response);
+							} catch (IOException e){
+								System.out.println(e);
+							}
+						}
+						//System.out.println(input.readLine());
 					}
 					else {
 						dataTCP = "STOR";
+						output.println(dataTCP);
 						System.out.println("Format is not correct.");
+						try{
+							String response = input.readLine();
+							System.out.println(response);
+						} catch (IOException e){
+							System.out.println(e);
+						}
 					}
-					output.println(dataTCP);
+					//System.out.println(input.readLine());
 				}
 				else if (data.startsWith("prt")) {
 					String[] command = data.split(" ");
 					if(command.length == 2){
-						dataPortClient = Integer.parseInt(command[1]);
-						dataTCP = "PRT" + " " + dataPortClient;					// PORT <SP> <host-port> <CRLF>
-						System.out.println("dataTCP: " + dataTCP);
-						output.println(dataTCP);
-						hasPort = true;
+						try{
+							dataPortClient = Integer.parseInt(command[1]);
+							dataTCP = "PRT" + " " + dataPortClient;				// PORT <SP> <host-port> <CRLF>
+							output.println(dataTCP);
+							hasPort = true;
+							try{
+								String response = input.readLine();
+								System.out.println(response);
+							} catch (IOException e){
+								System.out.println(e);
+							}
+						} catch(NumberFormatException e){
+							System.out.println("It is not a number.");
+						}
 					}
 					else{
 						System.out.println("Format is not correct");
 					}
+					//System.out.println(input.readLine());
 				}
 				else if (data.startsWith("get")) {
 					String[] command = data.split(" ");
 					if(command.length == 2){
 						String filename = command[1];
 						dataTCP = "RETR" + " " + filename; 						// RETR <SP> <pathname> <CRLF>
+						output.println(dataTCP);
 						System.out.println("Attempting to get file: " + filename);
-						if(hasPort)	DataClient.receiveFile(currentDirectory + filename, dataPortClient);
+						if(hasPort) { 
+							DataClient.receiveFile(filename, dataPortClient);
+							try{
+								String response = input.readLine();
+								System.out.println(response);
+							} catch (IOException e){
+								System.out.println(e);
+							}
+						}
+						//System.out.println(input.readLine());
 					}
 					else{
 						System.out.println("Format is not correct");
 						dataTCP = "RETR";
+						output.println(dataTCP);
+						try{
+							String response = input.readLine();
+							System.out.println(response);
+						} catch (IOException e){
+							System.out.println(e);
+						}
 					}
-					output.println(dataTCP);
+					//System.out.println(input.readLine());
+				}
+				else if (data.startsWith("list")) {
+					String[] command = data.split(" "); //For directory
+					if(command.length == 2){
+						String path = currentDirectory + command[1];
+						dataTCP = "LIST" + " " + path;
+						output.println(dataTCP);
+						//dataTCP = "LIST" + " " + command[1]; 						// LIST [<SP> <pathname>] <CRLF>
+						if(hasPort)	DataClient.receiveListFiles(dataPortClient, input);
+						try{
+							String response = input.readLine();
+							System.out.println(response);
+						} catch (IOException e){
+							System.out.println(e);
+						}
+					}
+					else {
+						dataTCP = "LIST";
+						output.println(dataTCP);
+						if(hasPort)	DataClient.receiveListFiles(dataPortClient, input);
+						try{
+							String response = input.readLine();
+							System.out.println(response);
+						} catch (IOException e){
+							System.out.println(e);
+						}
+					}
 				}
 				else if (data.startsWith("delete")) {
 					String[] command = data.split(" ");
@@ -97,97 +176,178 @@ public class TextClient {
 						String pathDirectory = command[1];
 						dataTCP = "DELE" + " " + pathDirectory; 				// DELE <SP> <pathname> <CRLF>
 					}
-					else dataTCP = "DELE";
+					else { dataTCP = "DELE"; }
 					System.out.println(dataTCP);
+					//System.out.println(input.readLine());
 					output.println(dataTCP);
+					try{
+						String response = input.readLine();
+						System.out.println(response);
+					} catch (IOException e){
+						System.out.println(e);
+					}
 				}
 				else if (data.startsWith("rename")) {
 					String[] command = data.split(" ");
 					if(command.length == 3){
 						dataTCP = "RNFR" + " " + command[1] + " " + command[2];	// RNFR <SP> <pathname> <CRLF>
 					}
-					else dataTCP = "RNFR";
+					else { dataTCP = "RNFR"; }
+					//System.out.println(input.readLine());
 					output.println(dataTCP);
-					System.out.println(dataTCP);
+					try{
+						String response = input.readLine();
+						System.out.println(response);
+					} catch (IOException e){
+						System.out.println(e);
+					}
 				}
-				else if (data.startsWith("list")) {
-					String[] command = data.split(" "); //For directory
-					dataTCP = "LIST";
-					//dataTCP = "LIST" + " " + command[1]; 						// LIST [<SP> <pathname>] <CRLF>
-					System.out.println(dataTCP);
+				else if (data.startsWith("wdir")) {
+					dataTCP = "PWD"; 											// PWD <CRLF>
 					output.println(dataTCP);
-					receiveListFiles(input);
-				}
-				else if (data.startsWith("mkdir")) {
-					String[] command = data.split(" ");
-					String directory = currentDirectory + command[1];
-					dataTCP = "MKD" + " " + directory; 						// MKD <SP> <pathname> <CRLF>
-					output.println(dataTCP);
-					System.out.println("Attempting to create directory: " + directory);
-					// receiveFile(filename);
-					// new File(directory).mkdir();
+					//System.out.println(input.readLine());
+					try{
+						String response = input.readLine();
+						System.out.println(response);
+					} catch (IOException e){
+						System.out.println(e);
+					}
 				}
 				else if (data.startsWith("cd")) {
 					String[] command = data.split(" ");
-					dataTCP = "CWD" + " " + command[1]; 					// CWD <SP> <pathname> <CRLF>
+					if(command.length == 2){
+						dataTCP = "CWD" + " " + command[1]; 					// CWD <SP> <pathname> <CRLF>
+						output.println(dataTCP);
+						System.out.println(dataTCP);
+						String directory = input.readLine();
+						
+						if (!directory.isEmpty()) {
+							currentDirectory = directory;
+						} else {
+							System.out.println("ERROR: Access forbidden outside the \"files\\\" folder!");
+						}
+					}
+					else { 
+						dataTCP = "CWD";
+						output.println(dataTCP);
+						try{
+							String response = input.readLine();
+							System.out.println(response);
+						} catch (IOException e){
+							System.out.println(e);
+						}
+					}
+					//System.out.println(input.readLine());
+				}
+				else if (data.startsWith("mkdir")) {
+					String[] command = data.split(" ");
+					String directory = command[1];
+					dataTCP = "MKD" + " " + directory; 							// MKD <SP> <pathname> <CRLF>
 					output.println(dataTCP);
-					String directory = input.readLine();
-
-					if (!directory.isEmpty()) {
-						currentDirectory = directory;
-					} else {
-						System.out.println("ERROR: Access forbidden outside the \"files\\\" folder!");
+					System.out.println("Attempting to create directory: " + directory);
+					//System.out.println(input.readLine());
+					try{
+						String response = input.readLine();
+						System.out.println(response);
+					} catch (IOException e){
+						System.out.println(e);
 					}
 				}
-				else if (data.startsWith("get path")) {
-					// String[] command = data.split(" ");
+				else if(data.startsWith("wdir")){
 					dataTCP = "PWD"; 											// PWD <CRLF>
-					output.println(dataTCP);
 				}
 				else if (data.startsWith("remove")) {
 					String[] command = data.split(" ");
-					dataTCP = "RMD" + command[1];								// RMD <SP> <pathname> <CRLF>
+					if(command.length == 2){
+						dataTCP = "RMD" + " " + command[1];						// RMD <SP> <pathname> <CRLF>
+					}
+					else dataTCP = "RMD";
 					output.println(dataTCP);
+					try{
+						String response = input.readLine();
+						System.out.println(response);
+					} catch (IOException e){
+						System.out.println(e);
+					}
+					//System.out.println(input.readLine());
 				}
 				else if (data.startsWith("user")) {
 					String[] command = data.split(" ");
 					String user = command[1];
 					dataTCP = "USER" + " " + user; 								// USER <SP> <username> <CRLF>
 					output.println(dataTCP);
-					// System.out.println(dataTCP);
+					try{
+						String response = input.readLine();
+						System.out.println(response);
+					} catch (IOException e){
+						System.out.println(e);
+					}
+					//System.out.println(input.readLine());
 				}
 				else if (data.startsWith("password")) {
 					String[] command = data.split(" ");
 					String password = command[1];
 					dataTCP = "PASS" + " " + password; 							// PASS <SP> <password> <CRLF>
 					output.println(dataTCP);
-					// System.out.println(dataTCP);
+					try{
+						String response = input.readLine();
+						System.out.println(response);
+					} catch (IOException e){
+						System.out.println(e);
+					}
+					//System.out.println(input.readLine());
 				}
 				else if(data.startsWith("quit")){
 					dataTCP = "QUIT";
 					output.println(dataTCP);
-
+					try{
+						String response = input.readLine();
+						System.out.println(response);
+					} catch (IOException e){
+						System.out.println(e);
+					}
 				}
 				else if (data.compareTo("END") == 0) {
 					output.println(data);
+					try{
+						String response = input.readLine();
+						System.out.println(response);
+					} catch (IOException e){
+						System.out.println(e);
+					}
+				}
+				else if(data.startsWith("path")){
+					System.out.println(System.getProperty("user.dir"));
+					//First part: divides the path in parts
+					String[] command = data.split(" ");
+					String path = System.getProperty("user.dir");
+
+					Stack<String> stack = new Stack<String>();
+
+					while(path.length()> 0 && (path.charAt(path.length()-1) =='\\' || path.charAt(path.length()-1) =='/')){
+						path = path.substring(0, path.length()-1);
+					}
+
+					int start = 0;
+
+					for(int i=1; i<path.length(); i++){
+						if(path.charAt(i) == '\\' || path.charAt(i) == '/'){
+							stack.push(path.substring(start, i));
+							start = i;
+						}else if(i==path.length()-1){
+							stack.push(path.substring(start));
+						}
+					}
+					System.out.println("The end " + stack.size());
+					int tam = stack.size();
+					for(int j = 0; j<tam; j++){
+						System.out.println(j + " " + stack.pop() + ", ");
+					}
 				}
 				else {
 					System.out.println("Error: Command unrecognised");
+					//System.out.println(input.readLine());
 				}
-				// result = input.readLine();
-				// Send data to server
-				// output.println(data);
-				// Read data from server
-				// result = input.readLine();
-				/*
-				 * if (result.compareTo("ok") !=0) {
-				 *
-				 * sendFile(data);
-				 *
-				 * } if(data.compareTo("END") !=0) { System.out.println("Data = " + data +
-				 * " --- Result = " + result); }
-				 */
-
 			}
 
 			// Close the connection

@@ -6,7 +6,6 @@ import java.net.*;
 import java.io.*;
 import java.util.*;
 
-import jdk.javadoc.internal.doclets.formats.html.SourceToHTMLConverter;
 
 public class TextClient {
 

@@ -42,7 +42,6 @@ public class ClientWindow extends javax.swing.JFrame {
     ServerWindow ServerPanel = new ServerWindow();
     //RenameFilesWindow RenamePanel = new RenameFilesWindow();
     DirectorySWindow DirectPanel = new DirectorySWindow();
-    
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -86,7 +85,9 @@ public class ClientWindow extends javax.swing.JFrame {
         });
         getContentPane().add(SendButton, new org.netbeans.lib.awtextra.AbsoluteConstraints(590, 410, 111, 42));
 
-        ComandField.setText("jTextField1");
+        ComandField.setFont(new java.awt.Font("Arial", 1, 18)); // NOI18N
+        ComandField.setToolTipText("");
+        ComandField.setBorder(null);
         getContentPane().add(ComandField, new org.netbeans.lib.awtextra.AbsoluteConstraints(550, 100, 170, 30));
 
         RenameButton.setBorder(null);
@@ -213,6 +214,7 @@ public class ClientWindow extends javax.swing.JFrame {
             // Socket connection = new Socket("localhost", controlPort);
             //connection = ExitConection;
             // Recover input & output from connection
+            
             PrintWriter output = new PrintWriter(main.connection.getOutputStream(), true);
 
             String s = "get " + ComandField.getText();
@@ -276,10 +278,10 @@ public class ClientWindow extends javax.swing.JFrame {
 
     private void RenameButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_RenameButtonMouseClicked
         // TODO add your handling code here:
-        int controlPort = 21;
+        //int controlPort = 21;
         String dataTCP = "";
-        String currentDirectory = "files\\";
-        boolean hasPort = true;
+        //String currentDirectory = "files\\";
+        //boolean hasPort = true;
         try {
 
             //Thread.sleep(5 * 1000);
@@ -289,23 +291,21 @@ public class ClientWindow extends javax.swing.JFrame {
             //connection = ExitConection;
             // Recover input & output from connection
             PrintWriter output = new PrintWriter(main.connection.getOutputStream(), true);
-
             String s = "rename " + ComandField.getText();
             if (s.startsWith("rename")) {
                 String[] command = s.split(" ");
                 if (command.length == 3) {
                     dataTCP = "RNFR" + " " + command[1] + " " + command[2];	// RNFR <SP> <pathname> <CRLF>
+                    JOptionPane.showMessageDialog(this, "File succesfully rename");
                 } else {
                     dataTCP = "RNFR";
                 }
+                //System.out.println(input.readLine());
                 output.println(dataTCP);
-                System.out.println(dataTCP);
             }
-           
-            
 
         } catch (IOException ex) {
-          Logger.getLogger(main.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(main.class.getName()).log(Level.SEVERE, null, ex);
         }
 
 

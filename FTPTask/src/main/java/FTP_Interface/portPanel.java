@@ -18,19 +18,16 @@ import javax.swing.JOptionPane;
  *
  * @author jojoj
  */
-public class RenameFilesWindow extends javax.swing.JFrame {
+public class portPanel extends javax.swing.JFrame {
 
     /**
-     * Creates new form RenameFilesWindow
+     * Creates new form portPanel
      */
-    public RenameFilesWindow() {
+    public portPanel() {
         initComponents();
         this.setLocationRelativeTo(null);
         setBackground(new Color(0.0f, 0.0f, 0.0f, 0.0f));
     }
-
-    ClientWindow ClientPanel = new ClientWindow();
-    ServerWindow ServerPanel = new ServerWindow();
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -41,12 +38,11 @@ public class RenameFilesWindow extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        SaveButton = new javax.swing.JButton();
-        CancelButton = new javax.swing.JButton();
-        PathText = new javax.swing.JTextField();
-        main4 = new javax.swing.JLabel();
+        PortText = new javax.swing.JTextField();
+        okBuutoon = new javax.swing.JButton();
+        portW = new javax.swing.JLabel();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setAlwaysOnTop(true);
         setUndecorated(true);
         setOpacity(0.0F);
@@ -58,40 +54,29 @@ public class RenameFilesWindow extends javax.swing.JFrame {
         });
         getContentPane().setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
-        SaveButton.setContentAreaFilled(false);
-        SaveButton.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-        SaveButton.addMouseListener(new java.awt.event.MouseAdapter() {
+        PortText.setFont(new java.awt.Font("Arial", 1, 18)); // NOI18N
+        PortText.setBorder(null);
+        getContentPane().add(PortText, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 80, 250, 30));
+
+        okBuutoon.setBorder(null);
+        okBuutoon.setBorderPainted(false);
+        okBuutoon.setContentAreaFilled(false);
+        okBuutoon.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        okBuutoon.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
-                SaveButtonMouseClicked(evt);
+                okBuutoonMouseClicked(evt);
             }
         });
-        getContentPane().add(SaveButton, new org.netbeans.lib.awtextra.AbsoluteConstraints(200, 150, 90, 30));
+        getContentPane().add(okBuutoon, new org.netbeans.lib.awtextra.AbsoluteConstraints(130, 133, 70, 30));
 
-        CancelButton.setContentAreaFilled(false);
-        CancelButton.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-        CancelButton.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                CancelButtonMouseClicked(evt);
-            }
-        });
-        getContentPane().add(CancelButton, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 150, 90, 30));
-
-        PathText.setFont(new java.awt.Font("Arial", 1, 18)); // NOI18N
-        PathText.setToolTipText("");
-        PathText.setBorder(null);
-        getContentPane().add(PathText, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 70, 270, 40));
-
-        main4.setIcon(new javax.swing.ImageIcon(getClass().getResource("/FTP_Images/panel rename.png"))); // NOI18N
-        getContentPane().add(main4, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, -1, -1));
+        portW.setIcon(new javax.swing.ImageIcon(getClass().getResource("/FTP_Images/portpanel.png"))); // NOI18N
+        getContentPane().add(portW, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 350, 180));
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
     private void formWindowOpened(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowOpened
         // TODO add your handling code here:
-
-        //ClientPanel.setVisible(false);
-        //ServerPanel.dispose();
         for (double i = 0.0; i <= 1.0; i = i + 0.1) {
 
             String val = i + "";
@@ -104,36 +89,43 @@ public class RenameFilesWindow extends javax.swing.JFrame {
             }
 
         }
-
     }//GEN-LAST:event_formWindowOpened
 
-    private void CancelButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_CancelButtonMouseClicked
+    private void okBuutoonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_okBuutoonMouseClicked
         // TODO add your handling code here:
         this.dispose();
 
-    }//GEN-LAST:event_CancelButtonMouseClicked
-
-    private void SaveButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_SaveButtonMouseClicked
-        // TODO add your handling code here:
-        this.dispose();
         String dataTCP = "";
+        String currentDirectory = "files\\";
+        boolean hasPort = false;
+
         try {
             PrintWriter output = new PrintWriter(main.connection.getOutputStream(), true);
-            String s = "mkdir " + PathText.getText();
-            if (s.startsWith("mkdir")) {
+            String s = "prt " + PortText.getText();
+            if (s.startsWith("prt")) {
                 String[] command = s.split(" ");
-                String directory = command[1];
-                dataTCP = "MKD" + " " + directory; 							// MKD <SP> <pathname> <CRLF>
-                output.println(dataTCP);
-                System.out.println("Attempting to create directory: " + directory);
-                JOptionPane.showMessageDialog(this, "Directory succesfully created");
+                if (command.length == 2) {
+                    try {
+                        dataPortClient = Integer.parseInt(command[1]);
+                        dataTCP = "PRT" + " " + dataPortClient;				// PORT <SP> <host-port> <CRLF>
+                        output.println(dataTCP);
+                        hasPort = true;
+                        JOptionPane.showMessageDialog(this, "Success");
+                    } catch (NumberFormatException e) {
+                        JOptionPane.showMessageDialog(this, "please try again");
+                    }
+                } else {
+                    JOptionPane.showMessageDialog(this, "please try again");
+                }
                 //System.out.println(input.readLine());
             }
 
         } catch (IOException ex) {
             Logger.getLogger(main.class.getName()).log(Level.SEVERE, null, ex);
         }
-    }//GEN-LAST:event_SaveButtonMouseClicked
+
+
+    }//GEN-LAST:event_okBuutoonMouseClicked
 
     /**
      * @param args the command line arguments
@@ -152,28 +144,27 @@ public class RenameFilesWindow extends javax.swing.JFrame {
                 }
             }
         } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(RenameFilesWindow.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(portPanel.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(RenameFilesWindow.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(portPanel.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(RenameFilesWindow.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(portPanel.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(RenameFilesWindow.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(portPanel.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
         //</editor-fold>
 
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new RenameFilesWindow().setVisible(true);
+                new portPanel().setVisible(true);
             }
         });
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton CancelButton;
-    private javax.swing.JTextField PathText;
-    private javax.swing.JButton SaveButton;
-    private javax.swing.JLabel main4;
+    private javax.swing.JTextField PortText;
+    private javax.swing.JButton okBuutoon;
+    private javax.swing.JLabel portW;
     // End of variables declaration//GEN-END:variables
 }

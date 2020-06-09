@@ -512,20 +512,21 @@ public class TextServer {
 
           //INTERFACE
 
-        public static String listFiles() {
+        public static ArrayList<String> listFiles() {
 			try {
 
                 String path = "fileList.txt";
                 System.out.println(new File(path).getAbsolutePath());
-				Scanner in = new Scanner(new FileReader("fileList.txt"));
+				Scanner in = new Scanner(new FileReader("src/main/java/FTP_Server/fileList.txt"));
 				String s = null;
-				StringBuilder sb = new StringBuilder();
+				//StringBuilder sb = new StringBuilder();
+                                ArrayList<String> ListFi = new ArrayList<String>();
 				while (in.hasNextLine()) {
 					s = in.nextLine();
-					sb.append(s);
+					ListFi.add(s);
 				}
 				in.close();
-				return sb.toString();
+				return ListFi;
 
 			} catch (Exception e) {
 			e.printStackTrace();

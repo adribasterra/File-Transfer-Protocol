@@ -8,7 +8,9 @@ package FTP_Interface;
 import static FTP_Client.TextClient.dataPortClient;
 import static FTP_Client.TextClient.output;
 import java.awt.Color;
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -119,16 +121,22 @@ public class RenameFilesWindow extends javax.swing.JFrame {
         String dataTCP = "";
         try {
             PrintWriter output = new PrintWriter(main.connection.getOutputStream(), true);
+            BufferedReader input = new BufferedReader(new InputStreamReader(main.connection.getInputStream()));
             String s = "mkdir " + PathText.getText();
-            if (s.startsWith("mkdir")) {
-                String[] command = s.split(" ");
-                String directory = command[1];
-                dataTCP = "MKD" + " " + directory; 							// MKD <SP> <pathname> <CRLF>
-                output.println(dataTCP);
-                System.out.println("Attempting to create directory: " + directory);
-                JOptionPane.showMessageDialog(this, "Directory succesfully created");
-                //System.out.println(input.readLine());
-            }
+            if  (s.startsWith("mkdir")) {
+					String[] command = s.split(" ");
+					String directory = command[1];
+					dataTCP = "MKD" + " " + directory; 							// MKD <SP> <pathname> <CRLF>
+					output.println(dataTCP);
+					System.out.println("Attempting to create directory: " + directory);
+					//System.out.println(input.readLine());
+					try{
+						String response = input.readLine();
+						System.out.println(response);
+					} catch (IOException e){
+						System.out.println(e);
+					}
+				}
 
         } catch (IOException ex) {
             Logger.getLogger(main.class.getName()).log(Level.SEVERE, null, ex);

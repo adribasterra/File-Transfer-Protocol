@@ -129,215 +129,193 @@ public class ServerThread extends Thread {
                 // Read data from client
                 data = input.readLine();
                 System.out.println(data);
-                if  (data.startsWith("STOR")) {
-					String[] command = data.split(" ");
-					if(command.length == 2){
-						String filename = command[1];
-						File fileData = new File(currentDirectory + filename);
-						System.out.println(fileData);
-						if(fileData.exists()){
-							System.out.println("ALREADY EXISTS IN SERVER");
-							output.println(CMD_FILENAME_NOT_ALLOWED);
-							System.out.println(CMD_FILENAME_NOT_ALLOWED);
-						}
-						else{
-							output.println(CMD_FILE_STATUS_OKAY);
-							System.out.println(CMD_FILE_STATUS_OKAY);
-							if(hasPort) {
-								boolean response = DataServer.receiveFile(currentDirectory + filename, dataPortClient, output);
-								if (response) addFilenameToList(currentDirectory + filename);
-							}
-							else {
-								output.println(CMD_CANT_OPEN_CONNECTION); //There is no dataPort
-								System.out.println(CMD_CANT_OPEN_CONNECTION);
-							}
-						}
-					}
-					else {
-						output.print(CMD_BAD_SEQUENCE); //There is no path for file
-						System.out.println(CMD_BAD_SEQUENCE);
-					}
-				}
-				else if (data.startsWith("PRT")) {
-					//Structure of type: h1,h2,h3,h4,p1,p2
-					String[] command = data.split(" ");
-					if(command.length == 2){
-						dataPortClient = Integer.parseInt(command[1]);
-						hasPort = true;
-						output.println(CMD_OKAY);
-						System.out.println(CMD_OKAY);
-					}
-					else {
-						output.print(CMD_BAD_SEQUENCE);
-						System.out.println(CMD_BAD_SEQUENCE);
-					}
-				}
-				else if (data.startsWith("RETR")) {
-					String[] command = data.split(" ");
-					if(command.length == 2){
-						String filename = currentDirectory + command[1];
-						File fileData = new File(filename);
-						if (!fileData.exists()){
-							System.out.println("ERROR: File "+filename+" does not exist here!");
-							output.println(CMD_FILE_ACTION_UNAVAILABLE);
-							System.out.println(CMD_FILE_ACTION_UNAVAILABLE);
-						}
-						else{
-							output.println(CMD_FILE_STATUS_OKAY);
-							System.out.println(CMD_FILE_STATUS_OKAY);
-							if(hasPort) { DataServer.sendFile(filename, dataPortClient, output); }
-							else {
-								output.println(CMD_CANT_OPEN_CONNECTION);
-								System.out.println(CMD_CANT_OPEN_CONNECTION);
-							}
-						}
-					} else {
-						output.print(CMD_BAD_SEQUENCE);
-						System.out.println(CMD_BAD_SEQUENCE);
-					}
-				}
-				else if (data.startsWith("LIST")) {
-					String[] command = data.split(" ");
-					if(hasPort){
-						if(command.length == 2) {
-							String path = command[1];
-							//String fileName = path + "fileList.txt";
-							File fileData = new File(path);
-							if(fileData.exists()){
-								output.println(CMD_FILE_STATUS_OKAY);
-								System.out.println(CMD_FILE_STATUS_OKAY);
-								System.out.println("Path: " + path);
-								DataServer.listFiles(dataPortClient, output, path);
-							}
-							else{ //Does not exists a fileList.txt in that path
-								System.out.println("ERROR: Directory " + path + " does not exist here!");
-								output.println(CMD_FILE_ACTION_UNAVAILABLE);
-								System.out.println(CMD_FILE_ACTION_UNAVAILABLE);
-							}
-						}
-						else if(command.length == 1) DataServer.listFiles(dataPortClient, output, currentDirectory);
-					}
-					else {
-						output.println(CMD_CANT_OPEN_CONNECTION);
-						System.out.println(CMD_CANT_OPEN_CONNECTION);
-					}
-				}
-				else if (data.startsWith("DELE")) {
-					String[] command = data.split(" ");
-					if(command.length == 2){
-						String filename = currentDirectory + command[1];
-						boolean result = deleteFile(filename);
-						if(result) {
-							output.println(CMD_COMPLETED);
-							System.out.println(CMD_COMPLETED);
-						}
-					}
-					else {
-						output.print(CMD_BAD_SEQUENCE);
-						System.out.println(CMD_BAD_SEQUENCE);
-					}
-				}
-				else if (data.startsWith("RNFR")) {
-					String[] command = data.split(" ");
-					if(command.length == 3){
-						String oldFilename = currentDirectory + command[1];
-						String newFilename = currentDirectory + command[2];
-						System.out.println(oldFilename);
-						System.out.println(newFilename);
-						if(newFilename != currentDirectory) {
-							renameFile(oldFilename, newFilename);
-						}
-						else {
-							output.println(CMD_FILENAME_NOT_ALLOWED);
-							System.out.println(CMD_FILENAME_NOT_ALLOWED);
-						}
-					}
-					else {
-						output.print(CMD_BAD_SEQUENCE);
-						System.out.println(CMD_BAD_SEQUENCE);
-					}
-				}
+                if (data.startsWith("STOR")) {
+                    String[] command = data.split(" ");
+                    if (command.length == 2) {
+                        String filename = command[1];
+                        File fileData = new File(currentDirectory + filename);
+                        System.out.println(fileData);
+                        if (fileData.exists()) {
+                            System.out.println("ALREADY EXISTS IN SERVER");
+                            output.println(CMD_FILENAME_NOT_ALLOWED);
+                            System.out.println(CMD_FILENAME_NOT_ALLOWED);
+                        } else {
+                            output.println(CMD_FILE_STATUS_OKAY);
+                            System.out.println(CMD_FILE_STATUS_OKAY);
+                            if (hasPort) {
+                                boolean response = DataServer.receiveFile(currentDirectory + filename, dataPortClient, output);
+                                if (response) {
+                                    addFilenameToList(currentDirectory + filename);
+                                }
+                            } else {
+                                output.println(CMD_CANT_OPEN_CONNECTION); //There is no dataPort
+                                System.out.println(CMD_CANT_OPEN_CONNECTION);
+                            }
+                        }
+                    } else {
+                        output.print(CMD_BAD_SEQUENCE); //There is no path for file
+                        System.out.println(CMD_BAD_SEQUENCE);
+                    }
+                } else if (data.startsWith("PRT")) {
+                    //Structure of type: h1,h2,h3,h4,p1,p2
+                    String[] command = data.split(" ");
+                    if (command.length == 2) {
+                        dataPortClient = Integer.parseInt(command[1]);
+                        hasPort = true;
+                        output.println(CMD_OKAY);
+                        System.out.println(CMD_OKAY);
+                    } else {
+                        output.print(CMD_BAD_SEQUENCE);
+                        System.out.println(CMD_BAD_SEQUENCE);
+                    }
+                } else if (data.startsWith("RETR")) {
+                    String[] command = data.split(" ");
+                    if (command.length == 2) {
+                        String filename = currentDirectory + command[1];
+                        File fileData = new File(filename);
+                        if (!fileData.exists()) {
+                            System.out.println("ERROR: File " + filename + " does not exist here!");
+                            output.println(CMD_FILE_ACTION_UNAVAILABLE);
+                            System.out.println(CMD_FILE_ACTION_UNAVAILABLE);
+                        } else {
+                            output.println(CMD_FILE_STATUS_OKAY);
+                            System.out.println(CMD_FILE_STATUS_OKAY);
+                            if (hasPort) {
+                                DataServer.sendFile(filename, dataPortClient, output);
+                            } else {
+                                output.println(CMD_CANT_OPEN_CONNECTION);
+                                System.out.println(CMD_CANT_OPEN_CONNECTION);
+                            }
+                        }
+                    } else {
+                        output.print(CMD_BAD_SEQUENCE);
+                        System.out.println(CMD_BAD_SEQUENCE);
+                    }
+                } else if (data.startsWith("LIST")) {
+                    String[] command = data.split(" ");
+                    if (hasPort) {
+                        if (command.length == 2) {
+                            String path = command[1];
+                            //String fileName = path + "fileList.txt";
+                            File fileData = new File(path);
+                            if (fileData.exists()) {
+                                output.println(CMD_FILE_STATUS_OKAY);
+                                System.out.println(CMD_FILE_STATUS_OKAY);
+                                System.out.println("Path: " + path);
+                                DataServer.listFiles(dataPortClient, output, path);
+                            } else { //Does not exists a fileList.txt in that path
+                                System.out.println("ERROR: Directory " + path + " does not exist here!");
+                                output.println(CMD_FILE_ACTION_UNAVAILABLE);
+                                System.out.println(CMD_FILE_ACTION_UNAVAILABLE);
+                            }
+                        } else if (command.length == 1) {
+                            DataServer.listFiles(dataPortClient, output, currentDirectory);
+                        }
+                    } else {
+                        output.println(CMD_CANT_OPEN_CONNECTION);
+                        System.out.println(CMD_CANT_OPEN_CONNECTION);
+                    }
+                } else if (data.startsWith("DELE")) {
+                    String[] command = data.split(" ");
+                    if (command.length == 2) {
+                        String filename = currentDirectory + command[1];
+                        boolean result = deleteFile(filename);
+                        if (result) {
+                            output.println(CMD_COMPLETED);
+                            System.out.println(CMD_COMPLETED);
+                        }
+                    } else {
+                        output.print(CMD_BAD_SEQUENCE);
+                        System.out.println(CMD_BAD_SEQUENCE);
+                    }
+                } else if (data.startsWith("RNFR")) {
+                    String[] command = data.split(" ");
+                    if (command.length == 3) {
+                        String oldFilename = currentDirectory + command[1];
+                        String newFilename = currentDirectory + command[2];
+                        System.out.println(oldFilename);
+                        System.out.println(newFilename);
+                        if (newFilename != currentDirectory) {
+                            renameFile(oldFilename, newFilename);
+                        } else {
+                            output.println(CMD_FILENAME_NOT_ALLOWED);
+                            System.out.println(CMD_FILENAME_NOT_ALLOWED);
+                        }
+                    } else {
+                        output.print(CMD_BAD_SEQUENCE);
+                        System.out.println(CMD_BAD_SEQUENCE);
+                    }
+                } else if (data.startsWith("PWD")) {
+                    output.println(CMD_GET_DIRECTORY + currentDirectory);
+                    System.out.println(CMD_GET_DIRECTORY + currentDirectory);
+                } else if (data.startsWith("CWD")) {
+                    String[] command = data.split(" ");
+                    if (command.length == 2) {
+                        String directory = canonicalDir(currentDirectory, command[1]);
+                        output.println(directory);
+                        File dir = new File(directory);
 
-				else if(data.startsWith("PWD")) {
-					output.println(CMD_GET_DIRECTORY + currentDirectory);
-					System.out.println(CMD_GET_DIRECTORY + currentDirectory);
-				}
-				else if (data.startsWith("CWD")) {
-					String[] command = data.split(" ");
-					if(command.length == 2){
-						String directory = canonicalDir(currentDirectory, command[1]);
-						output.println(directory);
-						File dir = new File(directory);
-
-						if(dir.exists()){
-							if (dir.isDirectory()) {
-								currentDirectory = directory;
-								output.println(CMD_COMPLETED);
-							}
-							else if (directory.isEmpty()) {
-								System.out.println("ERROR: Access forbidden outside the \"files\\\" folder!");
-							}
-						}
-						else{
-							output.println(CMD_FILE_UNAVAILABLE);
-							System.out.println("ERROR: Directory : " + directory + " does not exist!");
-						}
-					}
-					else{
-						output.print(CMD_BAD_SEQUENCE);
-						System.out.println(CMD_BAD_SEQUENCE);
-					}
-				}
-				else if (data.startsWith("MKD")) {
-					String[] command = data.split(" ");
-					String fileDir = canonicalDir(currentDirectory, command[1]);
-					if(new File(fileDir).mkdir()) {
-						output.println(CMD_GET_DIRECTORY + fileDir + " directory created.");
-					}
-					else { output.println(CMD_FILE_UNAVAILABLE); }
-				}
-				else if(data.startsWith("RMD")) {
-					//Remove directory
-					String[] command = data.split(" ");
-					if(command.length == 2){
-						String directory = canonicalDir(currentDirectory, command[1]);
-						File directoryToDelete = new File(directory);
-						String[]entries = directoryToDelete.list();
-						for(String s: entries){
-							File currentDir = new File(directoryToDelete.getPath(),s);
-							currentDir.delete();
-						}
-						directoryToDelete.delete();
-						System.out.println("Se supone que lo he borrado");
-						output.println(CMD_COMPLETED);
-					}
-					else System.out.println(CMD_FILE_ACTION_UNAVAILABLE);//output.println(CMD_FILE_UNAVAILABLE); 
-				}
-				else if(data.startsWith("USER")) {
-					String userData = data.substring(5).trim();
-					if(userData.compareTo(user)==0) {
-						output.println(CMD_USER_OKAY);
-					}
-				}
-				else if(data.startsWith("PASS")) {
-					String passwordData = data.substring(5).trim();
-					if(passwordData.compareTo(password)==0) {
-						output.println(CMD_USER_LOGGED);
-					}
-					else {
-						output.println(CMD_USER_ERROR);
-					}
-				}
-				else if(data.startsWith("QUIT")){
-					sCon.close();
-					output.println(CMD_CLOSING);
-					System.out.println(CMD_CLOSING);
-					connectionClosed = true;
-					data = "END";
-				}
-				else{
-					output.println(CMD_BAD_SEQUENCE);
-				}
+                        if (dir.exists()) {
+                            if (dir.isDirectory()) {
+                                currentDirectory = directory;
+                                output.println(CMD_COMPLETED);
+                            } else if (directory.isEmpty()) {
+                                System.out.println("ERROR: Access forbidden outside the \"files\\\" folder!");
+                            }
+                        } else {
+                            output.println(CMD_FILE_UNAVAILABLE);
+                            System.out.println("ERROR: Directory : " + directory + " does not exist!");
+                        }
+                    } else {
+                        output.print(CMD_BAD_SEQUENCE);
+                        System.out.println(CMD_BAD_SEQUENCE);
+                    }
+                } else if (data.startsWith("MKD")) {
+                    String[] command = data.split(" ");
+                    String fileDir = canonicalDir(currentDirectory, command[1]);
+                    if (new File(fileDir).mkdir()) {
+                        output.println(CMD_GET_DIRECTORY + fileDir + " directory created.");
+                    } else {
+                        output.println(CMD_FILE_UNAVAILABLE);
+                    }
+                } else if (data.startsWith("RMD")) {
+                    //Remove directory
+                    String[] command = data.split(" ");
+                    if (command.length == 2) {
+                        String directory = canonicalDir(currentDirectory, command[1]);
+                        File directoryToDelete = new File(directory);
+                        String[] entries = directoryToDelete.list();
+                        for (String s : entries) {
+                            File currentDir = new File(directoryToDelete.getPath(), s);
+                            currentDir.delete();
+                        }
+                        directoryToDelete.delete();
+                        System.out.println("Se supone que lo he borrado");
+                        output.println(CMD_COMPLETED);
+                    } else {
+                        System.out.println(CMD_FILE_ACTION_UNAVAILABLE);//output.println(CMD_FILE_UNAVAILABLE); 
+                    }
+                } else if (data.startsWith("USER")) {
+                    String userData = data.substring(5).trim();
+                    if (userData.compareTo(user) == 0) {
+                        output.println(CMD_USER_OKAY);
+                    }
+                } else if (data.startsWith("PASS")) {
+                    String passwordData = data.substring(5).trim();
+                    if (passwordData.compareTo(password) == 0) {
+                        output.println(CMD_USER_LOGGED);
+                    } else {
+                        output.println(CMD_USER_ERROR);
+                    }
+                } else if (data.startsWith("QUIT")) {
+                    sCon.close();
+                    output.println(CMD_CLOSING);
+                    System.out.println(CMD_CLOSING);
+                    connectionClosed = true;
+                    data = "END";
+                } else {
+                    output.println(CMD_BAD_SEQUENCE);
+                }
 
             } catch (Exception e) {
                 e.printStackTrace();
@@ -370,6 +348,7 @@ public class ServerThread extends Thread {
             String userData = input.readLine();
             if (userData.compareTo(user) == 0) {
                 output.println(CMD_USER_OKAY);
+                System.out.println(CMD_USER_OKAY);
                 output.println("User OK");
             } else {
                 output.println("User WRONG");
@@ -379,9 +358,11 @@ public class ServerThread extends Thread {
             String passwordData = input.readLine();
             if (passwordData.compareTo(password) == 0) {
                 output.println(CMD_USER_LOGGED);
+                System.out.println(CMD_USER_LOGGED);
                 output.println("Password OK");
             } else {
                 output.println(CMD_USER_ERROR);
+                System.out.println(CMD_USER_ERROR);
                 output.println("Password WRONG");
                 return false;
             }
@@ -390,6 +371,7 @@ public class ServerThread extends Thread {
         } catch (Exception e) {
             e.printStackTrace();
             output.println(CMD_ACTION_ABORTED);
+            System.out.println(CMD_ACTION_ABORTED);
         }
         return false;
     }
@@ -413,6 +395,7 @@ public class ServerThread extends Thread {
                 directory = directory + path + "\\";
             }
         }
+        System.out.println("De esta función sale: " + directory);
         return directory;
     }
 
@@ -427,13 +410,15 @@ public class ServerThread extends Thread {
             in.close();
 
             PrintWriter listWriter = new PrintWriter(new FileOutputStream("fileList.txt"));
-            listWriter.println(sb.toString() + filename.substring(6));
+            //NO VA
+            listWriter.println(sb.toString() + filename);
             listWriter.close();
 
             return true;
         } catch (Exception e) {
             e.printStackTrace();
             output.println(CMD_ACTION_ABORTED);
+            System.out.println(CMD_ACTION_ABORTED);
         }
         return false;
     }
@@ -466,6 +451,7 @@ public class ServerThread extends Thread {
         } catch (Exception e) {
             e.printStackTrace();
             output.println(CMD_ACTION_ABORTED);
+            System.out.println(CMD_ACTION_ABORTED);
         }
         return false;
     }
@@ -476,6 +462,7 @@ public class ServerThread extends Thread {
             File fileData = new File(filename);
             if (!fileData.exists() || !removeFilenameFromList(filename)) {
                 output.println(CMD_FILE_UNAVAILABLE);
+                System.out.println(CMD_FILE_UNAVAILABLE);
                 return false;
             }
             return fileData.delete();
@@ -483,6 +470,7 @@ public class ServerThread extends Thread {
         } catch (Exception e) {
             e.printStackTrace();
             output.println(CMD_ACTION_ABORTED);
+            System.out.println(CMD_ACTION_ABORTED);
         }
         return false;
     }
@@ -491,24 +479,33 @@ public class ServerThread extends Thread {
         try {
             File oldFile = new File(oldFilename);
             File newFile = new File(newFilename);
-            if (!oldFile.exists() || !removeFilenameFromList(oldFilename)) {
+
+            if (!oldFile.exists()) {
                 output.println(CMD_FILE_ACTION_UNAVAILABLE);
+                System.out.println(CMD_FILE_ACTION_UNAVAILABLE);
                 return false;
             }
             if (newFile.exists()) {
                 output.println(CMD_FILE_UNAVAILABLE);
+                System.out.println(CMD_FILE_UNAVAILABLE);
                 return false;
             }
             Boolean success = oldFile.renameTo(newFile);
-            if (success) {
+            if (success && oldFile.isFile()) {
+                removeFilenameFromList(oldFilename);
+                System.out.println("Is file");
                 addFilenameToList(newFilename);
-                output.println(CMD_COMPLETED);
+            } else if (success && oldFile.isDirectory()) {
+                System.out.println("Is directory");
             }
+            output.println(CMD_COMPLETED);
+            System.out.println(CMD_COMPLETED);
             return success;
 
         } catch (Exception e) {
             e.printStackTrace();
             output.println(CMD_ACTION_ABORTED);
+            System.out.println(CMD_ACTION_ABORTED);
         }
         return false;
     }
@@ -531,6 +528,7 @@ public class ServerThread extends Thread {
         } catch (Exception e) {
             e.printStackTrace();
             output.println(CMD_ACTION_ABORTED);
+            System.out.println(CMD_ACTION_ABORTED);
         }
         return false;
     }

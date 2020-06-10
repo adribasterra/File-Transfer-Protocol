@@ -1,6 +1,7 @@
+files\chakra.jpg
 files\genres.json
-files\qr-code.png
 files\other.txt
+files\qr-code.png
 files\test.txt
-files\adri\adri.txt
-files\adri\chakra.jpg
+files\esther\chakra.jpg
+files\esther\other.txt

@@ -246,23 +246,18 @@ public class TextServer {
                     String[] command = data.split(" ");
                     if (command.length == 2) {
                         String directory = canonicalDir(currentDirectory, command[1]);
-                        if(directory == currentDirectory){
-                            File directoryToDelete = new File(directory);
-                            String[] entries = directoryToDelete.list();
-                            for (String s : entries) {
-                                File currentDir = new File(directoryToDelete.getPath(), s);
-                                currentDir.delete();
-                                System.out.println("Directory deleted");
-                                removeFilenameFromList(directoryToDelete.getPath());
-                                System.out.println("Deleted file from fileList");
-                            }
-                            directoryToDelete.delete();
-                            System.out.println("Se supone que lo he borrado");
-                            output.println(CMD_COMPLETED);
+                        File directoryToDelete = new File(directory);
+                        String[] entries = directoryToDelete.list();
+                        for (String s : entries) {
+                            File currentDir = new File(directoryToDelete.getPath(), s);
+                            currentDir.delete();
+                            System.out.println("Directory deleted");
+                            removeFilenameFromList(directoryToDelete.getPath());
+                            System.out.println("Deleted file from fileList");
                         }
-                        else{
-                            output.println("Cannot delete current directory. Change working directory");
-                        }
+                        directoryToDelete.delete();
+                        System.out.println("Se supone que lo he borrado");
+                        output.println(CMD_COMPLETED);
                     } else {
                         System.out.println(CMD_FILE_ACTION_UNAVAILABLE);//output.println(CMD_FILE_UNAVAILABLE); 
                     }
@@ -369,10 +364,19 @@ public class TextServer {
             in.close();
 
             PrintWriter listWriter = new PrintWriter(new FileOutputStream("fileList.txt"));
-            //NO VA
+
             filename = filename.replace('/', '\\');
+
+            //Si añades un elemento borra toda la lista
+            File fileData = new File(filename);
+            if(fileData.isDirectory()){
+                String[] entries = fileData.list();
+                for (String s : entries) {
+                    File currentDir = new File(fileData.getPath(), s);
+                    listWriter.println(sb.toString() + currentDir.getPath());
+                }
+            }
             
-            listWriter.println(sb.toString() + filename);
             listWriter.close();
 
             return true;
@@ -452,13 +456,15 @@ public class TextServer {
                 return false;
             }
             Boolean success = oldFile.renameTo(newFile);
-            if (success && oldFile.isFile()) {
+            /*if (success && oldFile.isFile()) {
                 removeFilenameFromList(oldFilename);
                 System.out.println("Is file");
                 addFilenameToList(newFilename);
             } else if (success && oldFile.isDirectory()) {
                 System.out.println("Is directory");
-            }
+            }*/
+            removeFilenameFromList(oldFilename);
+            addFilenameToList(newFilename);
             output.println(CMD_COMPLETED);
             System.out.println(CMD_COMPLETED);
             return success;

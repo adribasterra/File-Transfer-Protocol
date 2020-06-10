@@ -221,7 +221,6 @@ public class TextClient {
 				else if (data.startsWith("wdir")) {
 					dataTCP = "PWD"; 											// PWD <CRLF>
 					output.println(dataTCP);
-					//System.out.println(input.readLine());
 					try{
 						String response = input.readLine();
 						System.out.println(response);
@@ -241,6 +240,12 @@ public class TextClient {
 							currentDirectory = directory;
 						} else {
 							System.out.println("ERROR: Access forbidden outside the \"files\\\" folder!");
+						}
+						try{
+							String response = input.readLine();
+							System.out.println(response);
+						} catch (IOException e){
+							System.out.println(e);
 						}
 					}
 					else { 

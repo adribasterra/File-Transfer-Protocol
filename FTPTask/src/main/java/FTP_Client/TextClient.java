@@ -104,15 +104,18 @@ public class TextClient {
 					if(command.length == 2){
 						try{
 							dataPortClient = Integer.parseInt(command[1]);
-							dataTCP = "PRT" + " " + dataPortClient;				// PORT <SP> <host-port> <CRLF>
-							output.println(dataTCP);
-							hasPort = true;
-							try{
-								String response = input.readLine();
-								System.out.println(response);
-							} catch (IOException e){
-								System.out.println(e);
+							if(dataPortClient != 21){
+								dataTCP = "PRT" + " " + dataPortClient;				// PORT <SP> <host-port> <CRLF>
+								output.println(dataTCP);
+								hasPort = true;
+								try{
+									String response = input.readLine();
+									System.out.println(response);
+								} catch (IOException e){
+									System.out.println(e);
+								}
 							}
+							else { System.out.println("The use of contorlPort as dataPort is not allowed"); }
 						} catch(NumberFormatException e){
 							System.out.println("It is not a number.");
 						}
@@ -315,16 +318,7 @@ public class TextClient {
 					}
 				}
 				else if(data.startsWith("quit")){
-					dataTCP = "QUIT";
-					output.println(dataTCP);
-					try{
-						String response = input.readLine();
-						System.out.println(response);
-					} catch (IOException e){
-						System.out.println(e);
-					}
-				}
-				else if (data.compareTo("END") == 0) {
+					data = "END";
 					output.println(data);
 					try{
 						String response = input.readLine();
@@ -332,6 +326,10 @@ public class TextClient {
 					} catch (IOException e){
 						System.out.println(e);
 					}
+				}
+				else if (data.startsWith("end") || data.startsWith("END")) {
+					data = "END";
+					output.println(data);
 				}
 				else if(data.startsWith("path")){
 					System.out.println(System.getProperty("user.dir"));
@@ -365,6 +363,13 @@ public class TextClient {
 					System.out.println("Error: Command unrecognised");
 					//System.out.println(input.readLine());
 				}
+			}
+
+			try{
+				String response = input.readLine();
+				System.out.println(response);
+			} catch (IOException e){
+				System.out.println(e);
 			}
 
 			// Close the connection

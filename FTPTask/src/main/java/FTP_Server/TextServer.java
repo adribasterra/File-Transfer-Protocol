@@ -270,23 +270,18 @@ public class TextServer {
                     } else {
                         output.println(CMD_USER_ERROR);
                     }
-                } else if (data.startsWith("QUIT")) {
-                    sCon.close();
-                    output.println(CMD_CLOSING);
-                    System.out.println(CMD_CLOSING);
-                    connectionClosed = true;
+                } else if(data.startsWith("END")){
                     data = "END";
-                } else {
+                }
+                else {
                     output.println(CMD_BAD_SEQUENCE);
                 }
             }
+            output.println(CMD_CLOSING);
+            System.out.println(CMD_CLOSING);
 
             // Close connection
-            if (!connectionClosed) {
-                sCon.close();
-                output.println(CMD_CLOSING);
-                System.out.println(CMD_CLOSING);
-            }
+            sCon.close();
 
             hasPort = false;
             // Close server socket

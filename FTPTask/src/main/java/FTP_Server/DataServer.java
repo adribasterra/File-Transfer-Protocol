@@ -95,13 +95,15 @@ public class DataServer {
 		return false;
 	}
 
-	public static Boolean listFiles(int dataPort, PrintWriter output, String path) {
+	public static Boolean listFiles(int dataPort, String path) {
 		System.out.println("listFiles in DataServer called");
 		try {
 			ServerSocket sServ = new ServerSocket(dataPort);
 			System.out.println("Server waiting for response before sending");
 			
 			Socket sCon = sServ.accept();
+
+			PrintWriter output = new PrintWriter(sCon.getOutputStream(), true);
 
 			path = path.substring(6);
 			path = path.replace('/', '\\');
@@ -119,8 +121,9 @@ public class DataServer {
 			input.close();
 			if (line == null) System.out.println("Is empty");
 			output.println("END");
+			output.println(CMD_SUCCESS);
+			output.close();
 			sCon.close();
-			//output.println(CMD_SUCCESS);
 			System.out.println(CMD_SUCCESS);
 			sServ.close();
 			return true;

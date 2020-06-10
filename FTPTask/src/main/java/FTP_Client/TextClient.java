@@ -67,18 +67,24 @@ public class TextClient {
 						// if (response != not ok) || response equals OK
 						System.out.println("Attempting to send file: " + filename);
 						if(hasPort)	{
-							DataClient.sendFile(filename, dataPortClient);
+							boolean doIt = false;
 							try{
 								String response = input.readLine();
 								System.out.println(response);
-								String response2 = input.readLine();
-								System.out.println(response2);
+								if(response.startsWith("150")) doIt = true;
 							} catch (IOException e){
 								System.out.println(e);
 							}
-							
+							if(doIt) {
+								DataClient.sendFile(filename, dataPortClient);
+								try{
+									String response = input.readLine();
+									System.out.println(response);
+								} catch (IOException e){
+									System.out.println(e);
+								}
+							}
 						}
-						//System.out.println(input.readLine());
 					}
 					else {
 						dataTCP = "STOR";
@@ -123,16 +129,25 @@ public class TextClient {
 						dataTCP = "RETR" + " " + filename; 						// RETR <SP> <pathname> <CRLF>
 						output.println(dataTCP);
 						System.out.println("Attempting to get file: " + filename);
-						if(hasPort) { 
-							DataClient.receiveFile(filename, dataPortClient);
+						if(hasPort) {
+							boolean doIt = false;
 							try{
 								String response = input.readLine();
 								System.out.println(response);
+								if(response.startsWith("150")) doIt = true;
 							} catch (IOException e){
 								System.out.println(e);
 							}
+							if(doIt) {
+								DataClient.receiveFile(filename, dataPortClient);
+								try{
+									String response = input.readLine();
+									System.out.println(response);
+								} catch (IOException e){
+									System.out.println(e);
+								}
+							}
 						}
-						//System.out.println(input.readLine());
 					}
 					else{
 						System.out.println("Format is not correct");
@@ -154,18 +169,18 @@ public class TextClient {
 						dataTCP = "LIST" + " " + path;
 						output.println(dataTCP);
 						//dataTCP = "LIST" + " " + command[1]; 						// LIST [<SP> <pathname>] <CRLF>
-						if(hasPort)	DataClient.receiveListFiles(dataPortClient, input);
 						try{
 							String response = input.readLine();
 							System.out.println(response);
 						} catch (IOException e){
 							System.out.println(e);
 						}
+						if(hasPort)	DataClient.receiveListFiles(dataPortClient);
 					}
 					else {
 						dataTCP = "LIST";
 						output.println(dataTCP);
-						if(hasPort)	DataClient.receiveListFiles(dataPortClient, input);
+						if(hasPort)	DataClient.receiveListFiles(dataPortClient);
 						try{
 							String response = input.readLine();
 							System.out.println(response);
@@ -286,7 +301,6 @@ public class TextClient {
 					} catch (IOException e){
 						System.out.println(e);
 					}
-					//System.out.println(input.readLine());
 				}
 				else if (data.startsWith("password")) {
 					String[] command = data.split(" ");
@@ -299,7 +313,6 @@ public class TextClient {
 					} catch (IOException e){
 						System.out.println(e);
 					}
-					//System.out.println(input.readLine());
 				}
 				else if(data.startsWith("quit")){
 					dataTCP = "QUIT";

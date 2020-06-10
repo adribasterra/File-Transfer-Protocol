@@ -165,14 +165,14 @@ public class TextServer {
                                 output.println(CMD_FILE_STATUS_OKAY);
                                 System.out.println(CMD_FILE_STATUS_OKAY);
                                 System.out.println("Path: " + path);
-                                DataServer.listFiles(dataPortClient, output, path);
+                                DataServer.listFiles(dataPortClient, path);
                             } else { //Does not exists a fileList.txt in that path
                                 System.out.println("ERROR: Directory " + path + " does not exist here!");
                                 output.println(CMD_FILE_ACTION_UNAVAILABLE);
                                 System.out.println(CMD_FILE_ACTION_UNAVAILABLE);
                             }
                         } else if (command.length == 1) {
-                            DataServer.listFiles(dataPortClient, output, currentDirectory);
+                            DataServer.listFiles(dataPortClient, currentDirectory);
                         }
                     } else {
                         output.println(CMD_CANT_OPEN_CONNECTION);

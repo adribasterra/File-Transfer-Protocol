@@ -246,15 +246,23 @@ public class TextServer {
                     String[] command = data.split(" ");
                     if (command.length == 2) {
                         String directory = canonicalDir(currentDirectory, command[1]);
-                        File directoryToDelete = new File(directory);
-                        String[] entries = directoryToDelete.list();
-                        for (String s : entries) {
-                            File currentDir = new File(directoryToDelete.getPath(), s);
-                            currentDir.delete();
+                        if(directory == currentDirectory){
+                            File directoryToDelete = new File(directory);
+                            String[] entries = directoryToDelete.list();
+                            for (String s : entries) {
+                                File currentDir = new File(directoryToDelete.getPath(), s);
+                                currentDir.delete();
+                                System.out.println("Directory deleted");
+                                removeFilenameFromList(directoryToDelete.getPath());
+                                System.out.println("Deleted file from fileList");
+                            }
+                            directoryToDelete.delete();
+                            System.out.println("Se supone que lo he borrado");
+                            output.println(CMD_COMPLETED);
                         }
-                        directoryToDelete.delete();
-                        System.out.println("Se supone que lo he borrado");
-                        output.println(CMD_COMPLETED);
+                        else{
+                            output.println("Cannot delete current directory. Change working directory");
+                        }
                     } else {
                         System.out.println(CMD_FILE_ACTION_UNAVAILABLE);//output.println(CMD_FILE_UNAVAILABLE); 
                     }
@@ -362,6 +370,8 @@ public class TextServer {
 
             PrintWriter listWriter = new PrintWriter(new FileOutputStream("fileList.txt"));
             //NO VA
+            filename = filename.replace('/', '\\');
+            
             listWriter.println(sb.toString() + filename);
             listWriter.close();
 

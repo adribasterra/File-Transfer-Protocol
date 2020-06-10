@@ -104,8 +104,7 @@ public class DataServer {
 			Socket sCon = sServ.accept();
 
 			PrintWriter output = new PrintWriter(sCon.getOutputStream(), true);
-
-			path = path.substring(6);
+			
 			path = path.replace('/', '\\');
 
 			System.out.println(path);

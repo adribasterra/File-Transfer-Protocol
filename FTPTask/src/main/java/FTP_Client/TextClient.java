@@ -58,12 +58,6 @@ public class TextClient {
 						String filename = command[1];
 						dataTCP = "STOR" + " " + filename; 						// STOR <SP> <pathname> <CRLF>
 						output.println(dataTCP);
-						try{
-							String response = input.readLine();
-							System.out.println(response);
-						} catch (IOException e){
-							System.out.println(e);
-						}
 						// if (response != not ok) || response equals OK
 						System.out.println("Attempting to send file: " + filename);
 						if(hasPort)	{

@@ -366,15 +366,21 @@ public class TextServer {
             PrintWriter listWriter = new PrintWriter(new FileOutputStream("fileList.txt"));
 
             filename = filename.replace('/', '\\');
+            System.out.println(filename);
 
             //Si añades un elemento borra toda la lista
             File fileData = new File(filename);
             if(fileData.isDirectory()){
+                System.out.println("Is directory");
                 String[] entries = fileData.list();
                 for (String s : entries) {
                     File currentDir = new File(fileData.getPath(), s);
                     listWriter.println(sb.toString() + currentDir.getPath());
                 }
+            }
+            else{
+                System.out.println("Is not directory");
+                listWriter.println(sb.toString() + filename);
             }
             
             listWriter.close();

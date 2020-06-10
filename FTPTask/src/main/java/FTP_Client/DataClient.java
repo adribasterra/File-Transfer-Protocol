@@ -84,6 +84,8 @@ public class DataClient {
 		try {
 			Socket connection = new Socket("localhost", dataPort);
 
+			// new input from connection
+
 			System.out.println("Here is the list of files on the server:");
 
 			String s = input.readLine();

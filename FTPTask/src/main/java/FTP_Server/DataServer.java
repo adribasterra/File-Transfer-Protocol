@@ -109,6 +109,8 @@ public class DataServer {
 			System.out.println(path);
 
 			Scanner input = new Scanner(new FileReader("fileList.txt"));
+			// new output in the data connection
+
 			String line = null;
 			while (input.hasNextLine()) {
 				line = input.nextLine();
@@ -116,7 +118,7 @@ public class DataServer {
 			}
 			input.close();
 			if (line == null) System.out.println("Is empty");
-		
+			output.println("END");
 			sCon.close();
 			//output.println(CMD_SUCCESS);
 			System.out.println(CMD_SUCCESS);

@@ -64,15 +64,19 @@ public class TextClient {
 						} catch (IOException e){
 							System.out.println(e);
 						}
+						// if (response != not ok) || response equals OK
 						System.out.println("Attempting to send file: " + filename);
 						if(hasPort)	{
 							DataClient.sendFile(filename, dataPortClient);
 							try{
 								String response = input.readLine();
 								System.out.println(response);
+								String response2 = input.readLine();
+								System.out.println(response2);
 							} catch (IOException e){
 								System.out.println(e);
 							}
+							
 						}
 						//System.out.println(input.readLine());
 					}

@@ -205,7 +205,7 @@ public class ClientWindow extends javax.swing.JFrame {
         // TODO add your handling code here:
         int controlPort = 21;
         String dataTCP = "";
-        
+
         boolean hasPort = true;
         try {
 
@@ -234,7 +234,7 @@ public class ClientWindow extends javax.swing.JFrame {
                     dataTCP = "RETR";
                 }
                 output.println(dataTCP);
-               // JOptionPane.showMessageDialog(this, "FILE ALREADY EXISTS IN CLIENT");
+                // JOptionPane.showMessageDialog(this, "FILE ALREADY EXISTS IN CLIENT");
             }
 
         } catch (IOException ex) {
@@ -249,7 +249,7 @@ public class ClientWindow extends javax.swing.JFrame {
         // TODO add your handling code here:
         int controlPort = 21;
         String dataTCP = "";
-        
+
         boolean hasPort = true;
         try {
 
@@ -266,7 +266,7 @@ public class ClientWindow extends javax.swing.JFrame {
                 String[] command = s.split(" ");
                 if (command.length == 2) {
                     String pathDirectory = command[1];
-                    dataTCP = "DELE" + " " + pathDirectory; 
+                    dataTCP = "DELE" + " " + pathDirectory;
                     // DELE <SP> <pathname> <CRLF>
                 } else {
                     dataTCP = "DELE";
@@ -290,37 +290,30 @@ public class ClientWindow extends javax.swing.JFrame {
     }//GEN-LAST:event_DeleteButtonMouseClicked
 
     private void RenameButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_RenameButtonMouseClicked
-        // TODO add your handling code here:
-        //int controlPort = 21;
+        
         String dataTCP = "";
-        //String currentDirectory = "files\\";
-        //boolean hasPort = true;
+       
         try {
 
-            //Thread.sleep(5 * 1000);
-            //int port = 21
-            // Connect with the server
-            // Socket connection = new Socket("localhost", controlPort);
-            //connection = ExitConection;
-            // Recover input & output from connection
             BufferedReader input = new BufferedReader(new InputStreamReader(main.connection.getInputStream()));
             PrintWriter output = new PrintWriter(main.connection.getOutputStream(), true);
             String s = "rename " + ComandField.getText();
             if (s.startsWith("rename")) {
-					String[] command = s.split(" ");
-					if(command.length == 3){
-						dataTCP = "RNFR" + " " + command[1] + " " + command[2];	// RNFR <SP> <pathname> <CRLF>
-					}
-					else { dataTCP = "RNFR"; }
-					//System.out.println(input.readLine());
-					output.println(dataTCP);
-					try{
-						String response = input.readLine();
-						System.out.println(response);
-					} catch (IOException e){
-						System.out.println(e);
-					}
-				}
+                String[] command = s.split(" ");
+                if (command.length == 3) {
+                    dataTCP = "RNFR" + " " + command[1] + " " + command[2];	// RNFR <SP> <pathname> <CRLF>
+                } else {
+                    dataTCP = "RNFR";
+                }
+                //System.out.println(input.readLine());
+                output.println(dataTCP);
+                try {
+                    String response = input.readLine();
+                    System.out.println(response);
+                } catch (IOException e) {
+                    System.out.println(e);
+                }
+            }
 
         } catch (IOException ex) {
             Logger.getLogger(main.class.getName()).log(Level.SEVERE, null, ex);
@@ -333,7 +326,7 @@ public class ClientWindow extends javax.swing.JFrame {
         // TODO add your handling code here:
         SendButton.setVisible(false);
         int controlPort = 21;
-       
+
         String baseDirectory = "UserFiles\\";
         boolean hasPort = true;
         String dataTCP = "";

@@ -5,6 +5,3 @@ test.txt
 files\chakra.jpg
 files\adri\chakra.jpg
 files\adri\other.txt
-files\adri\other.txt
-files\adri\chakra.jpg
-files\adri\other.txt

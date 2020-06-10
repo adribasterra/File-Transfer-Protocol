@@ -348,6 +348,7 @@ public class ServerThread extends Thread {
             String userData = input.readLine();
             if (userData.compareTo(user) == 0) {
                 output.println(CMD_USER_OKAY);
+                System.out.println(CMD_USER_OKAY);
                 output.println("User OK");
             } else {
                 output.println("User WRONG");
@@ -357,9 +358,11 @@ public class ServerThread extends Thread {
             String passwordData = input.readLine();
             if (passwordData.compareTo(password) == 0) {
                 output.println(CMD_USER_LOGGED);
+                System.out.println(CMD_USER_LOGGED);
                 output.println("Password OK");
             } else {
                 output.println(CMD_USER_ERROR);
+                System.out.println(CMD_USER_ERROR);
                 output.println("Password WRONG");
                 return false;
             }
@@ -368,6 +371,7 @@ public class ServerThread extends Thread {
         } catch (Exception e) {
             e.printStackTrace();
             output.println(CMD_ACTION_ABORTED);
+            System.out.println(CMD_ACTION_ABORTED);
         }
         return false;
     }
@@ -391,6 +395,7 @@ public class ServerThread extends Thread {
                 directory = directory + path + "\\";
             }
         }
+        System.out.println("De esta función sale: " + directory);
         return directory;
     }
 
@@ -405,13 +410,15 @@ public class ServerThread extends Thread {
             in.close();
 
             PrintWriter listWriter = new PrintWriter(new FileOutputStream("fileList.txt"));
-            listWriter.println(sb.toString() + filename.substring(6));
+            //NO VA
+            listWriter.println(sb.toString() + filename);
             listWriter.close();
 
             return true;
         } catch (Exception e) {
             e.printStackTrace();
             output.println(CMD_ACTION_ABORTED);
+            System.out.println(CMD_ACTION_ABORTED);
         }
         return false;
     }
@@ -444,6 +451,7 @@ public class ServerThread extends Thread {
         } catch (Exception e) {
             e.printStackTrace();
             output.println(CMD_ACTION_ABORTED);
+            System.out.println(CMD_ACTION_ABORTED);
         }
         return false;
     }
@@ -454,6 +462,7 @@ public class ServerThread extends Thread {
             File fileData = new File(filename);
             if (!fileData.exists() || !removeFilenameFromList(filename)) {
                 output.println(CMD_FILE_UNAVAILABLE);
+                System.out.println(CMD_FILE_UNAVAILABLE);
                 return false;
             }
             return fileData.delete();
@@ -461,6 +470,7 @@ public class ServerThread extends Thread {
         } catch (Exception e) {
             e.printStackTrace();
             output.println(CMD_ACTION_ABORTED);
+            System.out.println(CMD_ACTION_ABORTED);
         }
         return false;
     }
@@ -469,24 +479,33 @@ public class ServerThread extends Thread {
         try {
             File oldFile = new File(oldFilename);
             File newFile = new File(newFilename);
-            if (!oldFile.exists() || !removeFilenameFromList(oldFilename)) {
+
+            if (!oldFile.exists()) {
                 output.println(CMD_FILE_ACTION_UNAVAILABLE);
+                System.out.println(CMD_FILE_ACTION_UNAVAILABLE);
                 return false;
             }
             if (newFile.exists()) {
                 output.println(CMD_FILE_UNAVAILABLE);
+                System.out.println(CMD_FILE_UNAVAILABLE);
                 return false;
             }
             Boolean success = oldFile.renameTo(newFile);
-            if (success) {
+            if (success && oldFile.isFile()) {
+                removeFilenameFromList(oldFilename);
+                System.out.println("Is file");
                 addFilenameToList(newFilename);
-                output.println(CMD_COMPLETED);
+            } else if (success && oldFile.isDirectory()) {
+                System.out.println("Is directory");
             }
+            output.println(CMD_COMPLETED);
+            System.out.println(CMD_COMPLETED);
             return success;
 
         } catch (Exception e) {
             e.printStackTrace();
             output.println(CMD_ACTION_ABORTED);
+            System.out.println(CMD_ACTION_ABORTED);
         }
         return false;
     }
@@ -509,6 +528,7 @@ public class ServerThread extends Thread {
         } catch (Exception e) {
             e.printStackTrace();
             output.println(CMD_ACTION_ABORTED);
+            System.out.println(CMD_ACTION_ABORTED);
         }
         return false;
     }

@@ -120,6 +120,7 @@ public class DataServer {
 			input.close();
 			if (line == null) System.out.println("Is empty");
 			output.println("END");
+			
 			output.println(CMD_SUCCESS);
 			output.close();
 			sCon.close();

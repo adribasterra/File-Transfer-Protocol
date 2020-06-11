@@ -98,8 +98,8 @@ public class DataClient {
 					System.out.println(e);
 				}
 			}
-			
 			input.close();
+			
 			connection.close();
 			return true;
 		} catch (Exception e) {

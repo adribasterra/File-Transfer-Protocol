@@ -1,6 +1,25 @@
 
 
-Username: 1
-mail: 1
-Password: 1a
-Password: Funciona
+Username: 3
+mail: 3@gmail.com
+Password: 3nciona
+
+Username: juan
+mail: juan@gmail.com
+Password: 1234
+
+Username: juan2
+mail: juan22@gmail.com
+Password: juan22
+
+Username: raul
+mail: Raul@gmail.com
+Password: 1234
+
+Username: peca
+mail: peca@gmail.com
+Password: 1234
+
+Username: 2
+mail: 2@gmail.com
+Password: 2

@@ -71,6 +71,7 @@ public class RegisterPanel extends javax.swing.JFrame {
             raf.writeBytes("Username: " + usr + "\r\n");
             raf.writeBytes("mail: " + mail + "\r\n");
             raf.writeBytes("Password: " + pswd);
+            
 
         } catch (FileNotFoundException ex) {
             Logger.getLogger(RegisterPanel.class.getName()).log(Level.SEVERE, null, ex);
@@ -187,7 +188,7 @@ public class RegisterPanel extends javax.swing.JFrame {
         passtetx.setForeground(new java.awt.Color(255, 255, 255));
         passtetx.setBorder(null);
         passtetx.setOpaque(false);
-        getContentPane().add(passtetx, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 290, 230, 30));
+        getContentPane().add(passtetx, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 210, 230, 30));
 
         maintext.setFont(new java.awt.Font("Arial", 0, 18)); // NOI18N
         maintext.setForeground(new java.awt.Color(255, 255, 255));
@@ -199,7 +200,7 @@ public class RegisterPanel extends javax.swing.JFrame {
                 maintextActionPerformed(evt);
             }
         });
-        getContentPane().add(maintext, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 210, 230, 30));
+        getContentPane().add(maintext, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 290, 230, 30));
 
         usernametext.setFont(new java.awt.Font("Arial", 0, 18)); // NOI18N
         usernametext.setForeground(new java.awt.Color(255, 255, 255));
@@ -244,8 +245,9 @@ public class RegisterPanel extends javax.swing.JFrame {
         // TODO add your handling code here:
         CreateFolder();
         readFile();
-        countlines();
+        //countlines();
         addData(usernametext.getText(),maintext.getText(),passtetx.getText());
+       // JOptionPane.showMessageDialog(null, "Is registered in our system");
         //logic(usernametext.getText(), passtetx.getText());
 
     }//GEN-LAST:event_RegisterButtonMouseClicked

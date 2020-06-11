@@ -95,7 +95,7 @@ public class DataServer {
 		return false;
 	}
 
-	public static Boolean listFiles(int dataPort, PrintWriter output, String path) {
+	public static Boolean listFiles(int dataPort, String path) {
 		System.out.println("listFiles in DataServer called");
 		try {
 			ServerSocket sServ = new ServerSocket(dataPort);
@@ -103,12 +103,15 @@ public class DataServer {
 			
 			Socket sCon = sServ.accept();
 
-			path = path.substring(6);
+			PrintWriter output = new PrintWriter(sCon.getOutputStream(), true);
+			
 			path = path.replace('/', '\\');
 
 			System.out.println(path);
 
 			Scanner input = new Scanner(new FileReader("fileList.txt"));
+			// new output in the data connection
+
 			String line = null;
 			while (input.hasNextLine()) {
 				line = input.nextLine();
@@ -116,9 +119,10 @@ public class DataServer {
 			}
 			input.close();
 			if (line == null) System.out.println("Is empty");
-		
+			output.println("END");
+			output.println(CMD_SUCCESS);
+			output.close();
 			sCon.close();
-			//output.println(CMD_SUCCESS);
 			System.out.println(CMD_SUCCESS);
 			sServ.close();
 			return true;

@@ -165,14 +165,14 @@ public class TextServer {
                                 output.println(CMD_FILE_STATUS_OKAY);
                                 System.out.println(CMD_FILE_STATUS_OKAY);
                                 System.out.println("Path: " + path);
-                                DataServer.listFiles(dataPortClient, output, path);
+                                DataServer.listFiles(dataPortClient, path);
                             } else { //Does not exists a fileList.txt in that path
                                 System.out.println("ERROR: Directory " + path + " does not exist here!");
                                 output.println(CMD_FILE_ACTION_UNAVAILABLE);
                                 System.out.println(CMD_FILE_ACTION_UNAVAILABLE);
                             }
                         } else if (command.length == 1) {
-                            DataServer.listFiles(dataPortClient, output, currentDirectory);
+                            DataServer.listFiles(dataPortClient, currentDirectory);
                         }
                     } else {
                         output.println(CMD_CANT_OPEN_CONNECTION);
@@ -251,6 +251,9 @@ public class TextServer {
                         for (String s : entries) {
                             File currentDir = new File(directoryToDelete.getPath(), s);
                             currentDir.delete();
+                            System.out.println("Directory deleted");
+                            removeFilenameFromList(directoryToDelete.getPath());
+                            System.out.println("Deleted file from fileList");
                         }
                         directoryToDelete.delete();
                         System.out.println("Se supone que lo he borrado");
@@ -270,23 +273,18 @@ public class TextServer {
                     } else {
                         output.println(CMD_USER_ERROR);
                     }
-                } else if (data.startsWith("QUIT")) {
-                    sCon.close();
-                    output.println(CMD_CLOSING);
-                    System.out.println(CMD_CLOSING);
-                    connectionClosed = true;
+                } else if(data.startsWith("END")){
                     data = "END";
-                } else {
+                }
+                else {
                     output.println(CMD_BAD_SEQUENCE);
                 }
             }
+            output.println(CMD_CLOSING);
+            System.out.println(CMD_CLOSING);
 
             // Close connection
-            if (!connectionClosed) {
-                sCon.close();
-                output.println(CMD_CLOSING);
-                System.out.println(CMD_CLOSING);
-            }
+            sCon.close();
 
             hasPort = false;
             // Close server socket
@@ -366,8 +364,25 @@ public class TextServer {
             in.close();
 
             PrintWriter listWriter = new PrintWriter(new FileOutputStream("fileList.txt"));
-            //NO VA
-            listWriter.println(sb.toString() + filename);
+
+            filename = filename.replace('/', '\\');
+            System.out.println(filename);
+
+            //Si añades un elemento borra toda la lista
+            File fileData = new File(filename);
+            if(fileData.isDirectory()){
+                System.out.println("Is directory");
+                String[] entries = fileData.list();
+                for (String s : entries) {
+                    File currentDir = new File(fileData.getPath(), s);
+                    listWriter.println(sb.toString() + currentDir.getPath());
+                }
+            }
+            else{
+                System.out.println("Is not directory");
+                listWriter.println(sb.toString() + filename);
+            }
+            
             listWriter.close();
 
             return true;
@@ -447,13 +462,15 @@ public class TextServer {
                 return false;
             }
             Boolean success = oldFile.renameTo(newFile);
-            if (success && oldFile.isFile()) {
+            /*if (success && oldFile.isFile()) {
                 removeFilenameFromList(oldFilename);
                 System.out.println("Is file");
                 addFilenameToList(newFilename);
             } else if (success && oldFile.isDirectory()) {
                 System.out.println("Is directory");
-            }
+            }*/
+            removeFilenameFromList(oldFilename);
+            addFilenameToList(newFilename);
             output.println(CMD_COMPLETED);
             System.out.println(CMD_COMPLETED);
             return success;

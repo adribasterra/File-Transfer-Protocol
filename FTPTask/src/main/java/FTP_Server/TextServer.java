@@ -510,8 +510,54 @@ public class TextServer {
         return false;
     }*/
 
+
     //INTERFACE
     public static ArrayList<String> listFiles() {
+        try {
+
+            String path = "src/main/java/FTP_Server/files/";
+            File filesDir = new File(path);
+            System.out.println(new File(path).getAbsolutePath());
+            ArrayList<String> ListFiles = listFiles(filesDir);
+            return ListFiles;
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.out.println(CMD_ACTION_ABORTED);
+        }
+        return null;
+
+    }
+
+    public static ArrayList<String> listFiles(File fileData) {
+		try {
+            ArrayList<String> listFiles = new ArrayList<String>();
+			String[] entries = fileData.list();
+			for (String s : entries) {
+				File currentDir = new File(fileData.getPath(), s);
+				if (currentDir.isDirectory()) {
+                    if (currentDir.list().length==0) {
+                        listFiles.add(currentDir.getPath());
+                    }else{
+                        ArrayList<String> dirFiles = listFiles(currentDir);
+                        for (String fileString : dirFiles) {
+                            listFiles.add(fileString);
+                        }
+                    }
+				}else{
+					listFiles.add(currentDir.getPath());
+				}
+			}
+			return listFiles;
+		} catch (Exception e) {
+			e.printStackTrace();
+			System.out.println(CMD_ACTION_ABORTED);
+		}
+		return new ArrayList<String>();
+	}
+
+    //INTERFACE
+    /*public static ArrayList<String> listFiles() {
         try {
 
             String path = "fileList.txt";
@@ -534,7 +580,7 @@ public class TextServer {
         }
         return null;
 
-    }
+    }*/
 
     public static void ShowGuideline() {
         output.println("Possible actions:\n");

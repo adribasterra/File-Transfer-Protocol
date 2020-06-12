@@ -95,7 +95,7 @@ public class DataServer {
 		return false;
 	}
 
-	public static Boolean listFiles(int dataPort, PrintWriter output, String path) {
+	/*public static Boolean listFiles(int dataPort, String path) {
 		System.out.println("listFiles in DataServer called");
 		try {
 			ServerSocket sServ = new ServerSocket(dataPort);
@@ -103,7 +103,8 @@ public class DataServer {
 			
 			Socket sCon = sServ.accept();
 
-			path = path.substring(6);
+			PrintWriter output = new PrintWriter(sCon.getOutputStream(), true);
+			
 			path = path.replace('/', '\\');
 
 			System.out.println(path);
@@ -119,8 +120,46 @@ public class DataServer {
 			input.close();
 			if (line == null) System.out.println("Is empty");
 			output.println("END");
+			
+			output.println(CMD_SUCCESS);
+			output.close();
 			sCon.close();
-			//output.println(CMD_SUCCESS);
+			System.out.println(CMD_SUCCESS);
+			sServ.close();
+			return true;
+		} catch (Exception e) {
+			e.printStackTrace();
+			//output.println(CMD_ACTION_ABORTED);
+			System.out.println(CMD_ACTION_ABORTED);
+		}
+		return false;
+	}*/
+
+	public static Boolean listFiles(int dataPort, String path) {
+		System.out.println("listFiles in DataServer called");
+		try {
+			ServerSocket sServ = new ServerSocket(dataPort);
+			System.out.println("Server waiting for response before sending");
+			
+			Socket sCon = sServ.accept();
+
+			PrintWriter output = new PrintWriter(sCon.getOutputStream(), true);
+			
+			path = path.replace('/', '\\');
+
+			System.out.println(path);
+			File fileData = new File(path);
+
+			String[] entries = fileData.list();
+			for (String s : entries) {
+				File currentDir = new File(fileData.getPath(), s);
+				System.out.println("name: " + currentDir.getName() + " , path: " + currentDir.getPath());
+				output.println(currentDir.getPath());
+			}
+			output.println("END");
+			output.println(CMD_SUCCESS);
+			output.close();
+			sCon.close();
 			System.out.println(CMD_SUCCESS);
 			sServ.close();
 			return true;
@@ -131,4 +170,5 @@ public class DataServer {
 		}
 		return false;
 	}
+
 } 

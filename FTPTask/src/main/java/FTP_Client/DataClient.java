@@ -80,11 +80,12 @@ public class DataClient {
 		return false;
 	}
 
-	public static boolean receiveListFiles(int dataPort, BufferedReader input) {
+	public static boolean receiveListFiles(int dataPort) {
 		try {
 			Socket connection = new Socket("localhost", dataPort);
 
 			// new input from connection
+			BufferedReader input = new BufferedReader(new InputStreamReader(connection.getInputStream()));
 
 			System.out.println("Here is the list of files on the server:");
 
@@ -97,6 +98,7 @@ public class DataClient {
 					System.out.println(e);
 				}
 			}
+			input.close();
 			
 			connection.close();
 			return true;

@@ -5,6 +5,7 @@ package FTP_Client;
 import java.net.*;
 import java.io.*;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 
 public class TextClient {
@@ -43,7 +44,6 @@ public class TextClient {
 			ShowGuideline();
 
 			String currentDirectory = "files\\";
-			//String baseDirectory = System.getProperty("user.dir");
 
 			while (data.compareTo("END") != 0) {
 
@@ -58,27 +58,27 @@ public class TextClient {
 						String filename = command[1];
 						dataTCP = "STOR" + " " + filename; 						// STOR <SP> <pathname> <CRLF>
 						output.println(dataTCP);
-						try{
-							String response = input.readLine();
-							System.out.println(response);
-						} catch (IOException e){
-							System.out.println(e);
-						}
 						// if (response != not ok) || response equals OK
 						System.out.println("Attempting to send file: " + filename);
 						if(hasPort)	{
-							DataClient.sendFile(filename, dataPortClient);
+							boolean doIt = false;
 							try{
 								String response = input.readLine();
 								System.out.println(response);
-								String response2 = input.readLine();
-								System.out.println(response2);
+								if(response.startsWith("150")) doIt = true;
 							} catch (IOException e){
 								System.out.println(e);
 							}
-							
+							if(doIt) {
+								DataClient.sendFile(filename, dataPortClient);
+								try{
+									String response = input.readLine();
+									System.out.println(response);
+								} catch (IOException e){
+									System.out.println(e);
+								}
+							}
 						}
-						//System.out.println(input.readLine());
 					}
 					else {
 						dataTCP = "STOR";
@@ -98,15 +98,18 @@ public class TextClient {
 					if(command.length == 2){
 						try{
 							dataPortClient = Integer.parseInt(command[1]);
-							dataTCP = "PRT" + " " + dataPortClient;				// PORT <SP> <host-port> <CRLF>
-							output.println(dataTCP);
-							hasPort = true;
-							try{
-								String response = input.readLine();
-								System.out.println(response);
-							} catch (IOException e){
-								System.out.println(e);
+							if(dataPortClient != 21){
+								dataTCP = "PRT" + " " + dataPortClient;				// PORT <SP> <host-port> <CRLF>
+								output.println(dataTCP);
+								hasPort = true;
+								try{
+									String response = input.readLine();
+									System.out.println(response);
+								} catch (IOException e){
+									System.out.println(e);
+								}
 							}
+							else { System.out.println("The use of contorlPort as dataPort is not allowed"); }
 						} catch(NumberFormatException e){
 							System.out.println("It is not a number.");
 						}
@@ -123,16 +126,25 @@ public class TextClient {
 						dataTCP = "RETR" + " " + filename; 						// RETR <SP> <pathname> <CRLF>
 						output.println(dataTCP);
 						System.out.println("Attempting to get file: " + filename);
-						if(hasPort) { 
-							DataClient.receiveFile(filename, dataPortClient);
+						if(hasPort) {
+							boolean doIt = false;
 							try{
 								String response = input.readLine();
 								System.out.println(response);
+								if(response.startsWith("150")) doIt = true;
 							} catch (IOException e){
 								System.out.println(e);
 							}
+							if(doIt) {
+								DataClient.receiveFile(filename, dataPortClient);
+								try{
+									String response = input.readLine();
+									System.out.println(response);
+								} catch (IOException e){
+									System.out.println(e);
+								}
+							}
 						}
-						//System.out.println(input.readLine());
 					}
 					else{
 						System.out.println("Format is not correct");
@@ -154,18 +166,18 @@ public class TextClient {
 						dataTCP = "LIST" + " " + path;
 						output.println(dataTCP);
 						//dataTCP = "LIST" + " " + command[1]; 						// LIST [<SP> <pathname>] <CRLF>
-						if(hasPort)	DataClient.receiveListFiles(dataPortClient, input);
 						try{
 							String response = input.readLine();
 							System.out.println(response);
 						} catch (IOException e){
 							System.out.println(e);
 						}
+						if(hasPort)	DataClient.receiveListFiles(dataPortClient);
 					}
 					else {
 						dataTCP = "LIST";
 						output.println(dataTCP);
-						if(hasPort)	DataClient.receiveListFiles(dataPortClient, input);
+						if(hasPort)	DataClient.receiveListFiles(dataPortClient);
 						try{
 							String response = input.readLine();
 							System.out.println(response);
@@ -196,9 +208,11 @@ public class TextClient {
 					if(command.length == 3){
 						dataTCP = "RNFR" + " " + command[1] + " " + command[2];	// RNFR <SP> <pathname> <CRLF>
 					}
-					else { dataTCP = "RNFR"; }
-					//System.out.println(input.readLine());
+					else {
+						dataTCP = "RNFR";
+					}
 					output.println(dataTCP);
+					System.out.println(dataTCP);
 					try{
 						String response = input.readLine();
 						System.out.println(response);
@@ -209,7 +223,6 @@ public class TextClient {
 				else if (data.startsWith("wdir")) {
 					dataTCP = "PWD"; 											// PWD <CRLF>
 					output.println(dataTCP);
-					//System.out.println(input.readLine());
 					try{
 						String response = input.readLine();
 						System.out.println(response);
@@ -229,6 +242,12 @@ public class TextClient {
 							currentDirectory = directory;
 						} else {
 							System.out.println("ERROR: Access forbidden outside the \"files\\\" folder!");
+						}
+						try{
+							String response = input.readLine();
+							System.out.println(response);
+						} catch (IOException e){
+							System.out.println(e);
 						}
 					}
 					else { 
@@ -286,7 +305,6 @@ public class TextClient {
 					} catch (IOException e){
 						System.out.println(e);
 					}
-					//System.out.println(input.readLine());
 				}
 				else if (data.startsWith("password")) {
 					String[] command = data.split(" ");
@@ -299,19 +317,9 @@ public class TextClient {
 					} catch (IOException e){
 						System.out.println(e);
 					}
-					//System.out.println(input.readLine());
 				}
 				else if(data.startsWith("quit")){
-					dataTCP = "QUIT";
-					output.println(dataTCP);
-					try{
-						String response = input.readLine();
-						System.out.println(response);
-					} catch (IOException e){
-						System.out.println(e);
-					}
-				}
-				else if (data.compareTo("END") == 0) {
+					data = "END";
 					output.println(data);
 					try{
 						String response = input.readLine();
@@ -319,6 +327,10 @@ public class TextClient {
 					} catch (IOException e){
 						System.out.println(e);
 					}
+				}
+				else if (data.startsWith("end") || data.startsWith("END")) {
+					data = "END";
+					output.println(data);
 				}
 				else if(data.startsWith("path")){
 					System.out.println(System.getProperty("user.dir"));
@@ -352,6 +364,13 @@ public class TextClient {
 					System.out.println("Error: Command unrecognised");
 					//System.out.println(input.readLine());
 				}
+			}
+
+			try{
+				String response = input.readLine();
+				System.out.println(response);
+			} catch (IOException e){
+				System.out.println(e);
 			}
 
 			// Close the connection

@@ -157,8 +157,9 @@ public class LoginWindow extends javax.swing.JFrame {
     }*/
             regi.CreateFolder();
             regi.readFile();
-            regi.countlines();
+            regi.countLines();
             regi.logic(userText.getText(), passtext.getText());
+           // regi.logic(userText.getText(), passtext.getText());
         
     }//GEN-LAST:event_loginButtonMouseClicked
 

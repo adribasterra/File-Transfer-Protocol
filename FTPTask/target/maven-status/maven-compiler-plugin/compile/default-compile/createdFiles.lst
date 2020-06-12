@@ -20,6 +20,7 @@ FTP_Interface\main$12.class
 FTP_Interface\ClientWindow$2.class
 FTP_Interface\RenameFilesWindow$4.class
 FTP_Interface\RenameFilesWindow.class
+FTP_Interface\ServerWindow$5.class
 FTP_Interface\ClientWindow$8.class
 FTP_Interface\RenameFilesWindow$3.class
 FTP_Interface\errorWindow$2.class

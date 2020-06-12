@@ -41,6 +41,7 @@ public class ServerWindow extends javax.swing.JFrame {
         }
         text = text + "</html>";
         ServerInfo.setText(text);
+        pp.setVisible(false);
 
         // condcion = true;
         //System.out.println(listFiles());
@@ -57,6 +58,8 @@ public class ServerWindow extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        pp = new javax.swing.JScrollPane();
+        jList1 = new javax.swing.JList<>();
         cdButton = new javax.swing.JButton();
         ServerInfo = new javax.swing.JLabel();
         pathText = new javax.swing.JTextField();
@@ -74,6 +77,15 @@ public class ServerWindow extends javax.swing.JFrame {
             }
         });
         getContentPane().setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+
+        jList1.setModel(new javax.swing.AbstractListModel<String>() {
+            String[] strings = { "Item 1", "Item 2", "Item 3", "Item 4", "Item 5" };
+            public int getSize() { return strings.length; }
+            public String getElementAt(int i) { return strings[i]; }
+        });
+        pp.setViewportView(jList1);
+
+        getContentPane().add(pp, new org.netbeans.lib.awtextra.AbsoluteConstraints(200, 170, -1, -1));
 
         cdButton.setBorder(null);
         cdButton.setBorderPainted(false);
@@ -283,7 +295,9 @@ public class ServerWindow extends javax.swing.JFrame {
     public javax.swing.JLabel ServerInfo;
     private javax.swing.JButton backButton;
     private javax.swing.JButton cdButton;
+    private javax.swing.JList<String> jList1;
     private javax.swing.JLabel mainLabel;
     private javax.swing.JTextField pathText;
+    private javax.swing.JScrollPane pp;
     // End of variables declaration//GEN-END:variables
 }

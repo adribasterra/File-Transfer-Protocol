@@ -139,7 +139,7 @@ public class RenameFilesWindow extends javax.swing.JFrame {
                     try {
                         String response = input.readLine();
                         System.out.println(response);
-                        if (response.startsWith("200")) {
+                        if (response.startsWith("257")) {
                             SuccessWindow success = new SuccessWindow();
                             success.setVisible(true);
                         } else {

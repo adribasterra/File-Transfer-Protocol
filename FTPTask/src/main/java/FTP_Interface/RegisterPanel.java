@@ -23,7 +23,7 @@ import javax.swing.JOptionPane;
 public class RegisterPanel extends javax.swing.JFrame {
 
     File f = new File("USERS");
-    String Username, mail, Password;
+    String Username, Emaill, Password;
     int ln;
 
     /**
@@ -56,112 +56,113 @@ public class RegisterPanel extends javax.swing.JFrame {
     void readFile() {
         try {
             FileReader fr = new FileReader(f + "\\logins.txt");
-            System.out.println("file exists!");
+            System.out.println("file exists");
         } catch (FileNotFoundException ex) {
             try {
                 FileWriter fw = new FileWriter(f + "\\logins.txt");
-                System.out.println("file created");
+                System.out.println("File created");
             } catch (IOException ex1) {
                 Logger.getLogger(RegisterPanel.class.getName()).log(Level.SEVERE, null, ex1);
             }
         }
+        ;
 
     }
 
-    /**
-     * We use this method for add the users in the txt that we create before
-     */
-    void addData(String usr, String mail, String pswd) {
+    void addData(String usr, String pswd, String maill) {
         try {
-
             RandomAccessFile raf = new RandomAccessFile(f + "\\logins.txt", "rw");
-            for (int i = 0; i < ln; i++) {
-                raf.readLine();
+            try {
+                for (int i = 0; i < ln; i++) {
+
+                    raf.readLine();
+
+                }
+                raf.writeBytes("\r\n");
+                raf.writeBytes("\r\n");
+                raf.writeBytes("Username:" + usr + "\r\n");
+                raf.writeBytes("Password:" + pswd + "\r\n");
+                raf.writeBytes("Email:" + maill);
+            } catch (IOException ex) {
+                Logger.getLogger(RegisterPanel.class.getName()).log(Level.SEVERE, null, ex);
             }
-            raf.writeBytes("\r\n");
-            raf.writeBytes("\r\n");
-            raf.writeBytes("Username:" + usr + "\r\n");
-            raf.writeBytes("mail:" + mail + "\r\n");
-            raf.writeBytes("Password:" + pswd);
 
         } catch (FileNotFoundException ex) {
-            Logger.getLogger(RegisterPanel.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (IOException ex) {
-            Logger.getLogger(RegisterPanel.class.getName()).log(Level.SEVERE, null, ex);
-        }
-
-    }
-    
-     void countlines() {
-        try {
-            ln = 1;
-            RandomAccessFile raf = new RandomAccessFile(f + "\\logins.txt", "rw");
-            for (int i = 0; raf.readLine() != null; i++) {
-                ln++;
-            }
-            System.out.println("number of lines;" + ln);
-        } catch (FileNotFoundException ex) {
-            Logger.getLogger(RegisterPanel.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (IOException ex) {
             Logger.getLogger(RegisterPanel.class.getName()).log(Level.SEVERE, null, ex);
         }
 
     }
 
-    /**
-     * Method for check the information of the new users
-     */
     void CheckData(String usr, String pswd) {
+
         try {
             RandomAccessFile raf = new RandomAccessFile(f + "\\logins.txt", "rw");
             String line = raf.readLine();
             Username = line.substring(9);
-            mail = line.substring(5);
             Password = raf.readLine().substring(9);
+            Emaill = raf.readLine().substring(6);
             if (usr.equals(Username) & pswd.equals(Password)) {
-                JOptionPane.showMessageDialog(null, "Password matched");
-
+                SuccessWindow success = new SuccessWindow();
+                success.setVisible(true);
+                System.out.println("SIIII");
             } else {
-                JOptionPane.showMessageDialog(null, "Wrong user/Password");
+                errorWindow error = new errorWindow();
+                error.setVisible(true);
+                System.out.println("NOOOOOOOO");
             }
         } catch (FileNotFoundException ex) {
             Logger.getLogger(RegisterPanel.class.getName()).log(Level.SEVERE, null, ex);
-
         } catch (IOException ex) {
             Logger.getLogger(RegisterPanel.class.getName()).log(Level.SEVERE, null, ex);
         }
+
+    }
+
+    void countLines() {
+
+        try {
+            RandomAccessFile raf = new RandomAccessFile(f + "\\logins.txt", "rw");
+            for (int i = 0; raf.readLine() != null; i++) {
+                ln++;
+            }
+            System.out.println("number of lines:" + ln);
+        } catch (FileNotFoundException ex) {
+            Logger.getLogger(RegisterPanel.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
+            Logger.getLogger(RegisterPanel.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
     }
 
     void logic(String usr, String pswd) {
+
         try {
             RandomAccessFile raf = new RandomAccessFile(f + "\\logins.txt", "rw");
-            for (int i = 0; i < ln; i += 4) {
-                System.out.println("count " + i);
-                String forUser = raf.readLine().substring(9);
-                String forEmail = raf.readLine().substring(5);
-                String forpss = raf.readLine().substring(9);
-                
-                if (usr.equals(forUser) & pswd.equals(forpss)) {
-                    JOptionPane.showMessageDialog(null, "Password matched");
+            for (int i = 0; i < ln;i+=4) {
+
+                String forUsr = raf.readLine().substring(9);
+                String forUPsw = raf.readLine().substring(9);
+                if (usr.equals(forUsr) & pswd.equals(forUPsw)) {
+                    SuccessWindow success = new SuccessWindow();
+                    success.setVisible(true);
+                    
                     break;
+                } else if(i==(ln - 3)){
+                    errorWindow error = new errorWindow();
+                    error.setVisible(true);
+                    
+                }
+                for (int k=1;k<=2;k++){
+                raf.readLine();
+                }
 
-                } else if (i == (ln - 3)) {
-                    JOptionPane.showMessageDialog(null, "Wrong user/Password");
-                }
-                for (int k = 1; k <= 2; k++) {
-                    raf.readLine();
-                }
             }
-
         } catch (FileNotFoundException ex) {
             Logger.getLogger(RegisterPanel.class.getName()).log(Level.SEVERE, null, ex);
-
         } catch (IOException ex) {
             Logger.getLogger(RegisterPanel.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-
-   
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -262,22 +263,25 @@ public class RegisterPanel extends javax.swing.JFrame {
     private void RegisterButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_RegisterButtonMouseClicked
         // TODO add your handling code here:
 
-        String User = usernametext.getText();
+         String User = usernametext.getText();
         String Pass = passtetx.getText();
 
         if (User.isEmpty() || Pass.isEmpty()) {
             errorWindow error = new errorWindow();
             error.setVisible(true);
         } else {
-            SuccessWindow success = new SuccessWindow();
-            success.setVisible(true);
-            CreateFolder();
-            readFile();
-            //countlines();
-            addData(usernametext.getText(), maintext.getText(), passtetx.getText());
-            //CheckData(usernametext.getText(),maintext.getText(),passtetx.getText());
-            // JOptionPane.showMessageDialog(null, "Is registered in our system");
-            //logic(usernametext.getText(), passtetx.getText());
+         SuccessWindow success = new SuccessWindow();
+        success.setVisible(true);
+        CreateFolder();
+        readFile();
+        countLines();
+        addData(usernametext.getText(), passtetx.getText(), maintext.getText());
+        //CheckData("nilesh", "1234");
+        //countlines();
+        // addData(usernametext.getText(), maintext.getText(), passtetx.getText());
+        //CheckData(usernametext.getText(),maintext.getText(),passtetx.getText());
+        // JOptionPane.showMessageDialog(null, "Is registered in our system");
+        //logic(usernametext.getText(), passtetx.getText());
         }
 
 

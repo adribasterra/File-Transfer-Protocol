@@ -1,25 +1,31 @@
+Username:nilesh
+Password:1234
+Email:345
 
+Username:2
+Password:2
+Email:345
 
-Username: 3
-mail: 3@gmail.com
-Password: 3nciona
+Username:3
+Password:3
+Email:345
 
-Username: juan
-mail: juan@gmail.com
-Password: 1234
+Username:5
+Password:5
+Email:5
 
-Username: juan2
-mail: juan22@gmail.com
-Password: juan22
+Username:juano
+Password:juano
+Email:juano@gmail.com
 
-Username: raul
-mail: Raul@gmail.com
-Password: 1234
+Username:juano
+Password:juano
+Email:juano@gmail.com
 
-Username: peca
-mail: peca@gmail.com
-Password: 1234
+Username:6
+Password:6
+Email:6
 
-Username: 2
-mail: 2@gmail.com
-Password: 2
+Username:77
+Password:77
+Email:77

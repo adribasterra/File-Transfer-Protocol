@@ -205,6 +205,7 @@ public class ClientWindow extends javax.swing.JFrame {
         // TODO add your handling code here:
         int controlPort = 21;
         String dataTCP = "";
+        int dataPortClient;
 
         boolean hasPort = true;
         String download = ComandField.getText();
@@ -372,6 +373,7 @@ public class ClientWindow extends javax.swing.JFrame {
         // TODO add your handling code here:
         SendButton.setVisible(false);
         int controlPort = 21;
+        int dataPortClient;
 
         String baseDirectory = "UserFiles\\";
         boolean hasPort = true;

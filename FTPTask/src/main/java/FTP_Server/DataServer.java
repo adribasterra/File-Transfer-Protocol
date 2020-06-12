@@ -49,7 +49,6 @@ public class DataServer {
 			
 			return true;
 		} catch (Exception e) {
-			//System.out.println("Error receiving file :" + e);
 			output.println(CMD_ACTION_ABORTED);
 			System.out.println(CMD_ACTION_ABORTED);
 		}
@@ -95,46 +94,6 @@ public class DataServer {
 		return false;
 	}
 
-	/*public static Boolean listFiles(int dataPort, String path) {
-		System.out.println("listFiles in DataServer called");
-		try {
-			ServerSocket sServ = new ServerSocket(dataPort);
-			System.out.println("Server waiting for response before sending");
-			
-			Socket sCon = sServ.accept();
-
-			PrintWriter output = new PrintWriter(sCon.getOutputStream(), true);
-			
-			path = path.replace('/', '\\');
-
-			System.out.println(path);
-
-			Scanner input = new Scanner(new FileReader("fileList.txt"));
-			// new output in the data connection
-
-			String line = null;
-			while (input.hasNextLine()) {
-				line = input.nextLine();
-				if(line.startsWith(path)) { output.println(line); }
-			}
-			input.close();
-			if (line == null) System.out.println("Is empty");
-			output.println("END");
-			
-			output.println(CMD_SUCCESS);
-			output.close();
-			sCon.close();
-			System.out.println(CMD_SUCCESS);
-			sServ.close();
-			return true;
-		} catch (Exception e) {
-			e.printStackTrace();
-			//output.println(CMD_ACTION_ABORTED);
-			System.out.println(CMD_ACTION_ABORTED);
-		}
-		return false;
-	}*/
-
 	public static Boolean listFiles(int dataPort, String path) {
 		System.out.println("listFiles in DataServer at "+path+" called");
 		try {
@@ -169,7 +128,6 @@ public class DataServer {
 			return true;
 		} catch (Exception e) {
 			e.printStackTrace();
-			//output.println(CMD_ACTION_ABORTED);
 			System.out.println(CMD_ACTION_ABORTED);
 		}
 		return false;

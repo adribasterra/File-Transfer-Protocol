@@ -11,7 +11,6 @@ public class DataClient {
 			System.out.println("ERROR: File "+filename+" does not exist here!");
 			return false;
 		}
-		//System.out.println(fileData.toURI());
 		
 		try {
 			Socket sCon = new Socket("localhost", dataPort);
@@ -46,7 +45,6 @@ public class DataClient {
 			Socket connection = new Socket("localhost", dataPort);
 
 			fileData = new File(filename);
-			//System.out.println(fileData.toURI());
 			if (!fileData.createNewFile()){
 				System.out.println("ERROR: A file named "+fileData.getName()+" already exists on the server.\n");
 				connection.close();

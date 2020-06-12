@@ -134,7 +134,8 @@ public class TextServer {
                 } else if (data.startsWith("RETR")) {
                     String[] command = data.split(" ");
                     if (command.length == 2) {
-                        String filename = currentDirectory + command[1];
+                        String absolutePath = canonicalDir(currentDirectory, command[1]);
+                        String filename = absolutePath;
                         File fileData = new File(filename);
                         if (!fileData.exists()) {
                             System.out.println("ERROR: File " + filename + " does not exist here!");
@@ -158,7 +159,9 @@ public class TextServer {
                     String[] command = data.split(" ");
                     if (hasPort) {
                         if (command.length == 2) {
-                            String path = command[1];
+                            System.out.println("Directory " + currentDirectory+ command[1] + " !");
+                            String path = canonicalDir(currentDirectory, command[1]);
+                            
                             //String fileName = path + "fileList.txt";
                             File fileData = new File(path);
                             if (fileData.exists()) {
@@ -183,7 +186,7 @@ public class TextServer {
                 } else if (data.startsWith("DELE")) {
                     String[] command = data.split(" ");
                     if (command.length == 2) {
-                        String filename = currentDirectory + command[1];
+                        String filename = canonicalDir(currentDirectory, command[1]);
                         boolean result = deleteFile(filename);
                         if (result) {
                             output.println(CMD_COMPLETED);
@@ -196,8 +199,8 @@ public class TextServer {
                 } else if (data.startsWith("RNFR")) {
                     String[] command = data.split(" ");
                     if (command.length == 3) {
-                        String oldFilename = currentDirectory + command[1];
-                        String newFilename = currentDirectory + command[2];
+                        String oldFilename = canonicalDir(currentDirectory, command[1]);
+                        String newFilename = canonicalDir(currentDirectory, command[2]);
                         System.out.println(oldFilename);
                         System.out.println(newFilename);
                         if (newFilename != currentDirectory) {
@@ -349,12 +352,14 @@ public class TextServer {
 				directory = directory.substring(0, i+1);
 			}
 			else if (path.compareTo(".")!=0){
-				directory = directory + path + "\\";
+				directory = directory + path;
+				if (path.contains(".")==false) {
+					directory = directory + "\\";
+				}
 			}
 		}
-        System.out.println("De esta función sale: " + directory);
-        return directory;
-    }
+		return directory;
+	}
 
     /*public static boolean addFilenameToList(String filename) {
         try {

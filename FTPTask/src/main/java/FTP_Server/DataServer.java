@@ -136,7 +136,7 @@ public class DataServer {
 	}*/
 
 	public static Boolean listFiles(int dataPort, String path) {
-		System.out.println("listFiles in DataServer called");
+		System.out.println("listFiles in DataServer at "+path+" called");
 		try {
 			ServerSocket sServ = new ServerSocket(dataPort);
 			System.out.println("Server waiting for response before sending");
@@ -154,7 +154,11 @@ public class DataServer {
 			for (String s : entries) {
 				File currentDir = new File(fileData.getPath(), s);
 				System.out.println("name: " + currentDir.getName() + " , path: " + currentDir.getPath());
-				output.println(currentDir.getPath());
+				if (currentDir.isDirectory()) {
+					output.println(currentDir.getName()+"/");
+				}else{
+					output.println(currentDir.getName());
+				}
 			}
 			output.println("END");
 			output.println(CMD_SUCCESS);

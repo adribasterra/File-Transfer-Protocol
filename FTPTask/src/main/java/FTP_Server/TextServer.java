@@ -166,6 +166,7 @@ public class TextServer {
                                 System.out.println(CMD_FILE_STATUS_OKAY);
                                 System.out.println("Path: " + path);
                                 DataServer.listFiles(dataPortClient, output, path);
+                                output.println(CMD_OKAY);
                             } else { //Does not exists a fileList.txt in that path
                                 System.out.println("ERROR: Directory " + path + " does not exist here!");
                                 output.println(CMD_FILE_ACTION_UNAVAILABLE);
@@ -173,6 +174,7 @@ public class TextServer {
                             }
                         } else if (command.length == 1) {
                             DataServer.listFiles(dataPortClient, output, currentDirectory);
+                            output.println(CMD_OKAY);
                         }
                     } else {
                         output.println(CMD_CANT_OPEN_CONNECTION);
@@ -333,24 +335,25 @@ public class TextServer {
     }
 
     public static String canonicalDir(String curDir, String directory) {
-        String[] paths;
-        if (directory.contains("/")) {
-            paths = directory.split("/");
-        } else {
-            paths = new String[]{directory};
-        }
-        directory = curDir;
-        for (String path : paths) {
-            if (path.compareTo("..") == 0) {
-                int i = directory.lastIndexOf("\\", directory.length() - 2);
-                if (i == -1) {
-                    return "";
-                }
-                directory = directory.substring(0, i + 1);
-            } else if (path.compareTo(".") != 0) {
-                directory = directory + path + "\\";
-            }
-        }
+		String[] paths;
+		if (directory.contains("/")) {
+			paths = directory.split("/");
+		} else if (directory.contains("\\")) {
+			paths = directory.split("\\");
+		} else {
+			paths = new String[]{directory};
+		}
+		directory = curDir;
+		for (String path : paths){
+			if (path.compareTo("..")==0){
+				int i = directory.lastIndexOf("\\", directory.length()-2);
+				if (i==-1) return directory;
+				directory = directory.substring(0, i+1);
+			}
+			else if (path.compareTo(".")!=0){
+				directory = directory + path + "\\";
+			}
+		}
         System.out.println("De esta función sale: " + directory);
         return directory;
     }

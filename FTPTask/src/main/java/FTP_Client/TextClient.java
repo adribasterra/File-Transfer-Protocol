@@ -44,7 +44,6 @@ public class TextClient {
 			ShowGuideline();
 
 			String currentDirectory = "files\\";
-			//String baseDirectory = System.getProperty("user.dir");
 
 			while (data.compareTo("END") != 0) {
 

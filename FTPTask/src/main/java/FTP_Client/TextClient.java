@@ -5,6 +5,7 @@ package FTP_Client;
 import java.net.*;
 import java.io.*;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 
 public class TextClient {
@@ -208,9 +209,11 @@ public class TextClient {
 					if(command.length == 3){
 						dataTCP = "RNFR" + " " + command[1] + " " + command[2];	// RNFR <SP> <pathname> <CRLF>
 					}
-					else { dataTCP = "RNFR"; }
-					//System.out.println(input.readLine());
+					else {
+						dataTCP = "RNFR";
+					}
 					output.println(dataTCP);
+					System.out.println(dataTCP);
 					try{
 						String response = input.readLine();
 						System.out.println(response);

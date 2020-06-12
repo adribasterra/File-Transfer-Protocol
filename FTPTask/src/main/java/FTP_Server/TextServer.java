@@ -108,7 +108,7 @@ public class TextServer {
                             if (hasPort) {
                                 boolean response = DataServer.receiveFile(currentDirectory + filename, dataPortClient, output);
                                 if (response) {
-                                    addFilenameToList(currentDirectory + filename);
+                                    //addFilenameToList(currentDirectory + filename);
                                 }
                             } else {
                                 output.println(CMD_CANT_OPEN_CONNECTION); //There is no dataPort
@@ -205,7 +205,7 @@ public class TextServer {
                             System.out.println(CMD_FILENAME_NOT_ALLOWED);
                         }
                     } else {
-                        output.print(CMD_BAD_SEQUENCE);
+                        output.println(CMD_BAD_SEQUENCE);
                         System.out.println(CMD_BAD_SEQUENCE);
                     }
                 } else if (data.startsWith("PWD")) {
@@ -252,7 +252,7 @@ public class TextServer {
                             File currentDir = new File(directoryToDelete.getPath(), s);
                             currentDir.delete();
                             System.out.println("Directory deleted");
-                            removeFilenameFromList(directoryToDelete.getPath());
+                            //removeFilenameFromList(directoryToDelete.getPath());
                             System.out.println("Deleted file from fileList");
                         }
                         directoryToDelete.delete();
@@ -353,7 +353,7 @@ public class TextServer {
         return directory;
     }
 
-    public static boolean addFilenameToList(String filename) {
+    /*public static boolean addFilenameToList(String filename) {
         try {
             Scanner in = new Scanner(new FileReader("fileList.txt"));
             StringBuilder sb = new StringBuilder();
@@ -425,13 +425,14 @@ public class TextServer {
             System.out.println(CMD_ACTION_ABORTED);
         }
         return false;
-    }
+    }*/
 
     public static Boolean deleteFile(String filename) {
         System.out.println("deleteFile called");
         try {
             File fileData = new File(filename);
-            if (!fileData.exists() || !removeFilenameFromList(filename)) {
+            //if (!fileData.exists() || !removeFilenameFromList(filename)) {
+            if (!fileData.exists()) {
                 output.println(CMD_FILE_UNAVAILABLE);
                 System.out.println(CMD_FILE_UNAVAILABLE);
                 return false;
@@ -457,20 +458,15 @@ public class TextServer {
                 return false;
             }
             if (newFile.exists()) {
-                output.println(CMD_FILE_UNAVAILABLE);
-                System.out.println(CMD_FILE_UNAVAILABLE);
+                output.println(CMD_FILENAME_NOT_ALLOWED);
+                System.out.println(CMD_FILENAME_NOT_ALLOWED);
                 return false;
             }
             Boolean success = oldFile.renameTo(newFile);
-            /*if (success && oldFile.isFile()) {
-                removeFilenameFromList(oldFilename);
-                System.out.println("Is file");
-                addFilenameToList(newFilename);
-            } else if (success && oldFile.isDirectory()) {
-                System.out.println("Is directory");
-            }*/
-            removeFilenameFromList(oldFilename);
-            addFilenameToList(newFilename);
+           
+
+            //removeFilenameFromList(oldFilename);
+            //addFilenameToList(newFilename);
             output.println(CMD_COMPLETED);
             System.out.println(CMD_COMPLETED);
             return success;
@@ -483,7 +479,7 @@ public class TextServer {
         return false;
     }
 
-    public static Boolean listFiles(PrintWriter output) {
+    /*public static Boolean listFiles(PrintWriter output) {
         System.out.println("listFiles called");
         try {
             Scanner input = new Scanner(new FileReader("fileList.txt"));
@@ -504,7 +500,7 @@ public class TextServer {
             System.out.println(CMD_ACTION_ABORTED);
         }
         return false;
-    }
+    }*/
 
     //INTERFACE
     public static ArrayList<String> listFiles() {

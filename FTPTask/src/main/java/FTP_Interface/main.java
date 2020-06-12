@@ -40,16 +40,18 @@ public class main extends javax.swing.JFrame {
         CSButton.setVisible(false);
         LogButton.setVisible(false);
         SeButton.setVisible(false);
-        ServerConnect=false;
+        ServerConnect = false;
         clientConectSButton1.setVisible(false);
         register.setVisible(false);
-        
-        
+
     }
-    
+
     ServerWindow ServerPanel = new ServerWindow();
-    ClientWindow ClientPanel =  new ClientWindow();
+    ClientWindow ClientPanel = new ClientWindow();
+    errorWindow error = new errorWindow();
     RenameFilesWindow RenamePanel = new RenameFilesWindow();
+    Boolean forbidden = false;
+    
     portPanel portw = new portPanel();
     RegisterPanel register = new RegisterPanel();
     LoginWindow LoginPanel = new LoginWindow();
@@ -58,12 +60,12 @@ public class main extends javax.swing.JFrame {
     static boolean ServerConnect = false;
     private static int controlPort = 21;
     static Socket connection;
+
     private static BufferedReader input;
     private static PrintWriter output;
     // Send & recover data
-     String data = "";
+    String data = "";
 
-    
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -286,54 +288,60 @@ public class main extends javax.swing.JFrame {
     private void formWindowOpened(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowOpened
         // TODO add your handling code here:
         //JOptionPane.showMessageDialog(null,"Please, remember that you have to connect into the server");
-        
-        
-        
+
 
     }//GEN-LAST:event_formWindowOpened
 
     private void ServidorBotonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_ServidorBotonMouseClicked
         // TODO add your handling code here:
+        if(forbidden==false){
+            error.setVisible(true);
+        }else{
         ServerPanel.setVisible(true);
         main.setVisible(false);
-         mdesenfoque.setVisible(true);
-         ServidorBoton.setVisible(false);
-         ClienteBoton.setVisible(false);
-         ClientDesenfoque.setVisible(true);
-         SettingsPanel.setVisible(false);
-         CSButton.setVisible(false);
-         LogButton.setVisible(false);
-         SeButton.setVisible(false);
-         clientConectSButton1.setVisible(false);
-        
+        mdesenfoque.setVisible(true);
+        ServidorBoton.setVisible(false);
+        ClienteBoton.setVisible(false);
+        ClientDesenfoque.setVisible(true);
+        SettingsPanel.setVisible(false);
+        CSButton.setVisible(false);
+        LogButton.setVisible(false);
+        SeButton.setVisible(false);
+        clientConectSButton1.setVisible(false);
+        }
+
     }//GEN-LAST:event_ServidorBotonMouseClicked
 
     private void ClienteBotonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_ClienteBotonMouseClicked
         // TODO add your handling code here:
-       ClientPanel.setVisible(true);
+        if(forbidden==false){
+            error.setVisible(true);
+        }else{
+        ClientPanel.setVisible(true);
         main.setVisible(false);
-         mdesenfoque.setVisible(true);
-         ServidorBoton.setVisible(false);
-         ClienteBoton.setVisible(false);
-         SerDesButton.setVisible(true);
-         SettingsPanel.setVisible(false);
-         CSButton.setVisible(false);
-         LogButton.setVisible(false);
-         SeButton.setVisible(false);
-         clientConectSButton1.setVisible(false);
+        mdesenfoque.setVisible(true);
+        ServidorBoton.setVisible(false);
+        ClienteBoton.setVisible(false);
+        SerDesButton.setVisible(true);
+        SettingsPanel.setVisible(false);
+        CSButton.setVisible(false);
+        LogButton.setVisible(false);
+        SeButton.setVisible(false);
+        clientConectSButton1.setVisible(false);
+        }
     }//GEN-LAST:event_ClienteBotonMouseClicked
 
     private void cerrarMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_cerrarMouseClicked
-       
+
         try {
             int dialog = JOptionPane.YES_NO_OPTION;
-            int result = JOptionPane.showConfirmDialog(null, "Do you want to close?","Exit",dialog);
+            int result = JOptionPane.showConfirmDialog(null, "Do you want to close?", "Exit", dialog);
             int controlPort = 21;
 // Recover input & output from connection
             output = new PrintWriter(connection.getOutputStream(), true);
-            if(result == 0){
+            if (result == 0) {
                 output.println("END");
-                
+
                 Thread.sleep(5 * 1000);
                 output.close();
                 connection.close();
@@ -343,7 +351,7 @@ public class main extends javax.swing.JFrame {
             Logger.getLogger(main.class.getName()).log(Level.SEVERE, null, ex);
         } catch (InterruptedException ex) {
             Logger.getLogger(main.class.getName()).log(Level.SEVERE, null, ex);
-        } 
+        }
 
     }//GEN-LAST:event_cerrarMouseClicked
 
@@ -376,7 +384,7 @@ public class main extends javax.swing.JFrame {
 
     private void BothDesenfoqueMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_BothDesenfoqueMouseClicked
         // TODO add your handling code here:
-         RenamePanel.dispose();
+        RenamePanel.dispose();
         BothDesenfoque.setVisible(false);
         CSButton.setVisible(false);
         clientConectSButton1.setVisible(false);
@@ -384,30 +392,43 @@ public class main extends javax.swing.JFrame {
 
     private void SerDesButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_SerDesButtonMouseClicked
         // TODO add your handling code here:
+        if(forbidden==false){
+            error.setVisible(true);
+        }else{
         ServerPanel.setVisible(true);
         SerDesButton.setVisible(false);
         LoginPanel.dispose();
         CSButton.setVisible(false);
+        }
+        
     }//GEN-LAST:event_SerDesButtonMouseClicked
 
     private void CieDesButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_CieDesButtonMouseClicked
         // TODO add your handling code here:
+        if(forbidden==false){
+            error.setVisible(true);
+        }else{
         ClientPanel.setVisible(true);
-         LoginPanel.dispose();
-         CSButton.setVisible(false);
-       // ClientDesenfoque.setVisible(false);
+        LoginPanel.dispose();
+        CSButton.setVisible(false);
+        // ClientDesenfoque.setVisible(false);
+        }
     }//GEN-LAST:event_CieDesButtonMouseClicked
 
     private void SButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_SButtonMouseClicked
         // TODO add your handling code here:
+       
         SettingsPanel.setVisible(true);
         LogButton.setVisible(true);
         CSButton.setVisible(true);
         SeButton.setVisible(true);
+        
     }//GEN-LAST:event_SButtonMouseClicked
 
     private void CSButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_CSButtonMouseClicked
         // TODO add your handling code here:
+        forbidden = true;
+        if (forbidden = true) {
             ConnectServer();
             CSButton.setVisible(false);
             mdesenfoque.setVisible(true);
@@ -417,9 +438,11 @@ public class main extends javax.swing.JFrame {
             SettingsPanel.setVisible(false);
             SeButton.setVisible(false);
             clientConectSButton1.setVisible(true);
-            
+
             portw.setVisible(true);
-        
+        }
+
+
     }//GEN-LAST:event_CSButtonMouseClicked
 
     private void LogButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_LogButtonMouseClicked
@@ -436,7 +459,7 @@ public class main extends javax.swing.JFrame {
         ClientDesenfoque.setVisible(false);
         SeButton.setVisible(false);
         clientConectSButton1.setVisible(false);
-        
+
     }//GEN-LAST:event_LogButtonMouseClicked
 
     private void SeButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_SeButtonMouseClicked
@@ -451,42 +474,40 @@ public class main extends javax.swing.JFrame {
     }//GEN-LAST:event_clientConectSButton1MouseClicked
 
     //Allow us to connect into the server
-    public static void ConnectServer(){
-        
-        ServerConnect=true;
-        
+    public static void ConnectServer() {
+
+        ServerConnect = true;
+
         clientConectSButton1.setVisible(true);
         CSButton.setVisible(false);
-        
+
         try {
-            
-            
-                //int port = 21
-        
-        
-                // Connect with the server
-                connection = new Socket("localhost", controlPort);
-                //connection = ExitConection;
 
-            
-             } catch (IOException ex) {
-             Logger.getLogger(main.class.getName()).log(Level.SEVERE, null, ex);
-            }
+            //int port = 21
+            // Connect with the server
+            connection = new Socket("localhost", controlPort);
+            //connection = ExitConection;
+
+        } catch (IOException ex) {
+            Logger.getLogger(main.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
-    
+
     //Condition for the server conection
-    public static void ServerCondition(){
-    
-     if(ServerConnect == true){
-     JOptionPane.showMessageDialog(null,"you are already connected to the server");
-     }
+    public static void ServerCondition() {
+
+        if (ServerConnect == true) {
+            JOptionPane.showMessageDialog(null, "you are already connected to the server");
+        }
 
     }
+
+    
     /**
      * @param args the command line arguments
      */
     /**
-     * 
+     *
      * @param args the command line arguments
      */
     public static void main(String args[]) {
@@ -520,6 +541,7 @@ public class main extends javax.swing.JFrame {
             }
         });
     }
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel BothDesenfoque;

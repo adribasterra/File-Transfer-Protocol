@@ -128,38 +128,19 @@ public class LoginWindow extends javax.swing.JFrame {
     }//GEN-LAST:event_formWindowOpened
 
     private void loginButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_loginButtonMouseClicked
-        // TODO add your handling code here:
-            /*data(user, pass);
-    if(user.equals(userText.getText()) && pass.equals(passtext.getText())){
-         main Main = new main();
-         Main.setVisible(true);
-         this.dispose();
-    }else if(userText.getText().equals("") && passtext.getText().equals("")){
-        JOptionPane.showMessageDialog(this,"User and / or Password are empty\nPlease enter them.");
-        userText.setFocusable(true);
-    }else if(userText.getText().equals("")){
-        JOptionPane.showMessageDialog(this,"User is empty\nPlease enter it.");
-        userText.setFocusable(true);
-    }else if(passtext.getText().equals("")){
-        JOptionPane.showMessageDialog(this,"Password is empty\nPlease enter it.");
-        passtext.setFocusable(true);
-    }
-    else if(userText.getText().compareTo(user)!=0 && passtext.getText().compareTo(pass)!=0){
-        JOptionPane.showMessageDialog(this,"Invalid username and / or password\nPlease enter them.");
-         userText.setFocusable(true);
-    }
-    else if(userText.getText().compareTo(user)!=0){
-        JOptionPane.showMessageDialog(this,"Invalid user\nPlease enter it.");
-        userText.setFocusable(true);
-    }else if(passtext.getText().compareTo(pass)!=0){
-        JOptionPane.showMessageDialog(this,"Invalid password\nPlease enter it.");
-        passtext.setFocusable(true);
-    }*/
+       String User = userText.getText();
+        String Pass = passtext.getText();
+        
+        if (User.isEmpty() || Pass.isEmpty()) {
+            errorWindow error = new errorWindow();
+            error.setVisible(true);
+        } else {
             regi.CreateFolder();
             regi.readFile();
             regi.countLines();
             regi.logic(userText.getText(), passtext.getText());
            // regi.logic(userText.getText(), passtext.getText());
+        }
         
     }//GEN-LAST:event_loginButtonMouseClicked
 

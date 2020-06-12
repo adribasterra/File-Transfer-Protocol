@@ -41,7 +41,7 @@ public class ClientWindow extends javax.swing.JFrame {
 
     ServerWindow ServerPanel = new ServerWindow();
     //RenameFilesWindow RenamePanel = new RenameFilesWindow();
-    DirectorySWindow DirectPanel = new DirectorySWindow();
+    // DirectorySWindow DirectPanel = new DirectorySWindow();
     String currentDirectory = "UserFiles\\";
 
     /**
@@ -207,40 +207,75 @@ public class ClientWindow extends javax.swing.JFrame {
         String dataTCP = "";
 
         boolean hasPort = true;
-        try {
+        String download = ComandField.getText();
 
-            //Thread.sleep(5 * 1000);
-            //int port = 21
-            // Connect with the server
-            // Socket connection = new Socket("localhost", controlPort);
-            //connection = ExitConection;
-            // Recover input & output from connection
-            PrintWriter output = new PrintWriter(main.connection.getOutputStream(), true);
+        if (download.isEmpty()) {
+            errorWindow error = new errorWindow();
+            error.setVisible(true);
+        } else {
+            try {
 
-            String s = "get " + ComandField.getText();
-            if (s.startsWith("get")) {
-                String[] command = s.split(" ");
-                if (command.length == 2) {
-                    String filename = command[1];
-                    dataTCP = "RETR" + " " + filename; 						// RETR <SP> <pathname> <CRLF>
-                    System.out.println("Attempting to get file: " + filename);
-                    if (hasPort) {
-                        DataClient.receiveFile(currentDirectory + filename, dataPortClient);
-                        ///JOptionPane.showMessageDialog(this, "Success");
+                //Thread.sleep(5 * 1000);
+                //int port = 21
+                // Connect with the server
+                // Socket connection = new Socket("localhost", controlPort);
+                //connection = ExitConection;
+                // Recover input & output from connection
+                PrintWriter output = new PrintWriter(main.connection.getOutputStream(), true);
+                BufferedReader input = new BufferedReader(new InputStreamReader(main.connection.getInputStream()));
+
+                String s = "get " + ComandField.getText();
+                if (s.startsWith("get")) {
+                    String[] command = s.split(" ");
+                    if (command.length == 2) {
+                        String filename = command[1];
+                        dataTCP = "RETR" + " " + filename; 						// RETR <SP> <pathname> <CRLF>
+                        output.println(dataTCP);
+                        System.out.println("Attempting to get file: " + filename);
+                        if (hasPort) {
+                            boolean doIt = false;
+                            try {
+                                String response = input.readLine();
+                                System.out.println(response);
+                                if (response.startsWith("150")) {
+                                    doIt = true;
+                                    SuccessWindow success = new SuccessWindow();
+                                    success.setVisible(true);
+                                } else {
+                                    errorWindow error = new errorWindow();
+                                    error.setVisible(true);
+                                }
+                            } catch (IOException e) {
+                                System.out.println(e);
+                            }
+                            if (doIt) {
+                                DataClient.receiveFile(filename, dataPortClient);
+                                try {
+                                    String response = input.readLine();
+                                    System.out.println(response);
+                                } catch (IOException e) {
+                                    System.out.println(e);
+                                }
+                            }
+                        }
+                    } else {
+                        System.out.println("Format is not correct");
+                        dataTCP = "RETR";
+                        output.println(dataTCP);
+                        try {
+                            String response = input.readLine();
+                            System.out.println(response);
+                        } catch (IOException e) {
+                            System.out.println(e);
+                        }
                     }
-                } else {
-                    System.out.println("Format is not correct");
-                    JOptionPane.showMessageDialog(this, "Format is not correct");
-                    dataTCP = "RETR";
+                    //System.out.println(input.readLine());
                 }
-                output.println(dataTCP);
-                // JOptionPane.showMessageDialog(this, "FILE ALREADY EXISTS IN CLIENT");
+
+            } catch (IOException ex) {
+                Logger.getLogger(main.class.getName()).log(Level.SEVERE, null, ex);
             }
-
-        } catch (IOException ex) {
-            Logger.getLogger(main.class.getName()).log(Level.SEVERE, null, ex);
         }
-
 
     }//GEN-LAST:event_downloadButtonMouseClicked
 
@@ -266,23 +301,27 @@ public class ClientWindow extends javax.swing.JFrame {
                 String[] command = s.split(" ");
                 if (command.length == 2) {
                     String pathDirectory = command[1];
-                    dataTCP = "DELE" + " " + pathDirectory;
-                    // DELE <SP> <pathname> <CRLF>
+                    dataTCP = "DELE" + " " + pathDirectory; 				// DELE <SP> <pathname> <CRLF>
                 } else {
                     dataTCP = "DELE";
-                    JOptionPane.showMessageDialog(this, "Success");
                 }
                 System.out.println(dataTCP);
-                JOptionPane.showMessageDialog(this, "this file dos not exist");
                 //System.out.println(input.readLine());
                 output.println(dataTCP);
                 try {
                     String response = input.readLine();
                     System.out.println(response);
+                    if (response.startsWith("200")) {
+                        SuccessWindow success = new SuccessWindow();
+                        success.setVisible(true);
+                    } else {
+                        errorWindow error = new errorWindow();
+                        error.setVisible(true);
+                    }
                 } catch (IOException e) {
                     System.out.println(e);
                 }
-            };
+            }
 
         } catch (IOException ex) {
             Logger.getLogger(main.class.getName()).log(Level.SEVERE, null, ex);
@@ -290,9 +329,9 @@ public class ClientWindow extends javax.swing.JFrame {
     }//GEN-LAST:event_DeleteButtonMouseClicked
 
     private void RenameButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_RenameButtonMouseClicked
-        
+
         String dataTCP = "";
-       
+
         try {
 
             BufferedReader input = new BufferedReader(new InputStreamReader(main.connection.getInputStream()));
@@ -305,11 +344,18 @@ public class ClientWindow extends javax.swing.JFrame {
                 } else {
                     dataTCP = "RNFR";
                 }
-                //System.out.println(input.readLine());
                 output.println(dataTCP);
+                System.out.println(dataTCP);
                 try {
                     String response = input.readLine();
                     System.out.println(response);
+                    if (response.startsWith("200") || response.startsWith("250")) {
+                        SuccessWindow success = new SuccessWindow();
+                        success.setVisible(true);
+                    } else {
+                        errorWindow error = new errorWindow();
+                        error.setVisible(true);
+                    }
                 } catch (IOException e) {
                     System.out.println(e);
                 }
@@ -347,28 +393,33 @@ public class ClientWindow extends javax.swing.JFrame {
                     String filename = command[1];
                     dataTCP = "STOR" + " " + filename; 						// STOR <SP> <pathname> <CRLF>
                     output.println(dataTCP);
-                    try {
-                        String response = input.readLine();
-                        System.out.println(response);
-                    } catch (IOException e) {
-                        System.out.println(e);
-                    }
+                    // if (response != not ok) || response equals OK
                     System.out.println("Attempting to send file: " + filename);
                     if (hasPort) {
-                        DataClient.sendFile(filename, dataPortClient);
+                        boolean doIt = false;
                         try {
                             String response = input.readLine();
                             System.out.println(response);
+                            if (response.startsWith("150")) {
+                                doIt = true;
+                            }
                         } catch (IOException e) {
                             System.out.println(e);
                         }
+                        if (doIt) {
+                            DataClient.sendFile(filename, dataPortClient);
+                            try {
+                                String response = input.readLine();
+                                System.out.println(response);
+                            } catch (IOException e) {
+                                System.out.println(e);
+                            }
+                        }
                     }
-                    //System.out.println(input.readLine());
                 } else {
                     dataTCP = "STOR";
                     output.println(dataTCP);
-                    JOptionPane.showMessageDialog(this, "Format is not correct.");
-
+                    System.out.println("Format is not correct.");
                     try {
                         String response = input.readLine();
                         System.out.println(response);
@@ -381,14 +432,11 @@ public class ClientWindow extends javax.swing.JFrame {
             //output.println("DELE " + s);
 
             //Ponemos a "Dormir" e
-            Thread.sleep(5 * 1000);
-
+            // Thread.sleep(5 * 1000);
             // output.println("END");
             // connection.close();
         } catch (IOException ex) {
             Logger.getLogger(main.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (InterruptedException ex) {
-            Logger.getLogger(ClientWindow.class.getName()).log(Level.SEVERE, null, ex);
         }
     }//GEN-LAST:event_SendButtonMouseClicked
 

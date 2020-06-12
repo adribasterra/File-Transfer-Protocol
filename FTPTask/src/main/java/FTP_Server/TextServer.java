@@ -108,7 +108,7 @@ public class TextServer {
                             if (hasPort) {
                                 boolean response = DataServer.receiveFile(currentDirectory + filename, dataPortClient, output);
                                 if (response) {
-                                    addFilenameToList(currentDirectory + filename);
+                                    //addFilenameToList(currentDirectory + filename);
                                 }
                             } else {
                                 output.println(CMD_CANT_OPEN_CONNECTION); //There is no dataPort
@@ -134,7 +134,8 @@ public class TextServer {
                 } else if (data.startsWith("RETR")) {
                     String[] command = data.split(" ");
                     if (command.length == 2) {
-                        String filename = currentDirectory + command[1];
+                        String absolutePath = canonicalDir(currentDirectory, command[1]);
+                        String filename = absolutePath;
                         File fileData = new File(filename);
                         if (!fileData.exists()) {
                             System.out.println("ERROR: File " + filename + " does not exist here!");
@@ -158,7 +159,9 @@ public class TextServer {
                     String[] command = data.split(" ");
                     if (hasPort) {
                         if (command.length == 2) {
-                            String path = command[1];
+                            System.out.println("Directory " + currentDirectory+ command[1] + " !");
+                            String path = canonicalDir(currentDirectory, command[1]);
+                            
                             //String fileName = path + "fileList.txt";
                             File fileData = new File(path);
                             if (fileData.exists()) {
@@ -166,6 +169,7 @@ public class TextServer {
                                 System.out.println(CMD_FILE_STATUS_OKAY);
                                 System.out.println("Path: " + path);
                                 DataServer.listFiles(dataPortClient, path);
+                                output.println(CMD_OKAY);
                             } else { //Does not exists a fileList.txt in that path
                                 System.out.println("ERROR: Directory " + path + " does not exist here!");
                                 output.println(CMD_FILE_ACTION_UNAVAILABLE);
@@ -173,6 +177,7 @@ public class TextServer {
                             }
                         } else if (command.length == 1) {
                             DataServer.listFiles(dataPortClient, currentDirectory);
+                            output.println(CMD_OKAY);
                         }
                     } else {
                         output.println(CMD_CANT_OPEN_CONNECTION);
@@ -181,7 +186,7 @@ public class TextServer {
                 } else if (data.startsWith("DELE")) {
                     String[] command = data.split(" ");
                     if (command.length == 2) {
-                        String filename = currentDirectory + command[1];
+                        String filename = canonicalDir(currentDirectory, command[1]);
                         boolean result = deleteFile(filename);
                         if (result) {
                             output.println(CMD_COMPLETED);
@@ -194,8 +199,8 @@ public class TextServer {
                 } else if (data.startsWith("RNFR")) {
                     String[] command = data.split(" ");
                     if (command.length == 3) {
-                        String oldFilename = currentDirectory + command[1];
-                        String newFilename = currentDirectory + command[2];
+                        String oldFilename = canonicalDir(currentDirectory, command[1]);
+                        String newFilename = canonicalDir(currentDirectory, command[2]);
                         System.out.println(oldFilename);
                         System.out.println(newFilename);
                         if (newFilename != currentDirectory) {
@@ -205,7 +210,7 @@ public class TextServer {
                             System.out.println(CMD_FILENAME_NOT_ALLOWED);
                         }
                     } else {
-                        output.print(CMD_BAD_SEQUENCE);
+                        output.println(CMD_BAD_SEQUENCE);
                         System.out.println(CMD_BAD_SEQUENCE);
                     }
                 } else if (data.startsWith("PWD")) {
@@ -252,7 +257,7 @@ public class TextServer {
                             File currentDir = new File(directoryToDelete.getPath(), s);
                             currentDir.delete();
                             System.out.println("Directory deleted");
-                            removeFilenameFromList(directoryToDelete.getPath());
+                            //removeFilenameFromList(directoryToDelete.getPath());
                             System.out.println("Deleted file from fileList");
                         }
                         directoryToDelete.delete();
@@ -331,29 +336,32 @@ public class TextServer {
     }
 
     public static String canonicalDir(String curDir, String directory) {
-        String[] paths;
-        if (directory.contains("/")) {
-            paths = directory.split("/");
-        } else {
-            paths = new String[]{directory};
-        }
-        directory = curDir;
-        for (String path : paths) {
-            if (path.compareTo("..") == 0) {
-                int i = directory.lastIndexOf("\\", directory.length() - 2);
-                if (i == -1) {
-                    return "";
-                }
-                directory = directory.substring(0, i + 1);
-            } else if (path.compareTo(".") != 0) {
-                directory = directory + path + "\\";
-            }
-        }
-        System.out.println("De esta función sale: " + directory);
-        return directory;
-    }
+		String[] paths;
+		if (directory.contains("/")) {
+			paths = directory.split("/");
+		} else if (directory.contains("\\")) {
+			paths = directory.split("\\");
+		} else {
+			paths = new String[]{directory};
+		}
+		directory = curDir;
+		for (String path : paths){
+			if (path.compareTo("..")==0){
+				int i = directory.lastIndexOf("\\", directory.length()-2);
+				if (i==-1) return directory;
+				directory = directory.substring(0, i+1);
+			}
+			else if (path.compareTo(".")!=0){
+				directory = directory + path;
+				if (path.contains(".")==false) {
+					directory = directory + "\\";
+				}
+			}
+		}
+		return directory;
+	}
 
-    public static boolean addFilenameToList(String filename) {
+    /*public static boolean addFilenameToList(String filename) {
         try {
             Scanner in = new Scanner(new FileReader("fileList.txt"));
             StringBuilder sb = new StringBuilder();
@@ -425,13 +433,14 @@ public class TextServer {
             System.out.println(CMD_ACTION_ABORTED);
         }
         return false;
-    }
+    }*/
 
     public static Boolean deleteFile(String filename) {
         System.out.println("deleteFile called");
         try {
             File fileData = new File(filename);
-            if (!fileData.exists() || !removeFilenameFromList(filename)) {
+            //if (!fileData.exists() || !removeFilenameFromList(filename)) {
+            if (!fileData.exists()) {
                 output.println(CMD_FILE_UNAVAILABLE);
                 System.out.println(CMD_FILE_UNAVAILABLE);
                 return false;
@@ -457,20 +466,15 @@ public class TextServer {
                 return false;
             }
             if (newFile.exists()) {
-                output.println(CMD_FILE_UNAVAILABLE);
-                System.out.println(CMD_FILE_UNAVAILABLE);
+                output.println(CMD_FILENAME_NOT_ALLOWED);
+                System.out.println(CMD_FILENAME_NOT_ALLOWED);
                 return false;
             }
             Boolean success = oldFile.renameTo(newFile);
-            /*if (success && oldFile.isFile()) {
-                removeFilenameFromList(oldFilename);
-                System.out.println("Is file");
-                addFilenameToList(newFilename);
-            } else if (success && oldFile.isDirectory()) {
-                System.out.println("Is directory");
-            }*/
-            removeFilenameFromList(oldFilename);
-            addFilenameToList(newFilename);
+           
+
+            //removeFilenameFromList(oldFilename);
+            //addFilenameToList(newFilename);
             output.println(CMD_COMPLETED);
             System.out.println(CMD_COMPLETED);
             return success;
@@ -483,7 +487,7 @@ public class TextServer {
         return false;
     }
 
-    public static Boolean listFiles(PrintWriter output) {
+    /*public static Boolean listFiles(PrintWriter output) {
         System.out.println("listFiles called");
         try {
             Scanner input = new Scanner(new FileReader("fileList.txt"));
@@ -504,10 +508,56 @@ public class TextServer {
             System.out.println(CMD_ACTION_ABORTED);
         }
         return false;
-    }
+    }*/
+
 
     //INTERFACE
     public static ArrayList<String> listFiles() {
+        try {
+
+            String path = "src/main/java/FTP_Server/files/";
+            File filesDir = new File(path);
+            System.out.println(new File(path).getAbsolutePath());
+            ArrayList<String> ListFiles = listFiles(filesDir);
+            return ListFiles;
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.out.println(CMD_ACTION_ABORTED);
+        }
+        return null;
+
+    }
+
+    public static ArrayList<String> listFiles(File fileData) {
+		try {
+            ArrayList<String> listFiles = new ArrayList<String>();
+			String[] entries = fileData.list();
+			for (String s : entries) {
+				File currentDir = new File(fileData.getPath(), s);
+				if (currentDir.isDirectory()) {
+                    if (currentDir.list().length==0) {
+                        listFiles.add(currentDir.getPath());
+                    }else{
+                        ArrayList<String> dirFiles = listFiles(currentDir);
+                        for (String fileString : dirFiles) {
+                            listFiles.add(fileString);
+                        }
+                    }
+				}else{
+					listFiles.add(currentDir.getPath());
+				}
+			}
+			return listFiles;
+		} catch (Exception e) {
+			e.printStackTrace();
+			System.out.println(CMD_ACTION_ABORTED);
+		}
+		return new ArrayList<String>();
+	}
+
+    //INTERFACE
+    /*public static ArrayList<String> listFiles() {
         try {
 
             String path = "fileList.txt";
@@ -530,7 +580,7 @@ public class TextServer {
         }
         return null;
 
-    }
+    }*/
 
     public static void ShowGuideline() {
         output.println("Possible actions:\n");

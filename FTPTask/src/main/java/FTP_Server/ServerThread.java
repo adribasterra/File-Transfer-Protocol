@@ -21,7 +21,6 @@ import static FTP_Server.TextServer.CMD_SERVICE_READY;
 import static FTP_Server.TextServer.CMD_USER_ERROR;
 import static FTP_Server.TextServer.CMD_USER_LOGGED;
 import static FTP_Server.TextServer.CMD_USER_OKAY;
-import static FTP_Server.TextServer.addFilenameToList;
 import static FTP_Server.TextServer.canonicalDir;
 import static FTP_Server.TextServer.deleteFile;
 import static FTP_Server.TextServer.listFiles;

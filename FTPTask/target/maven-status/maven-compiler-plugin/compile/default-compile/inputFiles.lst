@@ -2,9 +2,9 @@ C:\Users\jojoj\OneDrive\San Jorge\Segundo año\Redes\Tema 1\FTP\FTPinterface\FTPT
 C:\Users\jojoj\OneDrive\San Jorge\Segundo año\Redes\Tema 1\FTP\FTPinterface\FTPTask\src\main\java\FTP_Interface\main.java
 C:\Users\jojoj\OneDrive\San Jorge\Segundo año\Redes\Tema 1\FTP\FTPinterface\FTPTask\src\main\java\FTP_Server\DataServer.java
 C:\Users\jojoj\OneDrive\San Jorge\Segundo año\Redes\Tema 1\FTP\FTPinterface\FTPTask\src\main\java\FTP_Interface\ClientWindow.java
+C:\Users\jojoj\OneDrive\San Jorge\Segundo año\Redes\Tema 1\FTP\FTPinterface\FTPTask\src\main\java\FTP_Interface\SuccessWindow.java
 C:\Users\jojoj\OneDrive\San Jorge\Segundo año\Redes\Tema 1\FTP\FTPinterface\FTPTask\src\main\java\FTP_Interface\LoginWindow.java
 C:\Users\jojoj\OneDrive\San Jorge\Segundo año\Redes\Tema 1\FTP\FTPinterface\FTPTask\src\main\java\FTP_Client\main.java
-C:\Users\jojoj\OneDrive\San Jorge\Segundo año\Redes\Tema 1\FTP\FTPinterface\FTPTask\src\main\java\FTP_Interface\DirectorySWindow.java
 C:\Users\jojoj\OneDrive\San Jorge\Segundo año\Redes\Tema 1\FTP\FTPinterface\FTPTask\src\main\java\FTP_Interface\RenameFilesWindow.java
 C:\Users\jojoj\OneDrive\San Jorge\Segundo año\Redes\Tema 1\FTP\FTPinterface\FTPTask\src\main\java\FTP_Server\Server.java
 C:\Users\jojoj\OneDrive\San Jorge\Segundo año\Redes\Tema 1\FTP\FTPinterface\FTPTask\src\main\java\FTP_Client\Connection.java
@@ -13,6 +13,7 @@ C:\Users\jojoj\OneDrive\San Jorge\Segundo año\Redes\Tema 1\FTP\FTPinterface\FTPT
 C:\Users\jojoj\OneDrive\San Jorge\Segundo año\Redes\Tema 1\FTP\FTPinterface\FTPTask\src\main\java\FTP_Interface\portPanel.java
 C:\Users\jojoj\OneDrive\San Jorge\Segundo año\Redes\Tema 1\FTP\FTPinterface\FTPTask\src\main\java\FTP_Interface\RegisterPanel.java
 C:\Users\jojoj\OneDrive\San Jorge\Segundo año\Redes\Tema 1\FTP\FTPinterface\FTPTask\src\main\java\FTP_Client\TextClient.java
+C:\Users\jojoj\OneDrive\San Jorge\Segundo año\Redes\Tema 1\FTP\FTPinterface\FTPTask\src\main\java\FTP_Interface\errorWindow.java
 C:\Users\jojoj\OneDrive\San Jorge\Segundo año\Redes\Tema 1\FTP\FTPinterface\FTPTask\src\main\java\FTP_Server\ServerThread.java
 C:\Users\jojoj\OneDrive\San Jorge\Segundo año\Redes\Tema 1\FTP\FTPinterface\FTPTask\src\main\java\FTP_Client\Command.java
 C:\Users\jojoj\OneDrive\San Jorge\Segundo año\Redes\Tema 1\FTP\FTPinterface\FTPTask\src\main\java\FTP_Interface\ServerWindow.java

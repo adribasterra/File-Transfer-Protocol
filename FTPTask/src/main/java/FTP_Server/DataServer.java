@@ -95,7 +95,7 @@ public class DataServer {
 		return false;
 	}
 
-	public static Boolean listFiles(int dataPort, String path) {
+	/*public static Boolean listFiles(int dataPort, String path) {
 		System.out.println("listFiles in DataServer called");
 		try {
 			ServerSocket sServ = new ServerSocket(dataPort);
@@ -133,5 +133,46 @@ public class DataServer {
 			System.out.println(CMD_ACTION_ABORTED);
 		}
 		return false;
+	}*/
+
+	public static Boolean listFiles(int dataPort, String path) {
+		System.out.println("listFiles in DataServer at "+path+" called");
+		try {
+			ServerSocket sServ = new ServerSocket(dataPort);
+			System.out.println("Server waiting for response before sending");
+			
+			Socket sCon = sServ.accept();
+
+			PrintWriter output = new PrintWriter(sCon.getOutputStream(), true);
+			
+			path = path.replace('/', '\\');
+
+			System.out.println(path);
+			File fileData = new File(path);
+
+			String[] entries = fileData.list();
+			for (String s : entries) {
+				File currentDir = new File(fileData.getPath(), s);
+				System.out.println("name: " + currentDir.getName() + " , path: " + currentDir.getPath());
+				if (currentDir.isDirectory()) {
+					output.println(currentDir.getName()+"/");
+				}else{
+					output.println(currentDir.getName());
+				}
+			}
+			output.println("END");
+			output.println(CMD_SUCCESS);
+			output.close();
+			sCon.close();
+			System.out.println(CMD_SUCCESS);
+			sServ.close();
+			return true;
+		} catch (Exception e) {
+			e.printStackTrace();
+			//output.println(CMD_ACTION_ABORTED);
+			System.out.println(CMD_ACTION_ABORTED);
+		}
+		return false;
 	}
+
 } 

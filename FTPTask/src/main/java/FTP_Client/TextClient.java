@@ -5,6 +5,7 @@ package FTP_Client;
 import java.net.*;
 import java.io.*;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 
 public class TextClient {
@@ -43,13 +44,13 @@ public class TextClient {
 			ShowGuideline();
 
 			String currentDirectory = "files\\";
-			//String baseDirectory = System.getProperty("user.dir");
+			String baseDirectory = "files\\";
 
 			while (data.compareTo("END") != 0) {
 
 				// Input for reading from keyboard
 				BufferedReader inputKeyboard = new BufferedReader(new InputStreamReader(System.in));
-				System.out.print("FTP (END to close the server): > ");
+				System.out.print("FTP : "+currentDirectory+"> ");
 				data = inputKeyboard.readLine();
 
 				if (data.startsWith("send")) {
@@ -70,7 +71,7 @@ public class TextClient {
 								System.out.println(e);
 							}
 							if(doIt) {
-								DataClient.sendFile(filename, dataPortClient);
+								DataClient.sendFile(baseDirectory + filename, dataPortClient);
 								try{
 									String response = input.readLine();
 									System.out.println(response);
@@ -136,7 +137,7 @@ public class TextClient {
 								System.out.println(e);
 							}
 							if(doIt) {
-								DataClient.receiveFile(filename, dataPortClient);
+								DataClient.receiveFile(baseDirectory + filename, dataPortClient);
 								try{
 									String response = input.readLine();
 									System.out.println(response);
@@ -162,17 +163,19 @@ public class TextClient {
 				else if (data.startsWith("list")) {
 					String[] command = data.split(" "); //For directory
 					if(command.length == 2){
-						String path = currentDirectory + command[1];
+						//String path = currentDirectory + command[1];
+						String path = command[1];
 						dataTCP = "LIST" + " " + path;
 						output.println(dataTCP);
 						//dataTCP = "LIST" + " " + command[1]; 						// LIST [<SP> <pathname>] <CRLF>
+						if(hasPort)	DataClient.receiveListFiles(dataPortClient);
 						try{
 							String response = input.readLine();
 							System.out.println(response);
 						} catch (IOException e){
 							System.out.println(e);
 						}
-						if(hasPort)	DataClient.receiveListFiles(dataPortClient);
+						
 					}
 					else {
 						dataTCP = "LIST";
@@ -208,9 +211,11 @@ public class TextClient {
 					if(command.length == 3){
 						dataTCP = "RNFR" + " " + command[1] + " " + command[2];	// RNFR <SP> <pathname> <CRLF>
 					}
-					else { dataTCP = "RNFR"; }
-					//System.out.println(input.readLine());
+					else {
+						dataTCP = "RNFR";
+					}
 					output.println(dataTCP);
+					System.out.println(dataTCP);
 					try{
 						String response = input.readLine();
 						System.out.println(response);
@@ -357,6 +362,8 @@ public class TextClient {
 					for(int j = 0; j<tam; j++){
 						System.out.println(j + " " + stack.pop() + ", ");
 					}
+				}else if (data.startsWith("help")) {
+					ShowGuideline();
 				}
 				else {
 					System.out.println("Error: Command unrecognised");

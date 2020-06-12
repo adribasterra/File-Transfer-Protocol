@@ -119,27 +119,41 @@ public class RenameFilesWindow extends javax.swing.JFrame {
         // TODO add your handling code here:
         this.dispose();
         String dataTCP = "";
-        try {
-            PrintWriter output = new PrintWriter(main.connection.getOutputStream(), true);
-            BufferedReader input = new BufferedReader(new InputStreamReader(main.connection.getInputStream()));
-            String s = "mkdir " + PathText.getText();
-            if  (s.startsWith("mkdir")) {
-					String[] command = s.split(" ");
-					String directory = command[1];
-					dataTCP = "MKD" + " " + directory; 							// MKD <SP> <pathname> <CRLF>
-					output.println(dataTCP);
-					System.out.println("Attempting to create directory: " + directory);
-					//System.out.println(input.readLine());
-					try{
-						String response = input.readLine();
-						System.out.println(response);
-					} catch (IOException e){
-						System.out.println(e);
-					}
-				}
+        String newPath = PathText.getText();
 
-        } catch (IOException ex) {
-            Logger.getLogger(main.class.getName()).log(Level.SEVERE, null, ex);
+        if (newPath.isEmpty()) {
+            errorWindow error = new errorWindow();
+            error.setVisible(true);
+        } else {
+            try {
+                PrintWriter output = new PrintWriter(main.connection.getOutputStream(), true);
+                BufferedReader input = new BufferedReader(new InputStreamReader(main.connection.getInputStream()));
+                String s = "mkdir " + PathText.getText();
+                if (s.startsWith("mkdir")) {
+                    String[] command = s.split(" ");
+                    String directory = command[1];
+                    dataTCP = "MKD" + " " + directory; 							// MKD <SP> <pathname> <CRLF>
+                    output.println(dataTCP);
+                    System.out.println("Attempting to create directory: " + directory);
+                    //System.out.println(input.readLine());
+                    try {
+                        String response = input.readLine();
+                        System.out.println(response);
+                        if (response.startsWith("200")) {
+                            SuccessWindow success = new SuccessWindow();
+                            success.setVisible(true);
+                        } else {
+                            errorWindow error = new errorWindow();
+                            error.setVisible(true);
+                        }
+                    } catch (IOException e) {
+                        System.out.println(e);
+                    }
+                }
+
+            } catch (IOException ex) {
+                Logger.getLogger(main.class.getName()).log(Level.SEVERE, null, ex);
+            }
         }
     }//GEN-LAST:event_SaveButtonMouseClicked
 

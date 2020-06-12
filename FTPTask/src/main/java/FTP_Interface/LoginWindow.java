@@ -172,8 +172,7 @@ public class LoginWindow extends javax.swing.JFrame {
     private void cerrarButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_cerrarButtonMouseClicked
         // TODO add your handling code here:
         this.dispose();
-        main mainn = new main();
-        mainn.setVisible(true);
+        
     }//GEN-LAST:event_cerrarButtonMouseClicked
 
     /**

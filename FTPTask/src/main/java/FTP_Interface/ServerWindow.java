@@ -39,7 +39,7 @@ public class ServerWindow extends javax.swing.JFrame {
             text = text + s + "<br/>";
 
         }
-        text = text + "/html>";
+        text = text + "</html>";
         ServerInfo.setText(text);
 
         // condcion = true;
@@ -47,7 +47,6 @@ public class ServerWindow extends javax.swing.JFrame {
     }
 
     public static boolean condcion = true;
-    
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -127,38 +126,121 @@ public class ServerWindow extends javax.swing.JFrame {
 
     private void backButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_backButtonMouseClicked
         // TODO add your handling code here:
+ String dataTCP = "";
+        String currentDirectory = "files\\";
+        String cd = pathText.getText();
 
+        if (cd.isEmpty()) {
+            errorWindow error = new errorWindow();
+            error.setVisible(true);
+        } else {
+            try {
+
+                BufferedReader input = new BufferedReader(new InputStreamReader(main.connection.getInputStream()));
+                PrintWriter output = new PrintWriter(main.connection.getOutputStream(), true);
+                String s = "cd .." ;
+                if (s.startsWith("cd")) {
+                    String[] command = s.split(" ");
+                    if (command.length == 2) {
+                        dataTCP = "CWD" + " " + command[1]; 					// CWD <SP> <pathname> <CRLF>
+                        output.println(dataTCP);
+                        System.out.println(dataTCP);
+                        String directory = input.readLine();
+
+                        if (!directory.isEmpty()) {
+                            currentDirectory = directory;
+                        } else {
+                            System.out.println("ERROR: Access forbidden outside the \"files\\\" folder!");
+                        }
+                        try {
+                            String response = input.readLine();
+                            System.out.println(response);
+                            if (response.startsWith("CWD")) {
+                            SuccessWindow success = new SuccessWindow();
+                            success.setVisible(true);
+                        } else {
+                            errorWindow error = new errorWindow();
+                            error.setVisible(true);
+                        }
+                        } catch (IOException e) {
+                            System.out.println(e);
+                        }
+                    } else {
+                        dataTCP = "CWD";
+                        output.println(dataTCP);
+                        try {
+                            String response = input.readLine();
+                            System.out.println(response);
+                        } catch (IOException e) {
+                            System.out.println(e);
+                        }
+                    }
+                    //System.out.println(input.readLine());
+                }
+
+            } catch (IOException ex) {
+                Logger.getLogger(main.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
     }//GEN-LAST:event_backButtonMouseClicked
 
     private void cdButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_cdButtonMouseClicked
         // TODO add your handling code here:
         String dataTCP = "";
         String currentDirectory = "files\\";
-        try {
+        String cd = pathText.getText();
 
-            BufferedReader input = new BufferedReader(new InputStreamReader(main.connection.getInputStream()));
-            PrintWriter output = new PrintWriter(main.connection.getOutputStream(), true);
-            String s = "cd " + pathText.getText();
-            if (s.startsWith("cd")) {
-                String[] command = s.split(" ");
-                if (command.length == 2) {
-                    dataTCP = "CWD" + " " + command[1]; 					// CWD <SP> <pathname> <CRLF>
-                    String directory = input.readLine();
+        if (cd.isEmpty()) {
+            errorWindow error = new errorWindow();
+            error.setVisible(true);
+        } else {
+            try {
 
-                    if (!directory.isEmpty()) {
-                        currentDirectory = directory;
+                BufferedReader input = new BufferedReader(new InputStreamReader(main.connection.getInputStream()));
+                PrintWriter output = new PrintWriter(main.connection.getOutputStream(), true);
+                String s = "cd " + pathText.getText();
+                if (s.startsWith("cd")) {
+                    String[] command = s.split(" ");
+                    if (command.length == 2) {
+                        dataTCP = "CWD" + " " + command[1]; 					// CWD <SP> <pathname> <CRLF>
+                        output.println(dataTCP);
+                        System.out.println(dataTCP);
+                        String directory = input.readLine();
+
+                        if (!directory.isEmpty()) {
+                            currentDirectory = directory;
+                        } else {
+                            System.out.println("ERROR: Access forbidden outside the \"files\\\" folder!");
+                        }
+                        try {
+                            String response = input.readLine();
+                            System.out.println(response);
+                            if (response.startsWith("CWD")) {
+                            SuccessWindow success = new SuccessWindow();
+                            success.setVisible(true);
+                        } else {
+                            errorWindow error = new errorWindow();
+                            error.setVisible(true);
+                        }
+                        } catch (IOException e) {
+                            System.out.println(e);
+                        }
                     } else {
-                        System.out.println("ERROR: Access forbidden outside the \"files\\\" folder!");
+                        dataTCP = "CWD";
+                        output.println(dataTCP);
+                        try {
+                            String response = input.readLine();
+                            System.out.println(response);
+                        } catch (IOException e) {
+                            System.out.println(e);
+                        }
                     }
-                } else {
-                    dataTCP = "CWD";
+                    //System.out.println(input.readLine());
                 }
-                output.println(dataTCP);
-                //System.out.println(input.readLine());
-            }
 
-        } catch (IOException ex) {
-            Logger.getLogger(main.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (IOException ex) {
+                Logger.getLogger(main.class.getName()).log(Level.SEVERE, null, ex);
+            }
         }
     }//GEN-LAST:event_cdButtonMouseClicked
 

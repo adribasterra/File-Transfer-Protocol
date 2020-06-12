@@ -1,4 +1,6 @@
+FTP_Interface\portPanel$4.class
 FTP_Interface\RenameFilesWindow$2.class
+FTP_Interface\SuccessWindow$3.class
 FTP_Interface\ClientWindow$7.class
 FTP_Interface\ServerWindow$3.class
 FTP_Interface\RegisterPanel$2.class
@@ -8,6 +10,7 @@ FTP_Interface\RegisterPanel.class
 FTP_Server\main.class
 FTP_Interface\ClientWindow$1.class
 FTP_Interface\main$5.class
+FTP_Interface\errorWindow$3.class
 FTP_Interface\LoginWindow$3.class
 FTP_Interface\portPanel$1.class
 FTP_Interface\ClientWindow$4.class
@@ -19,6 +22,7 @@ FTP_Interface\RenameFilesWindow$4.class
 FTP_Interface\RenameFilesWindow.class
 FTP_Interface\ClientWindow$8.class
 FTP_Interface\RenameFilesWindow$3.class
+FTP_Interface\errorWindow$2.class
 FTP_Interface\main$11.class
 FTP_Interface\LoginWindow$2.class
 FTP_Server\ServerThread.class
@@ -27,7 +31,7 @@ FTP_Interface\main$6.class
 FTP_Interface\ServerWindow.class
 FTP_Interface\RegisterPanel$4.class
 FTP_Client\Command.class
-FTP_Interface\DirectorySWindow.class
+FTP_Interface\errorWindow.class
 FTP_Interface\LoginWindow.class
 FTP_Client\DataClient.class
 FTP_Interface\LoginWindow$1.class
@@ -36,6 +40,7 @@ FTP_Interface\main$4.class
 FTP_Interface\main$7.class
 FTP_Interface\ClientWindow$3.class
 FTP_Interface\main$13.class
+FTP_Interface\errorWindow$1.class
 FTP_Interface\LoginWindow$4.class
 FTP_Client\Connection.class
 FTP_Interface\main$16.class
@@ -49,12 +54,14 @@ FTP_Interface\ServerWindow$4.class
 FTP_Interface\ClientWindow$5.class
 FTP_Client\TextClient.class
 FTP_Interface\main$15.class
+FTP_Interface\SuccessWindow$1.class
 FTP_Interface\portPanel$2.class
 FTP_Interface\main$9.class
+FTP_Interface\SuccessWindow.class
 FTP_Interface\main$2.class
 FTP_Server\DataServer.class
 FTP_Interface\RenameFilesWindow$1.class
-FTP_Interface\DirectorySWindow$1.class
+FTP_Interface\SuccessWindow$2.class
 FTP_Interface\RegisterPanel$1.class
 FTP_Interface\portPanel$3.class
 FTP_Interface\ServerWindow$2.class

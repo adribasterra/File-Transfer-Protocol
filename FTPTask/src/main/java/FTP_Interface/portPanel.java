@@ -59,6 +59,11 @@ public class portPanel extends javax.swing.JFrame {
 
         PortText.setFont(new java.awt.Font("Arial", 1, 18)); // NOI18N
         PortText.setBorder(null);
+        PortText.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                PortTextKeyTyped(evt);
+            }
+        });
         getContentPane().add(PortText, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 80, 250, 30));
 
         okBuutoon.setBorder(null);
@@ -117,16 +122,12 @@ public class portPanel extends javax.swing.JFrame {
                         try {
                             String response = input.readLine();
                             System.out.println(response);
-                            if (response.startsWith("200")) {
+                            if (response.startsWith("50")) {
                                 //JOptionPane.showMessageDialog(this, "Success");
-                                SuccessWindow success = new SuccessWindow();
-                                success.setVisible(true);
-                            } 
-                            if (response.startsWith("503")) {
                                 errorWindow error = new errorWindow();
                                 error.setVisible(true);
-                            } 
-                             if (response.startsWith("220")) {
+                            } else {
+                               
                                 SuccessWindow success = new SuccessWindow();
                                 success.setVisible(true);
                             }
@@ -148,6 +149,18 @@ public class portPanel extends javax.swing.JFrame {
 
 
     }//GEN-LAST:event_okBuutoonMouseClicked
+
+    private void PortTextKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_PortTextKeyTyped
+        // TODO add your handling code here:
+
+        char c = evt.getKeyChar();
+
+        if (Character.isLetter(c)) {
+            getToolkit().beep();
+            evt.consume();
+
+        }
+    }//GEN-LAST:event_PortTextKeyTyped
 
     /**
      * @param args the command line arguments

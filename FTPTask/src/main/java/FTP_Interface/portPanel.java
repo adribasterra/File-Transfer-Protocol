@@ -7,8 +7,11 @@ package FTP_Interface;
 
 import static FTP_Client.TextClient.dataPortClient;
 import static FTP_Client.TextClient.output;
+import static FTP_Interface.main.connection;
 import java.awt.Color;
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -100,6 +103,7 @@ public class portPanel extends javax.swing.JFrame {
         boolean hasPort = false;
 
         try {
+            BufferedReader input = new BufferedReader(new InputStreamReader(connection.getInputStream()));
             PrintWriter output = new PrintWriter(main.connection.getOutputStream(), true);
             String s = "prt " + PortText.getText();
             if (s.startsWith("prt")) {
@@ -110,12 +114,30 @@ public class portPanel extends javax.swing.JFrame {
                         dataTCP = "PRT" + " " + dataPortClient;				// PORT <SP> <host-port> <CRLF>
                         output.println(dataTCP);
                         hasPort = true;
-                        JOptionPane.showMessageDialog(this, "Success");
+                        try {
+                            String response = input.readLine();
+                            System.out.println(response);
+                            if (response.startsWith("200")) {
+                                //JOptionPane.showMessageDialog(this, "Success");
+                                SuccessWindow success = new SuccessWindow();
+                                success.setVisible(true);
+                            } 
+                            if (response.startsWith("503")) {
+                                errorWindow error = new errorWindow();
+                                error.setVisible(true);
+                            } 
+                             if (response.startsWith("220")) {
+                                SuccessWindow success = new SuccessWindow();
+                                success.setVisible(true);
+                            }
+                        } catch (IOException e) {
+                            System.out.println(e);
+                        }
                     } catch (NumberFormatException e) {
-                        JOptionPane.showMessageDialog(this, "please try again");
+                        System.out.println("It is not a number.");
                     }
                 } else {
-                    JOptionPane.showMessageDialog(this, "please try again");
+                    System.out.println("Format is not correct");
                 }
                 //System.out.println(input.readLine());
             }

@@ -447,7 +447,7 @@ public class TextClient {
 		System.out.println("\t8. Create directory. \t\t\tCOMMAND: 'mkdir + path'");
 		System.out.println("\t9. Remove directory. \t\t\tCOMMAND: 'remove + path'");
 		System.out.println("\t10. Rename file or directory. \t\tCOMMAND: 'rename + path'\n");
-		System.out.println("\t11. Indicate port for file transfer.  \t\tCOMMAND: 'prt + number'\n");
+		System.out.println("\t11. Indicate port for file transfer.  \tCOMMAND: 'prt + number'\n");
 		System.out.println("'Quit' or 'END' for finishing connection.\n");
 	}
 }

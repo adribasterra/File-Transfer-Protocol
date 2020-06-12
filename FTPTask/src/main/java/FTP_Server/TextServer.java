@@ -515,7 +515,7 @@ public class TextServer {
     public static ArrayList<String> listFiles() {
         try {
 
-            String path = "src/main/java/FTP_Server/files/";
+            String path = "files/";
             File filesDir = new File(path);
             System.out.println(new File(path).getAbsolutePath());
             ArrayList<String> ListFiles = listFiles(filesDir);

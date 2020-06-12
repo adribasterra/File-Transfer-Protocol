@@ -485,7 +485,8 @@ public class ServerThread extends Thread {
         System.out.println("deleteFile called");
         try {
             File fileData = new File(filename);
-            if (!fileData.exists() || !removeFilenameFromList(filename)) {
+            //if (!fileData.exists() || !removeFilenameFromList(filename)) {
+            if (!fileData.exists()) {
                 output.println(CMD_FILE_UNAVAILABLE);
                 System.out.println(CMD_FILE_UNAVAILABLE);
                 return false;
@@ -511,20 +512,15 @@ public class ServerThread extends Thread {
                 return false;
             }
             if (newFile.exists()) {
-                output.println(CMD_FILE_UNAVAILABLE);
-                System.out.println(CMD_FILE_UNAVAILABLE);
+                output.println(CMD_FILENAME_NOT_ALLOWED);
+                System.out.println(CMD_FILENAME_NOT_ALLOWED);
                 return false;
             }
             Boolean success = oldFile.renameTo(newFile);
-            /*if (success && oldFile.isFile()) {
-                removeFilenameFromList(oldFilename);
-                System.out.println("Is file");
-                addFilenameToList(newFilename);
-            } else if (success && oldFile.isDirectory()) {
-                System.out.println("Is directory");
-            }*/
-            removeFilenameFromList(oldFilename);
-            addFilenameToList(newFilename);
+           
+
+            //removeFilenameFromList(oldFilename);
+            //addFilenameToList(newFilename);
             output.println(CMD_COMPLETED);
             System.out.println(CMD_COMPLETED);
             return success;
